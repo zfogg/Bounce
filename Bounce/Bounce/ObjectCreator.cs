@@ -20,13 +20,10 @@ using FarseerPhysics.Controllers;
 
 namespace Bounce
 {
-    /// <summary>
-    /// This is a game component that implements IUpdateable.
-    /// </summary>
-    public class ObjectCreator : Microsoft.Xna.Framework.GameComponent
+    public class ObjectCreator : Microsoft.Xna.Framework.GameComponent //$ idea: consider making this into a static class.
     {
         private Game game;
-        public ObjectCreator(Game game)
+        public ObjectCreator(Game game) //$ idea: to be static, maybe the constructor could grab Game game as a GameComponent.
             : base(game)
         {
             r = new Random();
@@ -35,8 +32,8 @@ namespace Bounce
         }
         Random r;
 
-        private List<Body> bodies;
-        public override void Initialize()
+        private List<Body> bodies; //$ check: is this necessary? $ idea: maybe this should be a list of every item this class creates.
+        public override void Initialize() //$ check: does this method ever even run? Why / why not? If so, what should go into it? $ idea: maybe I should use the constructor to call this.
         {
             r = new Random();
             base.Initialize();
@@ -44,7 +41,7 @@ namespace Bounce
 
         public List<Obstacle> CreateObstacles(int number)
         {
-            List<Obstacle> obstacleList = new List<Obstacle>(100);
+            List<Obstacle> obstacleList = new List<Obstacle>(100); //$ edit: list number is necessary.
             for (int i = 0; i < number && i < BounceGame.CreationLimit; i++)
             {
                 Vector2 position = new Vector2( //This controls where the obstacles can spawn.
@@ -64,7 +61,7 @@ namespace Bounce
 
         public List<Metroid> CreateMetroidsOnObstacles(ref List<Obstacle> obstacles, int percentchance)
         {
-            List<Metroid> metroidList = new List<Metroid>(100);
+            List<Metroid> metroidList = new List<Metroid>(100); //$ edit: list number is necessary.
             foreach (Obstacle obstacle in obstacles)
                 if (r.Next(1, 101) > percentchance)
                 {
