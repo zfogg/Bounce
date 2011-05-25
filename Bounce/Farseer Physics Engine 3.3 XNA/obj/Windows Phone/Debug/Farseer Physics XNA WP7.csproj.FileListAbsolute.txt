@@ -1,6 +1,0 @@
-C:\Users\Zachary\Documents\Farseer Physics Engine 3.3.1 Samples XNA\Farseer Physics Engine 3.3 XNA\bin\Windows Phone\Debug\FarseerPhysicsXNA.dll
-C:\Users\Zachary\Documents\Farseer Physics Engine 3.3.1 Samples XNA\Farseer Physics Engine 3.3 XNA\bin\Windows Phone\Debug\FarseerPhysicsXNA.pdb
-C:\Users\Zachary\Documents\Farseer Physics Engine 3.3.1 Samples XNA\Farseer Physics Engine 3.3 XNA\obj\Windows Phone\Debug\ResolveAssemblyReference.cache
-C:\Users\Zachary\Documents\Farseer Physics Engine 3.3.1 Samples XNA\Farseer Physics Engine 3.3 XNA\obj\Windows Phone\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
-C:\Users\Zachary\Documents\Farseer Physics Engine 3.3.1 Samples XNA\Farseer Physics Engine 3.3 XNA\obj\Windows Phone\Debug\FarseerPhysicsXNA.dll
-C:\Users\Zachary\Documents\Farseer Physics Engine 3.3.1 Samples XNA\Farseer Physics Engine 3.3 XNA\obj\Windows Phone\Debug\FarseerPhysicsXNA.pdb

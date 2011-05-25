@@ -55,9 +55,49 @@ namespace FarseerPhysics.SamplesFramework
         {
             base.Initialize();
 
+            SimpleDemo1 simple1 = new SimpleDemo1();
+            SimpleDemo2 simple2 = new SimpleDemo2();
+            SimpleDemo3 simple3 = new SimpleDemo3();
+            SimpleDemo4 simple4 = new SimpleDemo4();
+            SimpleDemo5 simple5 = new SimpleDemo5();
+            SimpleDemo6 simple6 = new SimpleDemo6();
+            SimpleDemo7 simple7 = new SimpleDemo7();
+            SimpleDemo8 simple8 = new SimpleDemo8();
+            SimpleDemo9 simple9 = new SimpleDemo9();
+
+            AdvancedDemo1 advanced1 = new AdvancedDemo1();
+            AdvancedDemo2 advanced2 = new AdvancedDemo2();
+            AdvancedDemo3 advanced3 = new AdvancedDemo3();
+            AdvancedDemo4 advanced4 = new AdvancedDemo4();
+            AdvancedDemo5 advanced5 = new AdvancedDemo5();
+
+            GameDemo1 game1 = new GameDemo1();
 
             MenuScreen menuScreen = new MenuScreen("Farseer Samples");
 
+            menuScreen.AddMenuItem("Simple Samples", EntryType.Separator, null);
+            menuScreen.AddMenuItem(simple1.GetTitle(), EntryType.Screen, simple1);
+            menuScreen.AddMenuItem(simple2.GetTitle(), EntryType.Screen, simple2);
+            menuScreen.AddMenuItem(simple3.GetTitle(), EntryType.Screen, simple3);
+            menuScreen.AddMenuItem(simple4.GetTitle(), EntryType.Screen, simple4);
+            menuScreen.AddMenuItem(simple5.GetTitle(), EntryType.Screen, simple5);
+            menuScreen.AddMenuItem(simple6.GetTitle(), EntryType.Screen, simple6);
+            menuScreen.AddMenuItem(simple7.GetTitle(), EntryType.Screen, simple7);
+            menuScreen.AddMenuItem(simple8.GetTitle(), EntryType.Screen, simple8);
+            menuScreen.AddMenuItem(simple9.GetTitle(), EntryType.Screen, simple9);
+
+            menuScreen.AddMenuItem("Advanced Samples", EntryType.Separator, null);
+            menuScreen.AddMenuItem(advanced1.GetTitle(), EntryType.Screen, advanced1);
+            menuScreen.AddMenuItem(advanced2.GetTitle(), EntryType.Screen, advanced2);
+            menuScreen.AddMenuItem(advanced3.GetTitle(), EntryType.Screen, advanced3);
+            menuScreen.AddMenuItem(advanced4.GetTitle(), EntryType.Screen, advanced4);
+            menuScreen.AddMenuItem(advanced5.GetTitle(), EntryType.Screen, advanced5);
+
+            menuScreen.AddMenuItem("Game Samples", EntryType.Separator, null);
+            menuScreen.AddMenuItem(game1.GetTitle(), EntryType.Screen, game1);
+
+            menuScreen.AddMenuItem("", EntryType.Separator, null);
+            menuScreen.AddMenuItem("Exit", EntryType.ExitItem, null);
 
             ScreenManager.AddScreen(new BackgroundScreen());
             ScreenManager.AddScreen(menuScreen);

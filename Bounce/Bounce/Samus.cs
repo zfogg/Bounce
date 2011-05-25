@@ -83,7 +83,6 @@ namespace Bounce
 
         public override void Initialize()
         {
-
             base.Initialize();
         }
 

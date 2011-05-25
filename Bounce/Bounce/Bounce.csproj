@@ -61,7 +61,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DebugViewXNA">
-      <HintPath>..\Farseer Physics Engine 3.3 XNA\bin\x86\Debug\DebugViewXNA.dll</HintPath>
+      <HintPath>bin\DebugViewXNA\DebugViewXNA.dll</HintPath>
+    </Reference>
+    <Reference Include="FarseerPhysicsXNA">
+      <HintPath>bin\FarseerPhysicsXNA\FarseerPhysicsXNA.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86">
       <Private>False</Private>
@@ -113,6 +116,9 @@
   <ItemGroup>
     <Compile Include="Creator.cs" />
     <Compile Include="ConvertUnits.cs" />
+    <Compile Include="DrawingSystem\AssetCreator.cs" />
+    <Compile Include="DrawingSystem\LineBatch.cs" />
+    <Compile Include="DrawingSystem\Sprite.cs" />
     <Compile Include="Framing.cs" />
     <Compile Include="ObjectCreator.cs" />
     <Compile Include="Obstacle.cs" />
@@ -124,9 +130,6 @@
     <Compile Include="ScreenSystem\BackgroundScreen.cs" />
     <Compile Include="ScreenSystem\Camera2D.cs" />
     <Compile Include="ScreenSystem\ConvertUnits.cs" />
-    <Compile Include="DrawingSystem\AssetCreator.cs" />
-    <Compile Include="DrawingSystem\LineBatch.cs" />
-    <Compile Include="DrawingSystem\Sprite.cs" />
     <Compile Include="ScreenSystem\FramerateCounterComponent.cs" />
     <Compile Include="ScreenSystem\GameScreen.cs" />
     <Compile Include="ScreenSystem\IDemoScreen.cs" />
@@ -136,7 +139,6 @@
     <Compile Include="ScreenSystem\MenuEntry.cs" />
     <Compile Include="ScreenSystem\MenuScreen.cs" />
     <Compile Include="ScreenSystem\MessageBoxScreen.cs" />
-    <Compile Include="ScreenSystem\PhysicsGameScreen.cs" />
     <Compile Include="ScreenSystem\ScreenManagerComponent.cs" />
     <Compile Include="ScreenSystem\SpriteFonts.cs" />
     <Compile Include="ScreenSystem\VirtualButton.cs" />
@@ -147,10 +149,6 @@
     <Content Include="GameThumbnail.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Farseer Physics Engine 3.3.1 Samples XNA\Farseer Physics Engine 3.3 XNA\Farseer Physics XNA.csproj">
-      <Project>{0A850700-1ABB-4288-A391-6726B90EBEB9}</Project>
-      <Name>Farseer Physics XNA</Name>
-    </ProjectReference>
     <ProjectReference Include="..\BounceContent\BounceContent.contentproj">
       <Name>BounceContent</Name>
       <XnaReferenceType>Content</XnaReferenceType>

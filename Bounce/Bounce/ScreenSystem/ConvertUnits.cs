@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 
-namespace FarseerPhysics.SamplesFramework
+namespace Bounce
 {
     /// <summary>
     /// Convert units between display and simulation units.

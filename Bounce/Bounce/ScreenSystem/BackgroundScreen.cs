@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace FarseerPhysics.SamplesFramework
+namespace Bounce
 {
     /// <summary>
     /// The background screen sits behind all the other menu screens.

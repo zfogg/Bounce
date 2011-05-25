@@ -1,4 +1,4 @@
-﻿namespace FarseerPhysics.SamplesFramework
+﻿namespace Bounce
 {
     public interface IDemoScreen
     {

@@ -32,15 +32,16 @@ namespace Bounce
         }
         Random r;
 
-        private List<Body> bodies; //$ check: is this necessary? $ idea: maybe this should be a list of every item this class creates.
         public override void Initialize() //$ check: does this method ever even run? Why / why not? If so, what should go into it? $ idea: maybe I should use the constructor to call this.
         {
+            CreateObstacles(r.Next(1, 6));
             r = new Random();
             base.Initialize();
         }
 
         public List<Obstacle> CreateObstacles(int number)
         {
+            Obstacle.Texture = game.Content.Load<Texture2D>("obstacle");
             List<Obstacle> obstacleList = new List<Obstacle>(100); //$ edit: list number is necessary.
             for (int i = 0; i < number && i < BounceGame.CreationLimit; i++)
             {

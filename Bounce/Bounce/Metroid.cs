@@ -26,7 +26,7 @@ namespace Bounce
         public static Texture2D Texture;
         private Vector2 origin;
         //private SpriteEffects spriteEffects;
-
+        private Game game;
         public Metroid(Game game)
             : base(game)
         {
@@ -42,6 +42,7 @@ namespace Bounce
 
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
             r = new Random();
+            this.game = game;
             game.Components.Add(this);
         }
         private Random r;
@@ -57,20 +58,20 @@ namespace Bounce
 
         public override void Update(GameTime gameTime)
         {
-
+            
             base.Update(gameTime);
         }
-
+        
         public void Draw()
         {
-                BounceGame.SpriteBatch.Draw(Texture,
-                    ConvertUnits.ToDisplayUnits(Body.Position),
-                    null, Color.White,
-                    Body.Rotation,
-                    origin,
-                    1f,
-                    SpriteEffects.None,
-                    0);
+            BounceGame.SpriteBatch.Draw(Texture,
+                ConvertUnits.ToDisplayUnits(Body.Position),
+                null, Color.White,
+                Body.Rotation,
+                origin,
+                1f,
+                SpriteEffects.None,
+                0);
         }
     }
 }
