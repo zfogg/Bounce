@@ -37,22 +37,20 @@ namespace Bounce
                         ConvertUnits.ToSimUnits(Metroid.Texture.Width / 2),
                         ConvertUnits.ToSimUnits(Metroid.Texture.Height / 2), 1); ;
             Body.BodyType = BodyType.Dynamic;
-            //Body.Mass = 0.5f;
+            Body.Mass = 0.5f;
             Body.Restitution = 0.7f;
 
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
-            r = new Random();
             this.game = game;
             game.Components.Add(this);
         }
         private Random r;
 
         public Body Body;
-        //private Vertices textureVertices;
 
         public override void Initialize()
         {
-
+            r = new Random();
             base.Initialize();
         }
 

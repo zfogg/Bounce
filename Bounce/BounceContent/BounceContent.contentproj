@@ -176,9 +176,7 @@
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DebugViewXNA\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Compile Include="font.spritefont">
       <Name>font</Name>

@@ -98,8 +98,7 @@ namespace Bounce
             
 
             SpriteBatch.Begin();
-            DebugDraw();
-            framing.Draw();
+            //framing.Draw();
 
             foreach (Metroid m in metroids)
                 m.Draw();
@@ -108,26 +107,31 @@ namespace Bounce
                 o.Draw();
 
             samus.Draw();
-
+            
             SpriteBatch.End();
+            DebugDraw();
             base.Draw(gameTime);
         }
 
         protected void DebugDraw()
         {
-            Matrix transform = Matrix.Identity * Matrix.CreateScale(GraphicsDevice.Viewport.Height / ConvertUnits.ToSimUnits(GraphicsDevice.Viewport.Height))
-                                    * Matrix.CreateScale(1,-1,1)
-                                    * Matrix.CreateTranslation(GraphicsDevice.Viewport.Width * .5f, GraphicsDevice.Viewport.Height * .5f, 0f);
-            
+            Matrix proj = Matrix.CreateOrthographic(
+                Graphics.PreferredBackBufferWidth / 1f / 100.0f,
+                -Graphics.PreferredBackBufferHeight / 1f / 100.0f, 0, 1000000);
 
-            Matrix IDMatrix = Matrix.Identity;
-            DebugViewXNA.RenderDebugData(ref transform, ref IDMatrix);
+            Vector3 campos = new Vector3();
+            campos.X = (-Graphics.PreferredBackBufferWidth / 2) / 100.0f;
+            campos.Y = (Graphics.PreferredBackBufferHeight / 2) / -100.0f;
+            campos.Z = 0;
+            Matrix tran = Matrix.Identity;
+            tran.Translation = campos;
+            Matrix view = tran;
+
+            DebugViewXNA.RenderDebugData(ref proj, ref view);
         }
 
         public void HandleInput(GameTime gameTime)
-        {
-            // Control debug view
-            
+        {    
             if (KeyBoardState.IsKeyDown(Keys.F1))
             {
                 EnableOrDisableFlag(DebugViewFlags.Shape);

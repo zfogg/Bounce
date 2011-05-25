@@ -37,48 +37,45 @@ namespace Bounce
             {
                 texture = Game.Content.Load<Texture2D>("samus");
             }
-            //textureData = new uint[texture.Width * texture.Height];
-            //texture.GetData<uint>(textureData);
-            //textureVertices = PolygonTools.CreatePolygon(textureData, texture.Width, true);
-            //centroid = -textureVertices.GetCentroid();
-            //textureVertices.Translate(ref centroid);
-            //textureVertices = SimplifyTools.ReduceByDistance(textureVertices, 4f);
-            //var scale = ConvertUnits.ToSimUnits(Vector2.One);
-            ////Since it is a concave polygon, we need to partition it into several smaller convex polygons
-            //List<Vertices> list = BayazitDecomposer.ConvexPartition(textureVertices);
-            //foreach (Vertices vertices in list)
-            //{
-            //    vertices.Scale(ref scale);
 
-            //    //When we flip the y-axis, the orientation can change.
-            //    //We need to remember that FPE works with CCW polygons only.
-            //    vertices.ForceCounterClockWise();
-            //}
-            
-            ////Body properties
-            //body = BodyFactory.CreateCompoundPolygon(BounceGame.World, list, 1f);
-            body = BodyFactory.CreateRectangle(BounceGame.World, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height), 1f);
-            body.BodyType = BodyType.Dynamic;
-            body.Mass = 1.25f;
-            body.Friction = 0.8f;
-            body.Restitution = 0.075f;
-            body.Inertia = 1f;
-            body.Position = new Vector2(
+            uint[] textureData = new uint[texture.Width * texture.Height];
+            texture.GetData<uint>(textureData);
+
+            Vertices textureVertices = PolygonTools.CreatePolygon(textureData, texture.Width);
+            Vector2 centroid = -textureVertices.GetCentroid();
+            textureVertices.Translate(ref centroid);
+            textureVertices = SimplifyTools.ReduceByDistance(textureVertices, 4f);
+
+            List<Vertices> verticesList = BayazitDecomposer.ConvexPartition(textureVertices);
+            Vector2 vertScale = new Vector2(ConvertUnits.ToSimUnits(1)) * 1f;
+            foreach (Vertices vertices in verticesList)
+            {
+                vertices.Scale(ref vertScale);
+            }
+
+            Body = BodyFactory.CreateCompoundPolygon(BounceGame.World, verticesList, 1f);
+
+            //Body = BodyFactory.CreateRectangle(BounceGame.World, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height), 1f);
+            Body.BodyType = BodyType.Dynamic;
+            Body.Mass = 1.25f;
+            Body.Friction = 0.8f;
+            Body.Restitution = 0.075f;
+            Body.Inertia = 1f;
+            Body.Position = new Vector2(
               ConvertUnits.ToSimUnits(BounceGame.Graphics.PreferredBackBufferWidth * 0.20f),
             ConvertUnits.ToSimUnits(ConvertUnits.ToDisplayUnits(Framing.FloorBody.Position.Y) - (Framing.FloorTexture.Height / 2) - (texture.Height / 2))
             );
             // End body properties
-            origin = new Vector2(texture.Width / 2, texture.Height / 2);
+
+            origin = new Vector2(texture.Width / 2, texture.Height / 2); //For a rectangle body shape.
+            origin = -centroid; //For a polygon body shape.
             r = new Random();
             
             game.Components.Add(this);
         }
         private Random r;
 
-        private Body body;
-        private Vertices textureVertices;
-        Vector2 centroid;
-        uint[] textureData;
+        public Body Body;
         private Vector2 force;
 
         public override void Initialize()
@@ -100,31 +97,31 @@ namespace Bounce
             if (BounceGame.KeyBoardState.IsKeyDown(Keys.W))
             {
                 force.Y = -BounceGame.MovementCoEf;
-                body.ApplyForce(force);
+                Body.ApplyForce(force);
             }
             if (BounceGame.KeyBoardState.IsKeyDown(Keys.D))
             {
                 force.X = BounceGame.MovementCoEf;
-                body.ApplyForce(force);
+                Body.ApplyForce(force);
                 spriteEffects = SpriteEffects.FlipHorizontally;
             }
             if (BounceGame.KeyBoardState.IsKeyDown(Keys.S))
             {
                 force.Y = BounceGame.MovementCoEf;
-                body.ApplyForce(force);
+                Body.ApplyForce(force);
             }
             if (BounceGame.KeyBoardState.IsKeyDown(Keys.A))
             {
                 force.X = -BounceGame.MovementCoEf;
-                body.ApplyForce(force);
+                Body.ApplyForce(force);
             }
 
             //body.ApplyLinearImpulse(force);
 
             if (BounceGame.KeyBoardState.IsKeyDown(Keys.Right))
-                body.ApplyTorque(BounceGame.MovementCoEf * 1.2f);
+                Body.ApplyTorque(BounceGame.MovementCoEf * 1.2f);
             if (BounceGame.KeyBoardState.IsKeyDown(Keys.Left))
-                body.ApplyTorque(-BounceGame.MovementCoEf * 1.2f);
+                Body.ApplyTorque(-BounceGame.MovementCoEf * 1.2f);
 
             base.Update(gameTime);
         }
@@ -132,8 +129,8 @@ namespace Bounce
         public void Draw()
         {
             BounceGame.SpriteBatch.Draw(texture,
-                ConvertUnits.ToDisplayUnits(body.Position), null, Color.White,
-                body.Rotation, origin, 1f, SpriteEffects.None, 0f);
+                ConvertUnits.ToDisplayUnits(Body.Position), null, Color.White,
+                Body.Rotation, origin, 1f, SpriteEffects.None, 0f);
         }
     }
 }

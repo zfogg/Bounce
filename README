@@ -1,0 +1,6 @@
+Bounce is 2D 'game' based on Microsoft's XNA framework.
+It utilizes the Farseer physics engine.
+
+The goal of this project is to create a physics playground.
+The source will be full of abstract tools which can be used to create more specific tools.
+This way, any future projects will already have some groundwork code with which I'm familiar.

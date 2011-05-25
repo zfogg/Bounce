@@ -44,6 +44,22 @@ namespace Bounce
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
             game.Components.Add(this);
         }
+
+        public Obstacle(Game game)
+            : base(game)
+        {
+            if (Texture == null)
+                Texture = Game.Content.Load<Texture2D>("obstacle");
+
+            Body = BodyFactory.CreateRectangle(BounceGame.World,
+                    ConvertUnits.ToSimUnits(Obstacle.Texture.Width),
+                    ConvertUnits.ToSimUnits(Obstacle.Texture.Height), 1);
+            Body.BodyType = BodyType.Static;
+            Body.Mass = 1f;
+            Body.Restitution = 0.025f;
+            origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
+            game.Components.Add(this);
+        }
         private Random r;
 
         public Body Body;
