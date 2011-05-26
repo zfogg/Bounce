@@ -2,7 +2,7 @@ Content\background.xnb
 Content\floor.xnb
 Content\obstacle.xnb
 Content\metroid.xnb
-Content\samus.xnb
+Content\samus.old.xnb
 Content\side.xnb
 Content\Materials\blank.xnb
 Content\Materials\dots.xnb
@@ -18,8 +18,8 @@ Content\Common\popup.xnb
 Content\Common\slider.xnb
 Content\Common\socket.xnb
 Content\Common\stick.xnb
+Content\samus.xnb
 Content\Fonts\menufont.xnb
 Content\Fonts\detailsFont.xnb
 Content\Fonts\frameRateCounterFont.xnb
 Content\font.xnb
-Content\samus.old.xnb

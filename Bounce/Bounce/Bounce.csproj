@@ -114,14 +114,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConvertUnits.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Creator.cs" />
-    <Compile Include="ConvertUnits.cs" />
-    <Compile Include="Framing.cs" />
-    <Compile Include="ParseInput.cs" />
-    <Compile Include="ObjectCreator.cs" />
-    <Compile Include="Obstacle.cs" />
-    <Compile Include="Metroid.cs" />
-    <Compile Include="Samus.cs" />
+    <Compile Include="DebugFarseer.cs" />
+    <Compile Include="ItemCreation\Framing.cs" />
+    <Compile Include="InputHelper.cs" />
+    <Compile Include="ItemCreation\ObjectCreator.cs" />
+    <Compile Include="ItemCreation\Items\Obstacle.cs" />
+    <Compile Include="ItemCreation\Items\Metroid.cs" />
+    <Compile Include="ItemCreation\Items\Samus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="BounceGame.cs" />
