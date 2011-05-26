@@ -26,7 +26,8 @@ namespace Bounce
     {
         public static GraphicsDeviceManager Graphics;
         public static SpriteBatch SpriteBatch;
-        public static KeyboardState KeyBoardState;
+        public static KeyboardState KeyboardState;
+        public static MouseState MouseState;
         public static float MovementCoEf = 2.00f;
         public static int CreationLimit = 1000;
 
@@ -36,6 +37,7 @@ namespace Bounce
             Graphics.PreferredBackBufferWidth = 800;
             Graphics.PreferredBackBufferHeight = 480;
             Window.Title = "Project Bounce";
+            this.IsMouseVisible = true;
             Graphics.ApplyChanges();
             Content.RootDirectory = "Content";
         }
@@ -48,24 +50,26 @@ namespace Bounce
         private Random r;
 
         private List<Obstacle> obstacles;
-        private List<Metroid> metroids;
+        public static List<Metroid> Metroids;
         private Framing framing;
         private Samus samus;
 
+        public Body MouseCircle;
         protected override void Initialize()
         {
+
             r = new Random();
             ObjectCreator = new ObjectCreator(this);
             World = new World(new Vector2(0, 1.25f));
             DebugViewXNA = new DebugViewXNA(World);
             DebugViewXNA.AppendFlags(DebugViewFlags.Shape);
-            PrimitiveBatch = new PrimitiveBatch(GraphicsDevice);
-            //Components.Add<DebugView>(DebugViewXNA);
-            KeyBoardState = new KeyboardState();
+
+            KeyboardState = new KeyboardState();
+            MouseState = new MouseState();
 
             framing = new Framing(this);
             obstacles = ObjectCreator.CreateObstacles(r.Next(1, 6));
-            metroids = ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
+            Metroids = ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
             samus = new Samus(this);
             base.Initialize();
         }
@@ -83,11 +87,20 @@ namespace Bounce
         {
 
         }
-        
+
+        public static KeyboardState PreviousKeyboardState;
+        public static MouseState PreviousMouseState;
         protected override void Update(GameTime gameTime)
         {
-            KeyBoardState = Keyboard.GetState();
+            KeyboardState = Keyboard.GetState();
+            MouseState = Mouse.GetState();
             HandleInput(gameTime);
+
+            if (MouseCircle != null)
+                MouseCircle.Position = new Vector2(MouseState.X, MouseState.Y);
+
+            PreviousMouseState = MouseState;
+            PreviousKeyboardState = KeyboardState;
             World.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
             base.Update(gameTime);
         }
@@ -98,9 +111,9 @@ namespace Bounce
             
 
             SpriteBatch.Begin();
-            //framing.Draw();
+            framing.Draw();
 
-            foreach (Metroid m in metroids)
+            foreach (Metroid m in Metroids)
                 m.Draw();
 
             foreach (Obstacle o in obstacles)
@@ -131,41 +144,55 @@ namespace Bounce
         }
 
         public void HandleInput(GameTime gameTime)
-        {    
-            if (KeyBoardState.IsKeyDown(Keys.F1))
+        {
+            if (BounceGame.KeyboardState.GetPressedKeys().Length != 0)
             {
-                EnableOrDisableFlag(DebugViewFlags.Shape);
+                if (ParseInput.IsUniqueKeyPress(Keys.F1))
+                {
+                    EnableOrDisableFlag(DebugViewFlags.Shape);
+                }
+                if (ParseInput.IsUniqueKeyPress(Keys.F2))
+                {
+                    EnableOrDisableFlag(DebugViewFlags.DebugPanel);
+                    EnableOrDisableFlag(DebugViewFlags.PerformanceGraph);
+                }
+                if (ParseInput.IsUniqueKeyPress(Keys.F3))
+                {
+                    EnableOrDisableFlag(DebugViewFlags.Joint);
+                }
+                if (ParseInput.IsUniqueKeyPress(Keys.F4))
+                {
+                    EnableOrDisableFlag(DebugViewFlags.ContactPoints);
+                    EnableOrDisableFlag(DebugViewFlags.ContactNormals);
+                }
+                if (ParseInput.IsUniqueKeyPress(Keys.F5))
+                {
+                    EnableOrDisableFlag(DebugViewFlags.PolygonPoints);
+                }
+                if (ParseInput.IsUniqueKeyPress(Keys.F6))
+                {
+                    EnableOrDisableFlag(DebugViewFlags.Controllers);
+                }
+                if (ParseInput.IsUniqueKeyPress(Keys.F7))
+                {
+                    EnableOrDisableFlag(DebugViewFlags.CenterOfMass);
+                }
+                if (ParseInput.IsUniqueKeyPress(Keys.F8))
+                {
+                    EnableOrDisableFlag(DebugViewFlags.AABB);
+                }
             }
-            if (KeyBoardState.IsKeyDown(Keys.F2))
+
+            if (MouseState != PreviousMouseState)
             {
-                EnableOrDisableFlag(DebugViewFlags.DebugPanel);
-                EnableOrDisableFlag(DebugViewFlags.PerformanceGraph);
+                if (ParseInput.LeftMouseButtonReleased())
+                    Metroids.Add( ObjectCreator.CreateMetroidAtMouse() );
             }
-            if (KeyBoardState.IsKeyDown(Keys.F3))
-            {
-                EnableOrDisableFlag(DebugViewFlags.Joint);
-            }
-            if (KeyBoardState.IsKeyDown(Keys.F4))
-            {
-                EnableOrDisableFlag(DebugViewFlags.ContactPoints);
-                EnableOrDisableFlag(DebugViewFlags.ContactNormals);
-            }
-            if (KeyBoardState.IsKeyDown(Keys.F5))
-            {
-                EnableOrDisableFlag(DebugViewFlags.PolygonPoints);
-            }
-            if (KeyBoardState.IsKeyDown(Keys.F6))
-            {
-                EnableOrDisableFlag(DebugViewFlags.Controllers);
-            }
-            if (KeyBoardState.IsKeyDown(Keys.F7))
-            {
-                EnableOrDisableFlag(DebugViewFlags.CenterOfMass);
-            }
-            if (KeyBoardState.IsKeyDown(Keys.F8))
-            {
-                EnableOrDisableFlag(DebugViewFlags.AABB);
-            }
+
+            //if (ParseInput.IsUniqueMouseLeftClick())
+                //MouseCircle = ObjectCreator.CreateMouseCircle();
+
+            //if (ParseInput.LeftMouseButtonReleased())
         }
 
         private void EnableOrDisableFlag(DebugViewFlags flag)

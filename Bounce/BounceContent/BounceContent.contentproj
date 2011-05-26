@@ -70,8 +70,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="samus.png">
-      <Name>samus</Name>
+    <Compile Include="samus.old.png">
+      <Name>samus.old</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -176,7 +176,13 @@
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Include="samus.png">
+      <Name>samus</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="font.spritefont">
       <Name>font</Name>

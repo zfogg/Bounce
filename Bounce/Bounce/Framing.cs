@@ -91,9 +91,10 @@ namespace Bounce
 
         private Vector2 backgroundPosition;
 
+        private ObjectCreator objectCreator;
+        
         public override void Initialize()
         {
-
             base.Initialize();
         }
 

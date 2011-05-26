@@ -40,6 +40,8 @@ namespace Bounce
             Body.Mass = 0.5f;
             Body.Restitution = 0.7f;
 
+            //Shape = new CircleShape(2f, 1f);
+            //FixtureFactory.AttachCircle(Shape.Radius, Shape.Density, this.Body);
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
             this.game = game;
             game.Components.Add(this);
@@ -47,7 +49,7 @@ namespace Bounce
         private Random r;
 
         public Body Body;
-
+        public Shape Shape;
         public override void Initialize()
         {
             r = new Random();
@@ -56,6 +58,23 @@ namespace Bounce
 
         public override void Update(GameTime gameTime)
         {
+            if (BounceGame.KeyboardState.GetPressedKeys().Length != 0)
+            {
+                if (ParseInput.IsUniqueKeyPress(Keys.Space))
+                    Body.ApplyForce(new Vector2(
+                        r.Next(-100, 101) * BounceGame.MovementCoEf,
+                        r.Next(-100, 101) * BounceGame.MovementCoEf));
+            }
+
+            if (BounceGame.MouseState != BounceGame.PreviousMouseState)
+            {
+                if (ParseInput.RightMouseButtonReleased())
+                {
+                    Body.Dispose();
+                    BounceGame.Metroids.Remove(this);
+                    Dispose();
+                }
+            }
             
             base.Update(gameTime);
         }

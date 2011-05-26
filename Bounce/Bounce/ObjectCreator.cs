@@ -115,6 +115,25 @@ namespace Bounce
             return metroidList;
         }
 
+        public Body CreateMouseCircle()
+        {
+            Body body = BodyFactory.CreateCircle(BounceGame.World, ConvertUnits.ToSimUnits(10), 0f);
+            body.Position = new Vector2(BounceGame.MouseState.X, -BounceGame.MouseState.Y);
+            //body.IgnoreGravity = true;
+            return body;
+        }
+
+        public Metroid CreateMetroidAtMouse()
+        {
+            Metroid m = new Metroid(game);
+            Vector2 position = new Vector2(
+                ConvertUnits.ToSimUnits(BounceGame.MouseState.X),
+                ConvertUnits.ToSimUnits(BounceGame.MouseState.Y));
+            m.Body.Position = position;
+
+            return m;
+        }
+
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);

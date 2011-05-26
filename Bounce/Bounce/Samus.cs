@@ -53,7 +53,7 @@ namespace Bounce
                 vertices.Scale(ref vertScale);
             }
 
-            Body = BodyFactory.CreateCompoundPolygon(BounceGame.World, verticesList, 1f);
+            Body = BodyFactory.CreateCompoundPolygon(BounceGame.World, verticesList, 8f, true);
 
             //Body = BodyFactory.CreateRectangle(BounceGame.World, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height), 1f);
             Body.BodyType = BodyType.Dynamic;
@@ -76,10 +76,12 @@ namespace Bounce
         private Random r;
 
         public Body Body;
+        Shape Shape;
         private Vector2 force;
 
         public override void Initialize()
         {
+            
             base.Initialize();
         }
 
@@ -91,37 +93,43 @@ namespace Bounce
 
         public override void Update(GameTime gameTime)
         {
-            BounceGame.KeyBoardState = Keyboard.GetState();
+            BounceGame.KeyboardState = Keyboard.GetState();
 
             force = Vector2.Zero;
-            if (BounceGame.KeyBoardState.IsKeyDown(Keys.W))
-            {
-                force.Y = -BounceGame.MovementCoEf;
-                Body.ApplyForce(force);
-            }
-            if (BounceGame.KeyBoardState.IsKeyDown(Keys.D))
-            {
-                force.X = BounceGame.MovementCoEf;
-                Body.ApplyForce(force);
-                spriteEffects = SpriteEffects.FlipHorizontally;
-            }
-            if (BounceGame.KeyBoardState.IsKeyDown(Keys.S))
-            {
-                force.Y = BounceGame.MovementCoEf;
-                Body.ApplyForce(force);
-            }
-            if (BounceGame.KeyBoardState.IsKeyDown(Keys.A))
-            {
-                force.X = -BounceGame.MovementCoEf;
-                Body.ApplyForce(force);
-            }
 
-            //body.ApplyLinearImpulse(force);
+            if (BounceGame.KeyboardState.GetPressedKeys().Length != 0)
+            {
+                //if (InputDevices.IsUniqueKeypress(Keys.W)
+                if (BounceGame.KeyboardState.IsKeyDown(Keys.W))
+                {
+                    force.Y = -BounceGame.MovementCoEf;
+                    Body.ApplyForce(force);
+                }
+                if (BounceGame.KeyboardState.IsKeyDown(Keys.D))
+                {
+                    force.X = BounceGame.MovementCoEf;
+                    Body.ApplyForce(force);
+                }
+                if (BounceGame.KeyboardState.IsKeyDown(Keys.S))
+                {
+                    force.Y = BounceGame.MovementCoEf;
+                    Body.ApplyForce(force);
+                }
+                if (BounceGame.KeyboardState.IsKeyDown(Keys.A))
+                {
+                    force.X = -BounceGame.MovementCoEf;
+                    Body.ApplyForce(force);
+                }
 
-            if (BounceGame.KeyBoardState.IsKeyDown(Keys.Right))
-                Body.ApplyTorque(BounceGame.MovementCoEf * 1.2f);
-            if (BounceGame.KeyBoardState.IsKeyDown(Keys.Left))
-                Body.ApplyTorque(-BounceGame.MovementCoEf * 1.2f);
+                //body.ApplyLinearImpulse(force);
+
+                if (BounceGame.KeyboardState.IsKeyDown(Keys.Right))
+                    Body.ApplyTorque(BounceGame.MovementCoEf * 5.2f);
+                if (BounceGame.KeyboardState.IsKeyDown(Keys.Left))
+                    Body.ApplyTorque(-BounceGame.MovementCoEf * 5.2f);
+                //if (ParseInput.IsUniqueKeyPress(Keys.Space))
+                    //Body.ApplyLinearImpulse(new Vector2(0f, -2f));
+            }
 
             base.Update(gameTime);
         }
