@@ -21,12 +21,8 @@ using FarseerPhysics.Controllers;
 
 namespace Bounce
 {
-    public class Obstacle : Microsoft.Xna.Framework.GameComponent
+    public class Obstacle : PhysicalSprite
     {
-        public static Texture2D Texture { get; set; }
-        private Vector2 origin;
-        //private SpriteEffects spriteEffects;
-
         public Obstacle(Game game, Vector2 position)
             : base(game)
         {
@@ -34,8 +30,8 @@ namespace Bounce
                 Texture = Game.Content.Load<Texture2D>("obstacle");
 
             Body = BodyFactory.CreateRectangle(BounceGame.World,
-                    ConvertUnits.ToSimUnits(Obstacle.Texture.Width),
-                    ConvertUnits.ToSimUnits(Obstacle.Texture.Height), 1);
+                    ConvertUnits.ToSimUnits(this.Texture.Width),
+                    ConvertUnits.ToSimUnits(this.Texture.Height), 1);
             Body.Position = position;
             Body.BodyType = BodyType.Static;
             Body.Mass = 1f;
@@ -52,22 +48,17 @@ namespace Bounce
                 Texture = Game.Content.Load<Texture2D>("obstacle");
 
             Body = BodyFactory.CreateRectangle(BounceGame.World,
-                    ConvertUnits.ToSimUnits(Obstacle.Texture.Width),
-                    ConvertUnits.ToSimUnits(Obstacle.Texture.Height), 1);
+                    ConvertUnits.ToSimUnits(this.Texture.Width),
+                    ConvertUnits.ToSimUnits(this.Texture.Height), 1);
             Body.BodyType = BodyType.Static;
             Body.Mass = 1f;
             Body.Restitution = 0.025f;
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
-            game.Components.Add(this);
         }
-        private Random r;
-
-        public Body Body;
-        //private Vertices textureVertices;
 
         public override void Initialize()
         {
-
+            BounceGame.PhysicalSprites.Add(this);
             base.Initialize();
         }
 
@@ -77,7 +68,7 @@ namespace Bounce
             base.Update(gameTime);
         }
 
-        public void Draw()
+        public override void Draw()
         {
             BounceGame.SpriteBatch.Draw(Texture,
                 ConvertUnits.ToDisplayUnits(Body.Position), null, Color.White,

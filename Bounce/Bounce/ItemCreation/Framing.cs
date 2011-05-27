@@ -21,9 +21,6 @@ using FarseerPhysics.Controllers;
 
 namespace Bounce
 {
-    /// <summary>
-    /// This is a game component that implements IUpdateable.
-    /// </summary>
     public class Framing : Microsoft.Xna.Framework.GameComponent
     {
         public Framing(Game game)
@@ -42,7 +39,7 @@ namespace Bounce
             FloorBody.BodyType = BodyType.Static;
             FloorBody.Position = new Vector2(
                 ConvertUnits.ToSimUnits(0 + FloorTexture.Width / 2),
-                ConvertUnits.ToSimUnits(BounceGame.Graphics.PreferredBackBufferHeight - (FloorTexture.Height / 2))
+                ConvertUnits.ToSimUnits(BounceGame.Graphics.PreferredBackBufferHeight + (FloorTexture.Height / 2))
                 );
             FloorBody.Restitution = 0.7f;
             floorOrigin = new Vector2(FloorTexture.Width / 2, FloorTexture.Height / 2);
@@ -54,7 +51,7 @@ namespace Bounce
             CielingBody.BodyType = BodyType.Static;
             CielingBody.Position = new Vector2(
                 ConvertUnits.ToSimUnits(0 + CielingTexture.Width / 2),
-                ConvertUnits.ToSimUnits(0 + CielingTexture.Height / 2)
+                ConvertUnits.ToSimUnits(0 + -CielingTexture.Height / 2)
                 );
             cielingOrigin = new Vector2(CielingTexture.Width / 2, CielingTexture.Height / 2);
 
@@ -64,7 +61,7 @@ namespace Bounce
                 1f);
             RightSideBody.BodyType = BodyType.Static;
             RightSideBody.Position = new Vector2(
-                ConvertUnits.ToSimUnits(0 + (RightSideTexture.Width / 2)),
+                ConvertUnits.ToSimUnits(0 + (-RightSideTexture.Width / 2)),
                 ConvertUnits.ToSimUnits(0 + (RightSideTexture.Height / 2)));
             rightSideOrigin = new Vector2(RightSideTexture.Width / 2, RightSideTexture.Height / 2);
 
@@ -74,7 +71,7 @@ namespace Bounce
                 1f);
             LeftSideBody.BodyType = BodyType.Static;
             LeftSideBody.Position = new Vector2(
-                ConvertUnits.ToSimUnits(0 + BounceGame.Graphics.PreferredBackBufferWidth - (LeftSideTexture.Width / 2)),
+                ConvertUnits.ToSimUnits(0 + BounceGame.Graphics.PreferredBackBufferWidth - -(LeftSideTexture.Width / 2)),
                 ConvertUnits.ToSimUnits(0 + BounceGame.Graphics.PreferredBackBufferHeight - (LeftSideTexture.Height / 2)));
             leftSideOrigin = new Vector2(LeftSideTexture.Width / 2, LeftSideTexture.Height / 2);
                 

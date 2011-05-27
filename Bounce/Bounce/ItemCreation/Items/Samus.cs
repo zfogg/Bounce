@@ -24,73 +24,51 @@ namespace Bounce
     /// <summary>
     /// This is a game component that implements IUpdateable.
     /// </summary>
-    public class Samus : Microsoft.Xna.Framework.GameComponent
+    public class Samus : PhysicalSprite
     {
-        private Texture2D texture;
-        private Vector2 origin;
-        private SpriteEffects spriteEffects;
-
         public Samus(Game game)
             : base(game)
         {
-            if (texture == null)
-            {
-                texture = Game.Content.Load<Texture2D>("samus");
-            }
+            if (Texture == null)
+                Texture = Game.Content.Load<Texture2D>("samus");
 
-            uint[] textureData = new uint[texture.Width * texture.Height];
-            texture.GetData<uint>(textureData);
+            uint[] TextureData = new uint[Texture.Width * Texture.Height];
+            Texture.GetData<uint>(TextureData);
 
-            Vertices textureVertices = PolygonTools.CreatePolygon(textureData, texture.Width);
-            Vector2 centroid = -textureVertices.GetCentroid();
-            textureVertices.Translate(ref centroid);
-            textureVertices = SimplifyTools.ReduceByDistance(textureVertices, 4f);
+            Vertices TextureVertices = PolygonTools.CreatePolygon(TextureData, Texture.Width);
+            Vector2 centroid = -TextureVertices.GetCentroid();
+            TextureVertices.Translate(ref centroid);
+            TextureVertices = SimplifyTools.ReduceByDistance(TextureVertices, 4f);
 
-            List<Vertices> verticesList = BayazitDecomposer.ConvexPartition(textureVertices);
+            List<Vertices> verticesList = BayazitDecomposer.ConvexPartition(TextureVertices);
             Vector2 vertScale = new Vector2(ConvertUnits.ToSimUnits(1)) * 1f;
             foreach (Vertices vertices in verticesList)
-            {
                 vertices.Scale(ref vertScale);
-            }
 
             Body = BodyFactory.CreateCompoundPolygon(BounceGame.World, verticesList, 8f, true);
-
-            //Body = BodyFactory.CreateRectangle(BounceGame.World, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height), 1f);
-            Body.BodyType = BodyType.Dynamic;
-            Body.Mass = 1.25f;
-            Body.Friction = 0.8f;
-            Body.Restitution = 0.075f;
-            Body.Inertia = 1f;
             Body.Position = new Vector2(
-              ConvertUnits.ToSimUnits(BounceGame.Graphics.PreferredBackBufferWidth * 0.20f),
-            ConvertUnits.ToSimUnits(ConvertUnits.ToDisplayUnits(Framing.FloorBody.Position.Y) - (Framing.FloorTexture.Height / 2) - (texture.Height / 2))
+                ConvertUnits.ToSimUnits(BounceGame.Graphics.PreferredBackBufferWidth * 0.20f),
+                ConvertUnits.ToSimUnits(ConvertUnits.ToDisplayUnits(Framing.FloorBody.Position.Y) - (Framing.FloorTexture.Height / 2) - (Texture.Height / 2))
             );
+            Body.BodyType = BodyType.Dynamic;
+            Body.Mass = 1.25f * -BounceGame.World.Gravity.Y;
+            Body.Friction = 0.8f;
+            Body.Restitution = 0.015f;
+            Body.Inertia = 1f;
+            Body.AngularDamping = 0.50f;
             // End body properties
 
-            origin = new Vector2(texture.Width / 2, texture.Height / 2); //For a rectangle body shape.
+            origin = new Vector2(Texture.Width / 2, Texture.Height / 2); //For a rectangle body shape.
             origin = -centroid; //For a polygon body shape.
-            r = new Random();
-            
-            game.Components.Add(this);
         }
-        private Random r;
-
-        public Body Body;
-        Shape Shape;
-        private Vector2 force;
 
         public override void Initialize()
         {
-            
+            BounceGame.PhysicalSprites.Add(this);
             base.Initialize();
         }
 
-        public void LoadContent()
-        {
-            
-            
-        }
-
+        private Vector2 force;
         public override void Update(GameTime gameTime)
         {
             BounceGame.KeyboardState = Keyboard.GetState();
@@ -134,9 +112,9 @@ namespace Bounce
             base.Update(gameTime);
         }
 
-        public void Draw()
+        public override void Draw()
         {
-            BounceGame.SpriteBatch.Draw(texture,
+            BounceGame.SpriteBatch.Draw(Texture,
                 ConvertUnits.ToDisplayUnits(Body.Position), null, Color.White,
                 Body.Rotation, origin, 1f, SpriteEffects.None, 0f);
         }

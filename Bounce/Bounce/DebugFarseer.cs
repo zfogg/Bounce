@@ -21,6 +21,7 @@ namespace Bounce
         {
             DebugViewXNA = new DebugViewXNA(BounceGame.World);
             DebugViewXNA.LoadContent(game.GraphicsDevice, game.Content);
+            DebugViewXNA.RemoveFlags(DebugViewFlags.Shape);
             this.InitializeDraw();
             game.Components.Add(this);
         }

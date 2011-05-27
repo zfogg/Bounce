@@ -119,6 +119,7 @@
     </Compile>
     <Compile Include="Creator.cs" />
     <Compile Include="DebugFarseer.cs" />
+    <Compile Include="PhysicalSprite.cs" />
     <Compile Include="ItemCreation\Framing.cs" />
     <Compile Include="InputHelper.cs" />
     <Compile Include="ItemCreation\ObjectCreator.cs" />

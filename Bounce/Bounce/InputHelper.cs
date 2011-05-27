@@ -44,7 +44,7 @@ namespace Bounce
 
         public static bool LeftClickUnique()
         {
-            return (BounceGame.MouseState.LeftButton == ButtonState.Pressed && BounceGame.PreviousMouseState.LeftButton == ButtonState.Released) == true
+            return (BounceGame.MouseState.LeftButton == ButtonState.Pressed && BounceGame.PreviousMouseState.LeftButton == ButtonState.Released)
                 ?
                     true
                     :
@@ -53,7 +53,7 @@ namespace Bounce
 
         public static bool LeftClickRelease()
         {
-            return (BounceGame.MouseState.LeftButton == ButtonState.Released && BounceGame.PreviousMouseState.LeftButton == ButtonState.Pressed) == true
+            return (BounceGame.MouseState.LeftButton == ButtonState.Released && BounceGame.PreviousMouseState.LeftButton == ButtonState.Pressed)
                 ?
                     true
                     :
@@ -62,7 +62,7 @@ namespace Bounce
 
         public static bool RightClickUnique()
         {
-            return (BounceGame.MouseState.RightButton == ButtonState.Pressed && BounceGame.PreviousMouseState.RightButton == ButtonState.Released) == true
+            return (BounceGame.MouseState.RightButton == ButtonState.Pressed && BounceGame.PreviousMouseState.RightButton == ButtonState.Released)
                 ?
                     true
                     :
@@ -71,7 +71,7 @@ namespace Bounce
 
         public static bool RickClickRelease()
         {
-            return (BounceGame.MouseState.RightButton == ButtonState.Released && BounceGame.PreviousMouseState.RightButton == ButtonState.Pressed) == true
+            return (BounceGame.MouseState.RightButton == ButtonState.Released && BounceGame.PreviousMouseState.RightButton == ButtonState.Pressed)
                 ?
                     true
                     :

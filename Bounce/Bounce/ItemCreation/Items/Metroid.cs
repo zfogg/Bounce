@@ -21,65 +21,68 @@ using FarseerPhysics.Controllers;
 
 namespace Bounce
 {
-    public class Metroid : Microsoft.Xna.Framework.GameComponent
+    public class Metroid : PhysicalSprite
     {
-        public static Texture2D Texture;
-        private Vector2 origin;
-        //private SpriteEffects spriteEffects;
-        private Game game;
         public Metroid(Game game)
             : base(game)
         {
+            this.IsAlive = true;
+
             if (Texture == null)
                 Texture = Game.Content.Load<Texture2D>("metroid");
 
             Body = BodyFactory.CreateCircle(BounceGame.World,
-                        ConvertUnits.ToSimUnits(Metroid.Texture.Width / 2),
-                        ConvertUnits.ToSimUnits(Metroid.Texture.Height / 2), 1); ;
+                        ConvertUnits.ToSimUnits(this.Texture.Width / 2),
+                        ConvertUnits.ToSimUnits(this.Texture.Height / 2), 1); ;
             Body.BodyType = BodyType.Dynamic;
-            Body.Mass = 0.5f;
-            Body.Restitution = 0.7f;
+            Body.Mass = 5f;
+            Body.Friction = 0.25f;
+            Body.Restitution = .35f;
+            Body.AngularDamping = 1.75f;
 
-            //Shape = new CircleShape(2f, 1f);
-            //FixtureFactory.AttachCircle(Shape.Radius, Shape.Density, this.Body);
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
-            this.game = game;
-            game.Components.Add(this);
         }
-        private Random r;
-
-        public Body Body;
-        public Shape Shape;
         public override void Initialize()
         {
-            r = new Random();
+            BounceGame.PhysicalSprites.Add(this);
             base.Initialize();
         }
 
         public override void Update(GameTime gameTime)
         {
-             if (BounceGame.KeyboardState.GetPressedKeys().Length != 0)
+            if (this.IsAlive)
             {
-                if (InputHelper.KeyPressUnique(Keys.Space))
-                    Body.ApplyForce(new Vector2(
-                        r.Next(-100, 101) * BounceGame.MovementCoEf,
-                        r.Next(-100, 101) * BounceGame.MovementCoEf));
-            }
-
-            if (BounceGame.MouseState != BounceGame.PreviousMouseState)
-            {
-                if (InputHelper.RickClickRelease())
+                if (BounceGame.KeyboardState.GetPressedKeys().Length != 0)
                 {
-                    Body.Dispose();
-                    BounceGame.Metroids.Remove(this);
-                    Dispose();
+                    if (InputHelper.KeyPressUnique(Keys.Space))
+                        Body.ApplyForce(new Vector2(
+                            r.Next(-100, 101) * Body.Mass,
+                            r.Next(-100, 101) * Body.Mass));
+
+                    if (BounceGame.KeyboardState.IsKeyDown(Keys.Right))
+                        Body.ApplyTorque(BounceGame.MovementCoEf * Body.Mass * .001f);
+                    if (BounceGame.KeyboardState.IsKeyDown(Keys.Left))
+                        Body.ApplyTorque(-BounceGame.MovementCoEf * Body.Mass * .001f);
+                }
+
+                if (BounceGame.MouseState != BounceGame.PreviousMouseState)
+                {
+                    if (InputHelper.RickClickRelease())
+                        this.IsAlive = false;
                 }
             }
-            
+
+            if (!this.IsAlive)
+            {
+                Body.Awake = true;
+                Body.Dispose();
+                BounceGame.PhysicalSprites.Remove(this);
+            }
+
             base.Update(gameTime);
         }
         
-        public void Draw()
+        public override void Draw()
         {
             BounceGame.SpriteBatch.Draw(Texture,
                 ConvertUnits.ToDisplayUnits(Body.Position),

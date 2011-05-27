@@ -56,22 +56,19 @@ namespace Bounce
 
         public List<Obstacle> CreateObstacles(int number)
         {
-            if (Obstacle.Texture == null)
-                Obstacle.Texture = game.Content.Load<Texture2D>("obstacle"); //Used to calculate position.
-
-            List<Obstacle> obstacleList = new List<Obstacle>();
             Vector2 position = Vector2.Zero;
+            List<Obstacle> obstacleList = new List<Obstacle>();
             for (int i = 0; i < number && i < BounceGame.CreationLimit; i++)
             {
+                Obstacle o = CreateObstacle(position);
                 //The position Vector2 determines the range of the box in which an obstacle can be created.
                 position.X = ConvertUnits.ToSimUnits(r.Next( //X axis.
-                        (0 + Obstacle.Texture.Width), //Left: spawn fully inside the screen by at least the obstacle's texture width.
-                        (BounceGame.Graphics.PreferredBackBufferWidth - Obstacle.Texture.Width))); //Right: spawn fully inside the screen by at least the obstacle's texture width.
+                        (0 + o.Texture.Width), //Left: spawn fully inside the screen by at least the obstacle's Texture width.
+                        (BounceGame.Graphics.PreferredBackBufferWidth - o.Texture.Width))); //Right: spawn fully inside the screen by at least the obstacle's Texture width.
                 position.Y = ConvertUnits.ToSimUnits(r.Next( //Y axis.
                         (int)((float)BounceGame.Graphics.PreferredBackBufferHeight * 0.20f), //Top: spawn below x% of the screen's height.
-                        (BounceGame.Graphics.PreferredBackBufferHeight - (Obstacle.Texture.Height * 2)))); //Bottom: spawn above the floor by two of obstacle's texture height.
-
-                Obstacle o = CreateObstacle(position);
+                        (BounceGame.Graphics.PreferredBackBufferHeight - (o.Texture.Height * 2)))); //Bottom: spawn above the floor by two of obstacle's Texture height.
+                
                 obstacleList.Add(o);
             }
 
@@ -96,19 +93,17 @@ namespace Bounce
 
         public List<Metroid> CreateMetroidsOnObstacles(ref List<Obstacle> obstacles, int percentchance)
         {
-            if (Metroid.Texture == null)
-                Metroid.Texture = game.Content.Load<Texture2D>("metroid"); //Used to calculate position.
-
             List<Metroid> metroidList = new List<Metroid>();
             Vector2 position = Vector2.Zero;
             foreach (Obstacle obstacle in obstacles)
                 if (r.Next(1, 101) > percentchance)
                 {
+                    Metroid m = new Metroid(game);
                     //First, calculate a position that is a bit above the center of Obstacle obstacle.
-                    position.X = obstacle.Body.Position.X;
-                    position.Y = ConvertUnits.ToSimUnits(ConvertUnits.ToDisplayUnits(obstacle.Body.Position.Y) - (1.2f * (float)Metroid.Texture.Height));
+                    m.Body.Position = new Vector2(
+                        obstacle.Body.Position.X,
+                        position.Y = ConvertUnits.ToSimUnits(ConvertUnits.ToDisplayUnits(obstacle.Body.Position.Y) - (1.2f * (float)m.Texture.Height)));
                     //Next, create a Metroid at position, and add it to the list.
-                    Metroid m = CreateMetroid(position);
                     metroidList.Add(m);
                 }
 

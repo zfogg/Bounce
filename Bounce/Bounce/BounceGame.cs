@@ -28,7 +28,7 @@ namespace Bounce
         public static SpriteBatch SpriteBatch;
         public static KeyboardState KeyboardState;
         public static MouseState MouseState;
-        public static float MovementCoEf = 2.00f;
+        public static float MovementCoEf = 5.00f;
         public static int CreationLimit = 1000;
 
         public BounceGame()
@@ -50,7 +50,7 @@ namespace Bounce
         private Random r;
 
         private List<Obstacle> obstacles;
-        public static List<Metroid> Metroids;
+        public static List<PhysicalSprite> PhysicalSprites;
         private Framing framing;
         private Samus samus;
 
@@ -59,7 +59,7 @@ namespace Bounce
         {
             r = new Random();
             ObjectCreator = new ObjectCreator(this);
-            World = new World(new Vector2(0, 1.25f));
+            World = new World(new Vector2(0, 5.75f));
             DebugFarseer = new DebugFarseer(this);
 
             KeyboardState = new KeyboardState();
@@ -67,8 +67,9 @@ namespace Bounce
 
             framing = new Framing(this);
             obstacles = ObjectCreator.CreateObstacles(r.Next(1, 6));
-            Metroids = ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
-            //samus = new Samus(this);
+            ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
+            PhysicalSprites = new List<PhysicalSprite>();
+            samus = new Samus(this);
             base.Initialize();
         }
 
@@ -86,46 +87,42 @@ namespace Bounce
         public static MouseState PreviousMouseState;
         protected override void Update(GameTime gameTime)
         {
+            PreviousMouseState = MouseState;
+            PreviousKeyboardState = KeyboardState;
+
             KeyboardState = Keyboard.GetState();
             MouseState = Mouse.GetState();
             HandleInput(gameTime);
 
             World.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
             base.Update(gameTime);
-            PreviousMouseState = MouseState;
-            PreviousKeyboardState = KeyboardState;
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-            DebugFarseer.Draw();
 
             SpriteBatch.Begin();
             framing.Draw();
 
-            foreach (Metroid m in Metroids)
-                m.Draw();
-
-            foreach (Obstacle o in obstacles)
-                o.Draw();
-
-            //samus.Draw();
+            foreach (PhysicalSprite sprite in PhysicalSprites)
+                sprite.Draw();
             
             SpriteBatch.End();
+            DebugFarseer.Draw();
             base.Draw(gameTime);
         }
 
-        public void HandleInput(GameTime gameTime)
+        public void HandleInput(GameTime gameTime) //This should be refactored to somewhere other than the game loop class.
         {
             if (MouseState != PreviousMouseState)
             {
                 if (InputHelper.LeftClickRelease())
-                    Metroids.Add( ObjectCreator.CreateMetroidAtMouse() );
+                    ObjectCreator.CreateMetroidAtMouse();
             }
 
-            if (InputHelper.LeftClickUnique())
-                MouseCircle = ObjectCreator.CreateMouseCircle();
+            //if (InputHelper.LeftClickUnique())
+                //MouseCircle = ObjectCreator.CreateMouseCircle();
         }
     }
 }
