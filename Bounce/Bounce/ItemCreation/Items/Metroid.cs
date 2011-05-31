@@ -23,6 +23,12 @@ namespace Bounce
 {
     public class Metroid : PhysicalSprite
     {
+        public Metroid(Game game, float sinRadius, float cosRadius)
+            : this(game)
+        {
+            this.cosRadius = cosRadius;
+            this.sinRadius = sinRadius;
+        }
         public Metroid(Game game)
             : base(game)
         {
@@ -35,11 +41,11 @@ namespace Bounce
                         ConvertUnits.ToSimUnits(this.Texture.Width / 2),
                         ConvertUnits.ToSimUnits(this.Texture.Height / 2), 1); ;
             Body.BodyType = BodyType.Dynamic;
-            Body.Mass = 5f;
+            Body.Mass = 1f;
             Body.Friction = 0.25f;
             Body.Restitution = .35f;
-            Body.AngularDamping = 1.75f;
-
+            Body.AngularDamping = 0.75f;
+            Body.IgnoreGravity = true;
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
         }
         public override void Initialize()
@@ -48,28 +54,56 @@ namespace Bounce
             base.Initialize();
         }
 
-        public override void Update(GameTime gameTime)
+
+        Vector2 currentPosition, previousPosition;
+        Vector2 force = Vector2.Zero;
+        public override void Update(GameTime gameTime) //$ idea 'make metroids hover when they near the ground.'
         {
+            currentPosition = Body.Position;
             if (this.IsAlive)
             {
                 if (BounceGame.KeyboardState.GetPressedKeys().Length != 0)
                 {
                     if (InputHelper.KeyPressUnique(Keys.Space))
-                        Body.ApplyForce(new Vector2(
-                            r.Next(-100, 101) * Body.Mass,
-                            r.Next(-100, 101) * Body.Mass));
+                    {
+                        this.Body.IgnoreGravity = this.Body.IgnoreGravity ? false : true; //Toggle on/off
+                        this.sinActive = sinActive ? false : true; //Toggle on/off
+                        if (sinRadius == 0)
+                            this.sinRadius = (float)UnitCircle.Random(); //Random unit circle segment value, in radians
+                        if (cosRadius == 0)
+                            this.cosRadius = (float)UnitCircle.RandomSign(); //Random unit circle segment value, in radians
+                        this.sinCenter = Body.Position;
+                        this.sinCenter.X -= -cosRadius * 0.2f; //To shift Cos, because a Cos wave = a 'shifted Sin' wave
 
-                    if (BounceGame.KeyboardState.IsKeyDown(Keys.Right))
-                        Body.ApplyTorque(BounceGame.MovementCoEf * Body.Mass * .001f);
-                    if (BounceGame.KeyboardState.IsKeyDown(Keys.Left))
-                        Body.ApplyTorque(-BounceGame.MovementCoEf * Body.Mass * .001f);
+                        Body.ApplyLinearImpulse(new Vector2(cosRadius * 0.2f, sinRadius * 0.4f)); //To get started.
+                    }
+
+                    if (InputHelper.KeyPressUnique(Keys.NumPad8))
+                        sinCenter.Y += -0.25f;
+                    if (InputHelper.KeyPressUnique(Keys.NumPad6))
+                        sinCenter.X += 0.25f;
+                    if (InputHelper.KeyPressUnique(Keys.NumPad2))
+                        sinCenter.Y += 0.25f;
+                    if (InputHelper.KeyPressUnique(Keys.NumPad4))
+                        sinCenter.X += -0.25f;
                 }
+
 
                 if (BounceGame.MouseState != BounceGame.PreviousMouseState)
                 {
                     if (InputHelper.RickClickRelease())
                         this.IsAlive = false;
                 }
+            }
+
+            if (sinActive)
+            {
+                SinMotion();
+                CosMotion();
+                if (Body.Position.Y > sinCenter.Y + distanceLimit || Body.Position.Y < sinCenter.Y - distanceLimit)
+                    sinCenter.Y -= sinCenter.Y - Body.Position.Y; //This moves the sprites sinCenter, if he gets pushed too far from it.
+                if (Body.Position.X > sinCenter.X + distanceLimit || Body.Position.X < sinCenter.X - distanceLimit)
+                    sinCenter.X -= sinCenter.X - Body.Position.X; //This moves the sprites sinCenter, if he gets pushed too far from it.
             }
 
             if (!this.IsAlive)
@@ -79,7 +113,27 @@ namespace Bounce
                 BounceGame.PhysicalSprites.Remove(this);
             }
 
+            previousPosition = currentPosition;
             base.Update(gameTime);
+        }
+
+        bool sinActive;
+        Vector2 sinForce;
+        float sinRadius, distanceLimit = 10f;
+        private void SinMotion()
+        {
+            sinForce = Vector2.Zero;
+            sinForce.Y = (float)Math.Sin(Body.Position.Y - sinCenter.Y); //Apply force of sin(current distance from the sum of the vertices of a revolution)
+            Body.ApplyForce((-sinForce) * sinRadius);
+            Body.ApplyForce(-Vector2.UnitY * BounceGame.World.Gravity); //Antigravity
+        }
+
+        float cosRadius;
+        private void CosMotion()
+        {
+            sinForce = Vector2.Zero;
+            sinForce.X = (float)Math.Sin(Body.Position.X - sinCenter.X);
+            Body.ApplyForce((-sinForce) * cosRadius);
         }
         
         public override void Draw()

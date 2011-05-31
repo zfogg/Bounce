@@ -87,8 +87,6 @@ namespace Bounce
                         rightSideOrigin, leftSideOrigin;
 
         private Vector2 backgroundPosition;
-
-        private ObjectCreator objectCreator;
         
         public override void Initialize()
         {
@@ -122,7 +120,7 @@ namespace Bounce
                 RightSideBody.Rotation,
                 rightSideOrigin,
                 1f,
-                SpriteEffects.FlipVertically, 1);
+                SpriteEffects.FlipHorizontally, 1);
 
             BounceGame.SpriteBatch.Draw(LeftSideTexture,
                 ConvertUnits.ToDisplayUnits(LeftSideBody.Position),

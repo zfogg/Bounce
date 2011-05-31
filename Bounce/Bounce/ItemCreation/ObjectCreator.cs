@@ -60,7 +60,7 @@ namespace Bounce
             List<Obstacle> obstacleList = new List<Obstacle>();
             for (int i = 0; i < number && i < BounceGame.CreationLimit; i++)
             {
-                Obstacle o = CreateObstacle(position);
+                Obstacle o = new Obstacle(game);
                 //The position Vector2 determines the range of the box in which an obstacle can be created.
                 position.X = ConvertUnits.ToSimUnits(r.Next( //X axis.
                         (0 + o.Texture.Width), //Left: spawn fully inside the screen by at least the obstacle's Texture width.
@@ -68,11 +68,19 @@ namespace Bounce
                 position.Y = ConvertUnits.ToSimUnits(r.Next( //Y axis.
                         (int)((float)BounceGame.Graphics.PreferredBackBufferHeight * 0.20f), //Top: spawn below x% of the screen's height.
                         (BounceGame.Graphics.PreferredBackBufferHeight - (o.Texture.Height * 2)))); //Bottom: spawn above the floor by two of obstacle's Texture height.
-                
+                o.Body.Position = position;
                 obstacleList.Add(o);
             }
 
             return obstacleList;
+        }
+
+        public Metroid CreateMetroid(Vector2 position, float sinRadius, float cosRadius)
+        {
+            Metroid m = new Metroid(game, sinRadius, cosRadius);
+            m.Body.Position = position;
+
+            return m;
         }
 
         public Metroid CreateMetroid(float positionX, float positionY)
@@ -108,6 +116,21 @@ namespace Bounce
                 }
 
             return metroidList;
+        }
+
+        public List<Metroid> CreateHorizontalMetroidRow(int numberofmetroids, Vector2 startingposition, int pixelsapart)
+        {
+            List<Vector2> positions = Arrangements.HorizontalRow(numberofmetroids, startingposition, pixelsapart);
+
+            List<Metroid> metroids = new List<Metroid>();
+            int i = 0;
+            foreach (Vector2 position in positions)
+            {
+                metroids.Add(CreateMetroid(ConvertUnits.ToSimUnits(position), (float)UnitCircle.Indexed(i), 0f));
+                i++;
+            }
+
+            return metroids;
         }
 
         public Body CreateMouseCircle()

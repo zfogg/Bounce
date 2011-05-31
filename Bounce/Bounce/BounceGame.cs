@@ -28,7 +28,7 @@ namespace Bounce
         public static SpriteBatch SpriteBatch;
         public static KeyboardState KeyboardState;
         public static MouseState MouseState;
-        public static float MovementCoEf = 5.00f;
+        public static float MovementCoEf = 4.00f;
         public static int CreationLimit = 1000;
 
         public BounceGame()
@@ -40,6 +40,7 @@ namespace Bounce
             this.IsMouseVisible = true;
             Graphics.ApplyChanges();
             Content.RootDirectory = "Content";
+            this.Services.AddService(typeof(Game), this);
         }
 
         public static World World;
@@ -53,23 +54,25 @@ namespace Bounce
         public static List<PhysicalSprite> PhysicalSprites;
         private Framing framing;
         private Samus samus;
+        List<Metroid> metroids;
 
         public Body MouseCircle;
         protected override void Initialize()
         {
             r = new Random();
             ObjectCreator = new ObjectCreator(this);
-            World = new World(new Vector2(0, 5.75f));
+            World = new World(Vector2.UnitY * 5f);
             DebugFarseer = new DebugFarseer(this);
 
             KeyboardState = new KeyboardState();
             MouseState = new MouseState();
 
             framing = new Framing(this);
-            obstacles = ObjectCreator.CreateObstacles(r.Next(1, 6));
-            ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
+            //obstacles = ObjectCreator.CreateObstacles(r.Next(1, 3));
+            //ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
             PhysicalSprites = new List<PhysicalSprite>();
             samus = new Samus(this);
+            metroids = ObjectCreator.CreateHorizontalMetroidRow(9, new Vector2(50, 189), 75);
             base.Initialize();
         }
 

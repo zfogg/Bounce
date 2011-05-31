@@ -41,22 +41,22 @@ namespace Bounce
             TextureVertices = SimplifyTools.ReduceByDistance(TextureVertices, 4f);
 
             List<Vertices> verticesList = BayazitDecomposer.ConvexPartition(TextureVertices);
-            Vector2 vertScale = new Vector2(ConvertUnits.ToSimUnits(1)) * 1f;
+            Vector2 vertScale = new Vector2(ConvertUnits.ToSimUnits(1));
             foreach (Vertices vertices in verticesList)
                 vertices.Scale(ref vertScale);
 
-            Body = BodyFactory.CreateCompoundPolygon(BounceGame.World, verticesList, 8f, true);
+            Body = BodyFactory.CreateCompoundPolygon(BounceGame.World, verticesList, 1f, true);
+
             Body.Position = new Vector2(
                 ConvertUnits.ToSimUnits(BounceGame.Graphics.PreferredBackBufferWidth * 0.20f),
                 ConvertUnits.ToSimUnits(ConvertUnits.ToDisplayUnits(Framing.FloorBody.Position.Y) - (Framing.FloorTexture.Height / 2) - (Texture.Height / 2))
             );
             Body.BodyType = BodyType.Dynamic;
-            Body.Mass = 1.25f * -BounceGame.World.Gravity.Y;
-            Body.Friction = 0.8f;
-            Body.Restitution = 0.015f;
-            Body.Inertia = 1f;
+            Body.FixedRotation = true; //This causes the mass to reset.
+            Body.Mass = 1.75f;
+            Body.Friction = .475f;
+            Body.Restitution = 0.025f;
             Body.AngularDamping = 0.50f;
-            // End body properties
 
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2); //For a rectangle body shape.
             origin = -centroid; //For a polygon body shape.
@@ -80,31 +80,37 @@ namespace Bounce
                 //if (InputDevices.IsUniqueKeypress(Keys.W)
                 if (BounceGame.KeyboardState.IsKeyDown(Keys.W))
                 {
-                    force.Y = -BounceGame.MovementCoEf;
-                    Body.ApplyForce(force);
+                    force = Vector2.Add(force, -Vector2.UnitY);
+                    //Body.ApplyForce(force * BounceGame.MovementCoEf);
+
+                    if (InputHelper.KeyPressUnique(Keys.W))
+                        Body.ApplyLinearImpulse(force * BounceGame.MovementCoEf);
                 }
                 if (BounceGame.KeyboardState.IsKeyDown(Keys.D))
                 {
-                    force.X = BounceGame.MovementCoEf;
-                    Body.ApplyForce(force);
+                    force = Vector2.Add(force, Vector2.UnitX);
+                    //Body.ApplyForce(force * BounceGame.MovementCoEf);
                 }
                 if (BounceGame.KeyboardState.IsKeyDown(Keys.S))
                 {
-                    force.Y = BounceGame.MovementCoEf;
-                    Body.ApplyForce(force);
+                    force = Vector2.Add(force, Vector2.UnitY);
+                    //Body.ApplyForce(force * BounceGame.MovementCoEf);
                 }
                 if (BounceGame.KeyboardState.IsKeyDown(Keys.A))
                 {
-                    force.X = -BounceGame.MovementCoEf;
-                    Body.ApplyForce(force);
+                    force = Vector2.Add(force, -Vector2.UnitX);
+                    //Body.ApplyForce(force * BounceGame.MovementCoEf);
                 }
+
+                Vector2.Normalize(force);
+                Body.ApplyForce(force * BounceGame.MovementCoEf);
 
                 //body.ApplyLinearImpulse(force);
 
                 if (BounceGame.KeyboardState.IsKeyDown(Keys.Right))
-                    Body.ApplyTorque(BounceGame.MovementCoEf * 5.2f);
+                    Body.ApplyTorque(1f * BounceGame.MovementCoEf);
                 if (BounceGame.KeyboardState.IsKeyDown(Keys.Left))
-                    Body.ApplyTorque(-BounceGame.MovementCoEf * 5.2f);
+                    Body.ApplyTorque(1f * BounceGame.MovementCoEf);
                 //if (InputHelper.KeyPressUnique(Keys.Space))
                     //Body.ApplyLinearImpulse(new Vector2(0f, -2f));
             }
