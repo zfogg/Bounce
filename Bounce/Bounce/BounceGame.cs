@@ -44,8 +44,9 @@ namespace Bounce
         }
 
         public static World World;
+        Camera2D camera;
         public ObjectCreator ObjectCreator;
-        public DebugFarseer DebugFarseer;
+        public DebugBounce DebugFarseer;
         public PrimitiveBatch PrimitiveBatch;
 
         private Random r;
@@ -62,7 +63,7 @@ namespace Bounce
             r = new Random();
             ObjectCreator = new ObjectCreator(this);
             World = new World(Vector2.UnitY * 5f);
-            DebugFarseer = new DebugFarseer(this);
+            DebugFarseer = new DebugBounce(this);
 
             KeyboardState = new KeyboardState();
             MouseState = new MouseState();
@@ -72,13 +73,16 @@ namespace Bounce
             //ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
             PhysicalSprites = new List<PhysicalSprite>();
             samus = new Samus(this);
+            
             metroids = ObjectCreator.CreateHorizontalMetroidRow(9, new Vector2(50, 189), 75);
+            
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
+            camera = new Camera2D(GraphicsDevice);
         }
 
         protected override void UnloadContent()
@@ -97,6 +101,7 @@ namespace Bounce
             MouseState = Mouse.GetState();
             HandleInput(gameTime);
 
+            camera.Move();
             World.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
             base.Update(gameTime);
         }
@@ -105,7 +110,13 @@ namespace Bounce
         {
             GraphicsDevice.Clear(Color.Black);
 
-            SpriteBatch.Begin();
+            SpriteBatch.Begin(SpriteSortMode.Immediate,
+                BlendState.AlphaBlend,
+                null,
+                null,
+                null,
+                null,
+                camera.GetTransformation(GraphicsDevice));
             framing.Draw();
 
             foreach (PhysicalSprite sprite in PhysicalSprites)

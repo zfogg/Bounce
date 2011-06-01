@@ -15,11 +15,11 @@ namespace Bounce
     {
         protected float zoom;
         protected float rotation;
-        public Camera2D()
+        public Camera2D(GraphicsDevice graphicsDevice)
         {
             zoom = 1.0f;
             rotation = 0.0f;
-            Position = Vector2.Zero;
+            Position = new Vector2(graphicsDevice.Viewport.Width * 0.5f, graphicsDevice.Viewport.Height * 0.5f);
         }
         //public Camera2D(Game game)
         //    : base(game)
@@ -30,11 +30,6 @@ namespace Bounce
         private Vector2 cameraPosition;
 
         public Matrix Transform;
-        public Vector2 Position
-        {
-            get { return cameraPosition; }
-            set { cameraPosition = value; }
-        }
 
         public float Zoom
         {
@@ -48,9 +43,48 @@ namespace Bounce
             set { rotation = value; }
         }
 
-        public void Move(Vector2 amount)
+        private Vector2 movement;
+        public void Move()
         {
-            Position += amount;
+            movement = Vector2.Zero;
+
+            if (BounceGame.KeyboardState.GetPressedKeys().Length != 0)
+            {
+                if (BounceGame.KeyboardState.IsKeyDown((Keys.NumPad8)))
+                    movement.Y += -1f;
+                if (BounceGame.KeyboardState.IsKeyDown((Keys.NumPad6)))
+                    movement.X += 1f;
+                if (BounceGame.KeyboardState.IsKeyDown((Keys.NumPad2)))
+                    movement.Y += 1f;
+                if (BounceGame.KeyboardState.IsKeyDown((Keys.NumPad4)))
+                    movement.X += -1f;
+
+                if (movement != Vector2.Zero)
+                    movement.Normalize();
+
+                Position += movement * 3.50f;
+
+                if (BounceGame.KeyboardState.IsKeyDown(Keys.Add))
+                    zoom += 0.025f;
+                if (BounceGame.KeyboardState.IsKeyDown(Keys.Subtract))
+                    zoom += -0.025f;
+            }
+        }
+
+        public Vector2 Position
+        {
+            get { return cameraPosition; }
+            set { cameraPosition = value; }
+        }
+
+        public Matrix GetTransformation(GraphicsDevice graphicsDevice)
+        {
+            Transform =
+                Matrix.CreateTranslation(new Vector3(-Position.X, -Position.Y, 0)) *
+                    Matrix.CreateRotationZ(rotation) *
+                    Matrix.CreateScale(new Vector3(zoom, zoom, 1)) *
+                    Matrix.CreateTranslation(new Vector3(graphicsDevice.Viewport.Width * 0.5f, graphicsDevice.Viewport.Height * 0.5f, 0));
+            return Transform;
         }
     }
 }

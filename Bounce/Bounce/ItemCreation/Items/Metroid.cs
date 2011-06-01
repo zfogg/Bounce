@@ -44,7 +44,7 @@ namespace Bounce
             Body.Mass = 1f;
             Body.Friction = 0.25f;
             Body.Restitution = .35f;
-            Body.AngularDamping = 0.75f;
+            Body.AngularDamping = 0.075f;
             Body.IgnoreGravity = true;
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
         }
@@ -68,24 +68,15 @@ namespace Bounce
                     {
                         this.Body.IgnoreGravity = this.Body.IgnoreGravity ? false : true; //Toggle on/off
                         this.sinActive = sinActive ? false : true; //Toggle on/off
-                        if (sinRadius == 0)
+                        //if (sinRadius == 0)
                             this.sinRadius = (float)UnitCircle.Random(); //Random unit circle segment value, in radians
-                        if (cosRadius == 0)
-                            this.cosRadius = (float)UnitCircle.RandomSign(); //Random unit circle segment value, in radians
+                        //if (cosRadius == 0)
+                            this.cosRadius = (float)UnitCircle.Random(); //Random unit circle segment value, in radians
                         this.sinCenter = Body.Position;
-                        this.sinCenter.X -= -cosRadius * 0.2f; //To shift Cos, because a Cos wave = a 'shifted Sin' wave
+                        this.sinCenter.X += (float)Math.Cos(UnitCircle.Random()); //To shift Cos, because a Cos wave = a 'shifted Sin' wave
 
-                        Body.ApplyLinearImpulse(new Vector2(cosRadius * 0.2f, sinRadius * 0.4f)); //To get started.
+                        Body.ApplyLinearImpulse(new Vector2(-cosRadius / (float)UnitCircle.TwoPi, sinRadius / (float)UnitCircle.PiOverOne)); //To get started.
                     }
-
-                    if (InputHelper.KeyPressUnique(Keys.NumPad8))
-                        sinCenter.Y += -0.25f;
-                    if (InputHelper.KeyPressUnique(Keys.NumPad6))
-                        sinCenter.X += 0.25f;
-                    if (InputHelper.KeyPressUnique(Keys.NumPad2))
-                        sinCenter.Y += 0.25f;
-                    if (InputHelper.KeyPressUnique(Keys.NumPad4))
-                        sinCenter.X += -0.25f;
                 }
 
 
@@ -119,7 +110,7 @@ namespace Bounce
 
         bool sinActive;
         Vector2 sinForce;
-        float sinRadius, distanceLimit = 10f;
+        float sinRadius, distanceLimit = 2f;
         private void SinMotion()
         {
             sinForce = Vector2.Zero;

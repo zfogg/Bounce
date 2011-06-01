@@ -121,7 +121,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Creator.cs" />
-    <Compile Include="DebugFarseer.cs" />
+    <Compile Include="DebugBounce.cs" />
     <Compile Include="ItemCreation\Items\PhysicalSprite.cs" />
     <Compile Include="ItemCreation\Framing.cs" />
     <Compile Include="InputHelper.cs" />
