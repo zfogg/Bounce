@@ -69,13 +69,13 @@ namespace Bounce
                         this.Body.IgnoreGravity = this.Body.IgnoreGravity ? false : true; //Toggle on/off
                         this.sinActive = sinActive ? false : true; //Toggle on/off
                         //if (sinRadius == 0)
-                            this.sinRadius = (float)UnitCircle.Random(); //Random unit circle segment value, in radians
+                            this.sinRadius = (float)UnitCircle.PiOverTwo; //Random unit circle segment value, in radians
                         //if (cosRadius == 0)
-                            this.cosRadius = (float)UnitCircle.Random(); //Random unit circle segment value, in radians
+                            this.cosRadius = (float)UnitCircle.PiOverTwo; //Random unit circle segment value, in radians
                         this.sinCenter = Body.Position;
-                        this.sinCenter.X += (float)Math.Cos(UnitCircle.Random()); //To shift Cos, because a Cos wave = a 'shifted Sin' wave
+                        // this.sinCenter.X += this.cosRadius / 2f; //To shift Cos, because a Cos wave = a 'shifted Sin' wave
 
-                        Body.ApplyLinearImpulse(new Vector2(-cosRadius / (float)UnitCircle.TwoPi, sinRadius / (float)UnitCircle.PiOverOne)); //To get started.
+                        Body.ApplyLinearImpulse(new Vector2(cosRadius/2f, sinRadius/2f)); //To get started.
                     }
                 }
 
@@ -123,7 +123,8 @@ namespace Bounce
         private void CosMotion()
         {
             sinForce = Vector2.Zero;
-            sinForce.X = (float)Math.Sin(Body.Position.X - sinCenter.X);
+            sinForce.X = (float)Math.Sin((Body.Position.X - sinCenter.X))
+                 ;
             Body.ApplyForce((-sinForce) * cosRadius);
         }
         
