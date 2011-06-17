@@ -9,15 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using FarseerPhysics;
-using FarseerPhysics.DebugViews;
-using FarseerPhysics.Common;
-using FarseerPhysics.Common.PolygonManipulation;
-using FarseerPhysics.Common.Decomposition;
-using FarseerPhysics.Collision;
-using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics;
-using FarseerPhysics.Factories;
-using FarseerPhysics.Controllers;
 
 
 namespace Bounce
@@ -28,8 +20,8 @@ namespace Bounce
         public static SpriteBatch SpriteBatch;
         public static KeyboardState KeyboardState;
         public static MouseState MouseState;
-        public static float MovementCoEf = 4.00f;
-        public static int CreationLimit = 1000;
+        public static float MovementCoEf = 4.00f; //Needs more thought.
+        public static int CreationLimit = 1000; //Needs more thought.
 
         public BounceGame()
         {
@@ -47,7 +39,6 @@ namespace Bounce
         Camera2D camera;
         public ObjectCreator ObjectCreator;
         public DebugBounce DebugFarseer;
-        public PrimitiveBatch PrimitiveBatch;
 
         private Random r;
 
@@ -69,7 +60,7 @@ namespace Bounce
             MouseState = new MouseState();
 
             framing = new Framing(this);
-            //obstacles = ObjectCreator.CreateObstacles(r.Next(1, 3));
+            obstacles = ObjectCreator.CreateObstacles(r.Next(1, 3));
             //ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
             PhysicalSprites = new List<PhysicalSprite>();
             samus = new Samus(this);
@@ -135,8 +126,12 @@ namespace Bounce
                     ObjectCreator.CreateMetroidAtMouse();
             }
 
-            //if (InputHelper.LeftClickUnique())
-                //MouseCircle = ObjectCreator.CreateMouseCircle();
+            /* The following is still broken :(
+             * 
+             * if (InputHelper.LeftClickUnique())
+             *    MouseCircle = ObjectCreator.CreateMouseCircle();
+             *    
+             */
         }
     }
 }

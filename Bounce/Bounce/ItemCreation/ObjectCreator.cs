@@ -1,29 +1,16 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using FarseerPhysics;
-using FarseerPhysics.Common;
-using FarseerPhysics.Common.PolygonManipulation;
-using FarseerPhysics.Common.Decomposition;
-using FarseerPhysics.Collision;
-using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
-using FarseerPhysics.Controllers;
 
 namespace Bounce
 {
-    public class ObjectCreator : Microsoft.Xna.Framework.GameComponent //$ idea: consider making this into a static class.
+    public class ObjectCreator : GameComponent //consider making this into a static class.
     {
         private Game game;
-        public ObjectCreator(Game game) //$ idea: to be static, maybe the constructor could grab Game game as a GameComponent.
+        public ObjectCreator(Game game) //to be static, maybe the constructor could grab Game game as a GameComponent.
             : base(game)
         {
             r = new Random();
@@ -32,7 +19,7 @@ namespace Bounce
         }
         Random r;
 
-        public override void Initialize() //$ check: does this method ever even run? Why / why not? If so, what should go into it? $ idea: maybe I should use the constructor to call this.
+        public override void Initialize() //does this method ever even run? Why / why not? If so, what should go into it? $ idea: maybe I should use the constructor to call this.
         {
             CreateObstacles(r.Next(1, 6));
             r = new Random();

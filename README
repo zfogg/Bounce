@@ -1,6 +1,12 @@
 Bounce is 2D 'game' based on Microsoft's XNA framework.
 It utilizes the Farseer physics engine.
 
-The goal of this project is to create a physics playground.
-The source will be full of abstract tools which can be used to create more specific tools.
-This way, any future projects will already have some groundwork code with which I'm familiar.
+The goal of this project is to create a physics playground in which I can simulate theoretical physical scenarios.
+
+Controls:
+
+Movement: WASD
+Click to spawn a Metroid, right-click to delete them all.
+F# keys toggle physics engine debugdraw flags.
+Numpad arrow keys control the camera, + and - for zoom.
+Spacebar will activate the motion of all metroids, which have seperate and random X and Y radius values by why force is applied.

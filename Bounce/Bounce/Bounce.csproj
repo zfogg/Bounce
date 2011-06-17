@@ -114,17 +114,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Animations\Arrangements.cs" />
-    <Compile Include="Animations\UnitCircle.cs" />
+    <Compile Include="ItemCreation\Arrangements.cs" />
+    <Compile Include="etc\UnitCircle.cs" />
     <Compile Include="Camera2D\Camera2D.cs" />
-    <Compile Include="ConvertUnits.cs">
+    <Compile Include="etc\ConvertUnits.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Creator.cs" />
-    <Compile Include="DebugBounce.cs" />
-    <Compile Include="ItemCreation\Items\PhysicalSprite.cs" />
-    <Compile Include="ItemCreation\Framing.cs" />
-    <Compile Include="InputHelper.cs" />
+    <Compile Include="etc\DebugBounce.cs" />
+    <Compile Include="ItemCreation\PhysicalSprite.cs" />
+    <Compile Include="ItemCreation\Items\Framing.cs" />
+    <Compile Include="etc\InputHelper.cs" />
     <Compile Include="ItemCreation\ObjectCreator.cs" />
     <Compile Include="ItemCreation\Items\Obstacle.cs" />
     <Compile Include="ItemCreation\Items\Metroid.cs" />

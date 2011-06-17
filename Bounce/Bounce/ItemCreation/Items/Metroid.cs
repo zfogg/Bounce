@@ -1,22 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using FarseerPhysics;
-using FarseerPhysics.Common;
-using FarseerPhysics.Common.PolygonManipulation;
-using FarseerPhysics.Common.Decomposition;
-using FarseerPhysics.Collision;
-using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
-using FarseerPhysics.Controllers;
 
 
 namespace Bounce
@@ -57,25 +45,24 @@ namespace Bounce
 
         Vector2 currentPosition, previousPosition;
         Vector2 force = Vector2.Zero;
-        public override void Update(GameTime gameTime) //$ idea 'make metroids hover when they near the ground.'
+        public override void Update(GameTime gameTime) //make metroids hover when they near the ground.
         {
             currentPosition = Body.Position;
             if (this.IsAlive)
             {
                 if (BounceGame.KeyboardState.GetPressedKeys().Length != 0)
                 {
-                    if (InputHelper.KeyPressUnique(Keys.Space))
+                    if (InputHelper.KeyPressUnique(Keys.Space)) //Caution: experimental, horribly messy, and convoluted.
                     {
-                        this.Body.IgnoreGravity = this.Body.IgnoreGravity ? false : true; //Toggle on/off
-                        this.sinActive = sinActive ? false : true; //Toggle on/off
-                        //if (sinRadius == 0)
-                            this.sinRadius = (float)UnitCircle.PiOverTwo; //Random unit circle segment value, in radians
-                        //if (cosRadius == 0)
-                            this.cosRadius = (float)UnitCircle.PiOverTwo; //Random unit circle segment value, in radians
+                        this.Body.IgnoreGravity = this.Body.IgnoreGravity ? false : true;
+                        this.sinActive = sinActive ? false : true;
+                        this.sinRadius = (float)UnitCircle.RandomSegment();
+                        this.cosRadius = (float)UnitCircle.RandomSegment();
                         this.sinCenter = Body.Position;
-                        // this.sinCenter.X += this.cosRadius / 2f; //To shift Cos, because a Cos wave = a 'shifted Sin' wave
-
-                        Body.ApplyLinearImpulse(new Vector2(cosRadius/2f, sinRadius/2f)); //To get started.
+                        this.sinCenter.X += this.cosRadius / 4f;
+                        //7:14pm 7/16/11 - For some reason I'm getting inside-out sin and/or cos motion, such as that the sprite is at its slowest at point (0, 0).
+                        //Don't use UnitCircle.RandomSign() until I fix that.
+                        Body.ApplyLinearImpulse(new Vector2(cosRadius / 4f, sinRadius / 2f));
                     }
                 }
 
@@ -91,15 +78,15 @@ namespace Bounce
             {
                 SinMotion();
                 CosMotion();
+
                 if (Body.Position.Y > sinCenter.Y + distanceLimit || Body.Position.Y < sinCenter.Y - distanceLimit)
-                    sinCenter.Y -= sinCenter.Y - Body.Position.Y; //This moves the sprites sinCenter, if he gets pushed too far from it.
+                    sinCenter.Y -= sinCenter.Y - Body.Position.Y;
                 if (Body.Position.X > sinCenter.X + distanceLimit || Body.Position.X < sinCenter.X - distanceLimit)
-                    sinCenter.X -= sinCenter.X - Body.Position.X; //This moves the sprites sinCenter, if he gets pushed too far from it.
+                    sinCenter.X -= sinCenter.X - Body.Position.X;
             }
 
             if (!this.IsAlive)
             {
-                Body.Awake = true;
                 Body.Dispose();
                 BounceGame.PhysicalSprites.Remove(this);
             }
@@ -111,20 +98,19 @@ namespace Bounce
         bool sinActive;
         Vector2 sinForce;
         float sinRadius, distanceLimit = 2f;
-        private void SinMotion()
+        private void SinMotion() //Messy and experimental.
         {
             sinForce = Vector2.Zero;
             sinForce.Y = (float)Math.Sin(Body.Position.Y - sinCenter.Y); //Apply force of sin(current distance from the sum of the vertices of a revolution)
             Body.ApplyForce((-sinForce) * sinRadius);
-            Body.ApplyForce(-Vector2.UnitY * BounceGame.World.Gravity); //Antigravity
+            Body.ApplyForce(-Vector2.UnitY * BounceGame.World.Gravity);
         }
 
         float cosRadius;
-        private void CosMotion()
+        private void CosMotion() //Messy and experimental.
         {
             sinForce = Vector2.Zero;
-            sinForce.X = (float)Math.Sin((Body.Position.X - sinCenter.X))
-                 ;
+            sinForce.X = (float)Math.Sin((Body.Position.X - sinCenter.X));
             Body.ApplyForce((-sinForce) * cosRadius);
         }
         
