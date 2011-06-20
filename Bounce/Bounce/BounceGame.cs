@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -29,10 +28,10 @@ namespace Bounce
             Graphics.PreferredBackBufferWidth = 800;
             Graphics.PreferredBackBufferHeight = 480;
             Window.Title = "Project Bounce";
-            this.IsMouseVisible = true;
+            IsMouseVisible = true;
             Graphics.ApplyChanges();
             Content.RootDirectory = "Content";
-            this.Services.AddService(typeof(Game), this);
+            Services.AddService(typeof(Game), this);
         }
 
         public static World World;
@@ -60,12 +59,12 @@ namespace Bounce
             MouseState = new MouseState();
 
             framing = new Framing(this);
-            obstacles = ObjectCreator.CreateObstacles(r.Next(1, 3));
+            //obstacles = ObjectCreator.CreateObstacles(r.Next(1, 3));
             //ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
             PhysicalSprites = new List<PhysicalSprite>();
             samus = new Samus(this);
             
-            metroids = ObjectCreator.CreateHorizontalMetroidRow(9, new Vector2(50, 189), 75);
+            metroids = ObjectCreator.CreateHorizontalMetroidRow(5, new Vector2(50, 189), 135);
             
             base.Initialize();
         }

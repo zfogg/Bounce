@@ -54,18 +54,19 @@ namespace Bounce
                 {
                     if (InputHelper.KeyPressUnique(Keys.Space)) //Caution: experimental, horribly messy, and convoluted.
                     {
-                        this.Body.IgnoreGravity = this.Body.IgnoreGravity ? false : true;
-                        this.sinActive = sinActive ? false : true;
-                        this.sinRadius = (float)UnitCircle.RandomSegment();
-                        this.cosRadius = (float)UnitCircle.RandomSegment();
-                        this.sinCenter = Body.Position;
-                        this.sinCenter.X += this.cosRadius / 4f;
-                        //7:14pm 7/16/11 - For some reason I'm getting inside-out sin and/or cos motion, such as that the sprite is at its slowest at point (0, 0).
-                        //Don't use UnitCircle.RandomSign() until I fix that.
-                        Body.ApplyLinearImpulse(new Vector2(cosRadius / 4f, sinRadius / 2f));
+                        Body.IgnoreGravity = this.Body.IgnoreGravity ? false : true;
+                        sinActive = sinActive ? false : true;
+                        sinRadius = (float)UnitCircle.RandomSegment();
+                        cosRadius = (float)UnitCircle.RandomSegment();
+                        sinCenter = Body.Position;
+                        sinCenter.X += (float)-Math.Cos((double)cosRadius);
+
+                        Body.ApplyLinearImpulse(new Vector2(
+                            cosRadius / 4f,
+                            sinRadius / 2f)
+                            );
                     }
                 }
-
 
                 if (BounceGame.MouseState != BounceGame.PreviousMouseState)
                 {
