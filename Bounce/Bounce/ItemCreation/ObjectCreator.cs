@@ -110,13 +110,13 @@ namespace Bounce
             List<Vector2> positions = Arrangements.HorizontalRow(numberofmetroids, startingposition, pixelsapart);
 
             List<Metroid> metroidList = new List<Metroid>();
-            int i = 0;
+            int i = 5;
             foreach (Vector2 position in positions)
             {
                 metroidList.Add(CreateMetroid(ConvertUnits.ToSimUnits(position),
                     (float)unitCircle.IndexedRadianDictionary(i),
                     0f));
-                i++;
+                i += 2;
             }
 
             return metroidList;

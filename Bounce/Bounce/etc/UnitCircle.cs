@@ -84,15 +84,14 @@ namespace Bounce
             return r.Next(0, 2) == 0 ? segment : -segment;
         }
 
-        private Enum indexedEnumValue(int index, Type enumType)
+        private T indexedEnumValue<T>(int index)
         {
-            var values = Enum.GetValues(enumType);
-            return (Enum)values.GetValue(index);
+            return (T)Enum.GetValues(typeof(T)).GetValue(index);
         }
 
         public double IndexedRadianDictionary(int index)
         {
-            return RadiansDictionary[(CircleRadians)indexedEnumValue(index, typeof(CircleRadians))];
+            return RadiansDictionary[indexedEnumValue<CircleRadians>(index)];
         }
 
         private void Initialize()
