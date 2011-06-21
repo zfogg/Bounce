@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Bounce
 {
@@ -13,13 +10,12 @@ namespace Bounce
             pi = Math.PI;
             r = new Random();
             RadiansDictionary = new Dictionary<CircleRadians, double>();
-            //DegreesDictionary = new Dictionary<CircleDegrees, double>();
             Initialize();
         }
-        double pi;
+
+        private double pi;
         private Random r;
         public Dictionary<CircleRadians, double> RadiansDictionary;
-        //public Dictionary<CircleDegrees, double> DegreesDictionary;
 
         public enum CircleRadians
         {
@@ -43,39 +39,18 @@ namespace Bounce
             ElevenPiOverSix, // 330°
             TwoPi // 360°
         }
-        //public enum CircleDegrees
-        //{
-        //    Thirty, // 30°
-        //    FourtyFive, // 45°
-        //    Sixty, // 60°
-        //    Ninety, // 90°
-
-        //    OneTwenty, // 120°
-        //    OneThirtyFive, // 135°
-        //    OneFifty, // 150°
-        //    OneEighty, // 180°
-
-        //    TwoTen, // 210°
-        //    TwoTentyFive, // 225°
-        //    TwoFourty, // 240°
-        //    TwoSeventy, //270
-
-        //    ThreeHundred, // 300°
-        //    ThreeFifteen, // 315°
-        //    ThreeThirty, // 330°
-        //    ThreeSixty // 360°
-        //}
 
         public double RandomSegment()
         {
             try
             {
-                return IndexedRadianDictionary(r.Next(16));
+                int maxEnumIndex = Enum.GetNames(typeof(CircleRadians)).Length;
+                return IndexedRadianDictionary(r.Next(maxEnumIndex));
             }
             catch (ArgumentOutOfRangeException e)
             {
                 Console.WriteLine("Dictionary not loaded: {0}", e);
-                 return 0.00;
+                return 0.00;
             }
         }
 
@@ -84,19 +59,22 @@ namespace Bounce
             return r.Next(0, 2) == 0 ? segment : -segment;
         }
 
-        private T indexedEnumValue<T>(int index)
+        private T indexToEnum<T>(int index)
         {
             return (T)Enum.GetValues(typeof(T)).GetValue(index);
         }
 
         public double IndexedRadianDictionary(int index)
         {
-            return RadiansDictionary[indexedEnumValue<CircleRadians>(index)];
+            if (Enum.IsDefined(typeof(CircleRadians), index))
+                return RadiansDictionary[indexToEnum<CircleRadians>(index)];
+            else
+                throw new ArgumentOutOfRangeException("index", index, "The enum has no value at this index.");
         }
 
         private void Initialize()
         {
-            //Radians dictionary.
+            //Radians dictionary. Consider storing the doubles in plaintext, as this method is too verbose.
             RadiansDictionary.Add(CircleRadians.PiOverSix, pi / 6);
             RadiansDictionary.Add(CircleRadians.PiOverFour, pi / 4);
             RadiansDictionary.Add(CircleRadians.PiOverThree, pi / 3);
@@ -116,27 +94,6 @@ namespace Bounce
             RadiansDictionary.Add(CircleRadians.SevenPiOverFour, (7 * pi) / 4);
             RadiansDictionary.Add(CircleRadians.ElevenPiOverSix, (11 * pi) / 6);
             RadiansDictionary.Add(CircleRadians.TwoPi, 2 * pi);
-
-            //Degrees dictionary, purely for convenience. Not in use right now.
-            //DegreesDictionary.Add(CircleDegrees.Thirty, RadiansDictionary[CircleRadians.PiOverSix]);
-            //DegreesDictionary.Add(CircleDegrees.FourtyFive, RadiansDictionary[CircleRadians.PiOverFour]);
-            //DegreesDictionary.Add(CircleDegrees.Sixty, RadiansDictionary[CircleRadians.PiOverThree]);
-            //DegreesDictionary.Add(CircleDegrees.Ninety, RadiansDictionary[CircleRadians.PiOverTwo]);
-
-            //DegreesDictionary.Add(CircleDegrees.OneTwenty, RadiansDictionary[CircleRadians.TwoPiOverThree]);
-            //DegreesDictionary.Add(CircleDegrees.OneThirtyFive, RadiansDictionary[CircleRadians.ThreePiOverFour]);
-            //DegreesDictionary.Add(CircleDegrees.OneFifty, RadiansDictionary[CircleRadians.FivePiOverSix]);
-            //DegreesDictionary.Add(CircleDegrees.OneEighty, RadiansDictionary[CircleRadians.PiOverOne]);
-
-            //DegreesDictionary.Add(CircleDegrees.TwoTen, RadiansDictionary[CircleRadians.SevenPiOverSix]);
-            //DegreesDictionary.Add(CircleDegrees.TwoTentyFive, RadiansDictionary[CircleRadians.FivePiOverFour]);
-            //DegreesDictionary.Add(CircleDegrees.TwoFourty, RadiansDictionary[CircleRadians.FourPiOverThree]);
-            //DegreesDictionary.Add(CircleDegrees.TwoSeventy, RadiansDictionary[CircleRadians.ThreePiOverTwo]);
-
-            //DegreesDictionary.Add(CircleDegrees.ThreeHundred, RadiansDictionary[CircleRadians.FivePiOverThree]);
-            //DegreesDictionary.Add(CircleDegrees.ThreeFifteen, RadiansDictionary[CircleRadians.SevenPiOverFour]);
-            //DegreesDictionary.Add(CircleDegrees.ThreeThirty, RadiansDictionary[CircleRadians.ElevenPiOverSix]);
-            //DegreesDictionary.Add(CircleDegrees.ThreeSixty, RadiansDictionary[CircleRadians.TwoPi]);
         }
     }
 }

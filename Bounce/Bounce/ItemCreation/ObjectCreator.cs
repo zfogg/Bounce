@@ -16,72 +16,81 @@ namespace Bounce
             r = new Random();
             this.game = game;
             unitCircle = new UnitCircle();
-            //game.Components.Add(this);
+            game.Components.Add(this);
         }
         Random r;
         UnitCircle unitCircle;
 
-        public override void Initialize() //does this method ever even run? Why / why not? If so, what should go into it? $ idea: maybe I should use the constructor to call this.
+        public override void Initialize()
         {
             base.Initialize();
         }
 
-        public Obstacle CreateObstacle(float positionX, float positionY)
+        public Obstacle CreateObstacle(float spawnPositionX, float spawnPositionY)
         {
-            Vector2 position = new Vector2(positionX, positionY);
+            Vector2 position = new Vector2(spawnPositionX, spawnPositionY);
             Obstacle o = CreateObstacle(position);
+
             return o;
         }
 
-        public Obstacle CreateObstacle(Vector2 position)
+        public Obstacle CreateObstacle(Vector2 spawnPosition)
         {
             Obstacle o = new Obstacle(game);
-            o.Body.Position = position;
+            o.Body.Position = spawnPosition;
 
             return o;
         }
 
+        /// <summary>
+        /// Returns a list of obstacles that are placed randomly around the screen.
+        /// Obstacles will spawn fully inside the screen, at least 20% above the bottom and below the top.
+        /// </summary>
+        /// <param name="number">The number of obstacles to create.</param>
+        /// <returns></returns>
         public List<Obstacle> CreateObstacles(int number)
         {
-            Vector2 position = Vector2.Zero;
             List<Obstacle> obstacleList = new List<Obstacle>();
+            Vector2 spawnPosition = new Vector2();
+
             for (int i = 0; i < number && i < BounceGame.CreationLimit; i++)
             {
                 Obstacle o = new Obstacle(game);
-                //The position Vector2 determines the range of the box in which an obstacle can be created.
-                position.X = ConvertUnits.ToSimUnits(r.Next( //X axis.
+                //Next, randomly determine the spawning location 
+                spawnPosition.X = ConvertUnits.ToSimUnits(r.Next( //X axis.
                         (0 + o.Texture.Width), //Left: spawn fully inside the screen by at least the obstacle's Texture width.
                         (BounceGame.Graphics.PreferredBackBufferWidth - o.Texture.Width))); //Right: spawn fully inside the screen by at least the obstacle's Texture width.
-                position.Y = ConvertUnits.ToSimUnits(r.Next( //Y axis.
+                spawnPosition.Y = ConvertUnits.ToSimUnits(r.Next( //Y axis.
                         (int)((float)BounceGame.Graphics.PreferredBackBufferHeight * 0.20f), //Top: spawn below x% of the screen's height.
                         (BounceGame.Graphics.PreferredBackBufferHeight - (o.Texture.Height * 2)))); //Bottom: spawn above the floor by two of obstacle's Texture height.
-                o.Body.Position = position;
+
+                o.Body.Position = spawnPosition;
                 obstacleList.Add(o);
             }
 
             return obstacleList;
         }
 
-        public Metroid CreateMetroid(Vector2 position, float sinRadius, float cosRadius)
+        public Metroid CreateMetroid(Vector2 spawnPosition, float sinRadius, float cosRadius)
         {
             Metroid m = new Metroid(game, sinRadius, cosRadius);
-            m.Body.Position = position;
+            m.Body.Position = spawnPosition;
 
             return m;
         }
 
-        public Metroid CreateMetroid(float positionX, float positionY)
+        public Metroid CreateMetroid(float spawnPositionX, float spawnPositionY)
         {
-            Vector2 position = new Vector2(positionX, positionY);
+            Vector2 position = new Vector2(spawnPositionX, spawnPositionY);
             Metroid m = CreateMetroid(position);
 
             return m;
         }
 
-        public Metroid CreateMetroid(Vector2 position)
+        public Metroid CreateMetroid(Vector2 spawnPosition)
         {
             Metroid m = new Metroid(game);
-            m.Body.Position = position;
+            m.Body.Position = spawnPosition;
 
             return m;
         }
@@ -89,16 +98,19 @@ namespace Bounce
         public List<Metroid> CreateMetroidsOnObstacles(ref List<Obstacle> obstacles, int percentchance)
         {
             List<Metroid> metroidList = new List<Metroid>();
-            Vector2 position = Vector2.Zero;
+            Vector2 spawnPosition = new Vector2();
+
             foreach (Obstacle obstacle in obstacles)
                 if (r.Next(1, 101) > percentchance)
                 {
                     Metroid m = new Metroid(game);
-                    //First, calculate a position that is a bit above the center of Obstacle obstacle.
-                    m.Body.Position = new Vector2(
-                        obstacle.Body.Position.X,
-                        position.Y = ConvertUnits.ToSimUnits(ConvertUnits.ToDisplayUnits(obstacle.Body.Position.Y) - (1.2f * (float)m.Texture.Height)));
-                    //Next, create a Metroid at position, and add it to the list.
+                    //Calculate a spawnPosition that is a bit above the center of Obstacle obstacle.
+                    spawnPosition.X = ConvertUnits.ToSimUnits(
+                        obstacle.Body.Position.X);
+                    spawnPosition.Y = ConvertUnits.ToSimUnits(
+                        obstacle.Body.Position.Y - ConvertUnits.ToSimUnits(1.2f * (float)m.Texture.Height));
+
+                    m.Body.Position = spawnPosition;
                     metroidList.Add(m);
                 }
 
@@ -107,36 +119,27 @@ namespace Bounce
 
         public List<Metroid> CreateHorizontalMetroidRow(int numberofmetroids, Vector2 startingposition, int pixelsapart)
         {
-            List<Vector2> positions = Arrangements.HorizontalRow(numberofmetroids, startingposition, pixelsapart);
-
+            List<Vector2> spawnPositions = VectorProcessor.HorizontalRow(numberofmetroids, startingposition, pixelsapart);
             List<Metroid> metroidList = new List<Metroid>();
-            int i = 5;
-            foreach (Vector2 position in positions)
+            int radiusIndex = 5;
+
+            foreach (Vector2 spawnPosition in spawnPositions)
             {
-                metroidList.Add(CreateMetroid(ConvertUnits.ToSimUnits(position),
-                    (float)unitCircle.IndexedRadianDictionary(i),
+                metroidList.Add(CreateMetroid(ConvertUnits.ToSimUnits(spawnPosition),
+                    (float)unitCircle.IndexedRadianDictionary(radiusIndex),
                     0f));
-                i += 2;
+                radiusIndex += 2;
             }
 
             return metroidList;
         }
 
-        public Body CreateMouseCircle()
-        {
-            Body body = BodyFactory.CreateCircle(BounceGame.World, ConvertUnits.ToSimUnits(10), 0f);
-            body.Position = new Vector2(BounceGame.MouseState.X, -BounceGame.MouseState.Y);
-            //body.IgnoreGravity = true;
-            return body;
-        }
-
         public Metroid CreateMetroidAtMouse()
         {
             Metroid m = new Metroid(game);
-            Vector2 position = new Vector2(
+            m.Body.Position = new Vector2(
                 ConvertUnits.ToSimUnits(BounceGame.MouseState.X),
                 ConvertUnits.ToSimUnits(BounceGame.MouseState.Y));
-            m.Body.Position = position;
 
             return m;
         }

@@ -15,6 +15,7 @@ namespace Bounce
             this.IsAlive = true;
             this.game = game;
             r = new Random();
+
             game.Components.Add(this);
         }
 

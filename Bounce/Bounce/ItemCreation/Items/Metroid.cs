@@ -25,23 +25,21 @@ namespace Bounce
             if (Texture == null)
                 Texture = Game.Content.Load<Texture2D>("metroid");
 
+            unitCircle = new UnitCircle();
+            origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
+
             Body = BodyFactory.CreateCircle(BounceGame.World,
                         ConvertUnits.ToSimUnits(this.Texture.Width / 2),
-                        ConvertUnits.ToSimUnits(this.Texture.Height / 2), 1); ;
+                        ConvertUnits.ToSimUnits(this.Texture.Height / 2), 1);
+
             Body.BodyType = BodyType.Dynamic;
             Body.Mass = 1f;
             Body.Friction = 0.25f;
             Body.Restitution = .35f;
             Body.AngularDamping = 0.075f;
             Body.IgnoreGravity = true;
-            unitCircle = new UnitCircle();
-            origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
-        }
 
-        public override void Initialize()
-        {
             BounceGame.PhysicalSprites.Add(this);
-            base.Initialize();
         }
 
         UnitCircle unitCircle;

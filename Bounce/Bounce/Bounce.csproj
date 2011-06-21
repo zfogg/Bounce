@@ -114,7 +114,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ItemCreation\Arrangements.cs" />
+    <Compile Include="ItemCreation\VectorProcessor.cs" />
     <Compile Include="etc\UnitCircle.cs" />
     <Compile Include="Camera2D\Camera2D.cs" />
     <Compile Include="etc\ConvertUnits.cs">

@@ -17,8 +17,13 @@ namespace Bounce
     {
         public static GraphicsDeviceManager Graphics;
         public static SpriteBatch SpriteBatch;
-        public static KeyboardState KeyboardState;
-        public static MouseState MouseState;
+        public static World World;
+        private Camera2D camera;
+        public ObjectCreator ObjectCreator;
+        public DebugBounce DebugFarseer;
+        private Random r;
+        public static KeyboardState KeyboardState, PreviousKeyboardState;
+        public static MouseState MouseState, PreviousMouseState;
         public static float MovementCoEf = 4.00f; //Needs more thought.
         public static int CreationLimit = 1000; //Needs more thought.
 
@@ -34,20 +39,12 @@ namespace Bounce
             Services.AddService(typeof(Game), this);
         }
 
-        public static World World;
-        Camera2D camera;
-        public ObjectCreator ObjectCreator;
-        public DebugBounce DebugFarseer;
-
-        private Random r;
-
         private List<Obstacle> obstacles;
         public static List<PhysicalSprite> PhysicalSprites;
         private Framing framing;
         private Samus samus;
         List<Metroid> metroids;
 
-        public Body MouseCircle;
         protected override void Initialize()
         {
             r = new Random();
@@ -58,14 +55,12 @@ namespace Bounce
             KeyboardState = new KeyboardState();
             MouseState = new MouseState();
 
-            framing = new Framing(this);
-            //obstacles = ObjectCreator.CreateObstacles(r.Next(1, 3));
-            //ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
             PhysicalSprites = new List<PhysicalSprite>();
+            framing = new Framing(this);
             samus = new Samus(this);
-            
+            obstacles = ObjectCreator.CreateObstacles(r.Next(1, 3));
+            ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
             metroids = ObjectCreator.CreateHorizontalMetroidRow(5, new Vector2(50, 189), 135);
-            
             base.Initialize();
         }
 
@@ -80,8 +75,6 @@ namespace Bounce
 
         }
 
-        public static KeyboardState PreviousKeyboardState;
-        public static MouseState PreviousMouseState;
         protected override void Update(GameTime gameTime)
         {
             PreviousMouseState = MouseState;
@@ -100,15 +93,11 @@ namespace Bounce
         {
             GraphicsDevice.Clear(Color.Black);
 
-            SpriteBatch.Begin(SpriteSortMode.Immediate,
-                BlendState.AlphaBlend,
-                null,
-                null,
-                null,
-                null,
+            SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
+                null, null, null, null,
                 camera.GetTransformation(GraphicsDevice));
-            framing.Draw();
 
+            framing.Draw();
             foreach (PhysicalSprite sprite in PhysicalSprites)
                 sprite.Draw();
             
