@@ -34,18 +34,20 @@ namespace Bounce
             Body.Restitution = .35f;
             Body.AngularDamping = 0.075f;
             Body.IgnoreGravity = true;
+            unitCircle = new UnitCircle();
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
         }
+
         public override void Initialize()
         {
             BounceGame.PhysicalSprites.Add(this);
             base.Initialize();
         }
 
-
+        UnitCircle unitCircle;
         Vector2 currentPosition, previousPosition;
         Vector2 force = Vector2.Zero;
-        public override void Update(GameTime gameTime) //make metroids hover when they near the ground.
+        public override void Update(GameTime gameTime) // Idea: make metroids hover when they near the ground.
         {
             currentPosition = Body.Position;
             if (this.IsAlive)
@@ -56,8 +58,13 @@ namespace Bounce
                     {
                         Body.IgnoreGravity = this.Body.IgnoreGravity ? false : true;
                         sinActive = sinActive ? false : true;
-                        sinRadius = (float)UnitCircle.RandomSegment();
-                        cosRadius = (float)UnitCircle.RandomSegment();
+
+                        if (sinRadius == 0f && cosRadius == 0f)
+                        {
+                            sinRadius = (float)unitCircle.RandomSegment();
+                            cosRadius = (float)unitCircle.RandomSegment();
+                        }
+
                         sinCenter = Body.Position;
                         sinCenter.X += (float)-Math.Cos((double)cosRadius);
 

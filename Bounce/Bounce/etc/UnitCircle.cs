@@ -1,136 +1,143 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Bounce
 {
-    public static class UnitCircle
+    public class UnitCircle
     {
-        static double pi = Math.PI;
-        private static Random r = new Random();
-
-        //Top right.
-        /// <summary>
-        /// 30°
-        /// </summary>
-        public static double PiOverSix { get { return pi / 6; } }
-        /// <summary>
-        /// 45°
-        /// </summary>
-        public static double PiOverFour { get { return pi / 4; } }
-        /// <summary>
-        /// 60°
-        /// </summary>
-        public static double PiOverThree { get { return pi / 3; } }
-        /// <summary>
-        /// 90°
-        /// </summary>
-        public static double PiOverTwo { get { return pi / 2; } }
-
-        //Top left.
-        /// <summary>
-        /// 120°
-        /// </summary>
-        public static double TwoPiOverThree { get { return (2 * pi) / 3; } }
-        /// <summary>
-        /// 135°
-        /// </summary>
-        public static double ThreePiOverFour { get { return (3 * pi) / 4; } }
-        /// <summary>
-        /// 150°
-        /// </summary>
-        public static double FivePiOverSix { get { return (5 * pi) / 6; } }
-        /// <summary>
-        /// 180°
-        /// </summary>
-        public static double PiOverOne { get { return pi; } }
-
-        //Bottom left.
-        /// <summary>
-        /// 210°
-        /// </summary>
-        public static double SevenPiOverSix { get { return (7 * pi) / 6; } }
-        /// <summary>
-        /// 225°
-        /// </summary>
-        public static double FivePiOverFour { get { return (5 * pi) / 4; } }
-        /// <summary>
-        /// 240°
-        /// </summary>
-        public static double FourPiOverThree { get { return (4 * pi) / 3; } }
-        /// <summary>
-        /// 270°
-        /// </summary>
-        public static double ThreePiOverTwo { get { return (3 * pi) / 2; } }
-
-        //Bottom right.
-        /// <summary>
-        /// 300°
-        /// </summary>
-        public static double FivePiOverThree { get { return (5 * pi) / 3; } }
-        /// <summary>
-        /// 315°
-        /// </summary>
-        public static double SevenPiOverFour { get { return (7 * pi) / 4; } }
-        /// <summary>
-        /// 330°
-        /// </summary>
-        public static double ElevenPiOverSix { get { return (11 * pi) / 6; } }
-        /// <summary>
-        /// 360°
-        /// </summary>
-        public static double TwoPi { get { return 2 * pi; } }
-
-        public static double RandomSegment()
+        public UnitCircle()
         {
-            return Indexed(r.Next(0, 16));
+            pi = Math.PI;
+            r = new Random();
+            RadiansDictionary = new Dictionary<CircleRadians, double>();
+            //DegreesDictionary = new Dictionary<CircleDegrees, double>();
+            Initialize();
+        }
+        double pi;
+        private Random r;
+        public Dictionary<CircleRadians, double> RadiansDictionary;
+        //public Dictionary<CircleDegrees, double> DegreesDictionary;
+
+        public enum CircleRadians
+        {
+            PiOverSix, // 30°
+            PiOverFour, // 45°
+            PiOverThree, // 60°
+            PiOverTwo, // 90°
+
+            TwoPiOverThree, // 120°
+            ThreePiOverFour, // 135°
+            FivePiOverSix, // 150°
+            PiOverOne, // 180°
+
+            SevenPiOverSix, // 210°
+            FivePiOverFour, // 225°
+            FourPiOverThree, // 240°
+            ThreePiOverTwo, //270
+
+            FivePiOverThree, // 300°
+            SevenPiOverFour, // 315°
+            ElevenPiOverSix, // 330°
+            TwoPi // 360°
+        }
+        //public enum CircleDegrees
+        //{
+        //    Thirty, // 30°
+        //    FourtyFive, // 45°
+        //    Sixty, // 60°
+        //    Ninety, // 90°
+
+        //    OneTwenty, // 120°
+        //    OneThirtyFive, // 135°
+        //    OneFifty, // 150°
+        //    OneEighty, // 180°
+
+        //    TwoTen, // 210°
+        //    TwoTentyFive, // 225°
+        //    TwoFourty, // 240°
+        //    TwoSeventy, //270
+
+        //    ThreeHundred, // 300°
+        //    ThreeFifteen, // 315°
+        //    ThreeThirty, // 330°
+        //    ThreeSixty // 360°
+        //}
+
+        public double RandomSegment()
+        {
+            try
+            {
+                return IndexedRadianDictionary(r.Next(16));
+            }
+            catch (ArgumentOutOfRangeException e)
+            {
+                Console.WriteLine("Dictionary not loaded: {0}", e);
+                 return 0.00;
+            }
         }
 
-        public static double RandomSign(double segment)
+        public double RandomSign(double segment)
         {
             return r.Next(0, 2) == 0 ? segment : -segment;
         }
 
-        public static double Indexed(int index)
+        private Enum indexedEnumValue(int index, Type enumType)
         {
-            switch (index)
-            {
-                case 0:
-                    return PiOverSix;
-                case 1:
-                    return PiOverFour;
-                case 2:
-                    return PiOverThree;
-                case 3:
-                    return PiOverTwo;
-                case 4:
-                    return TwoPiOverThree;
-                case 5:
-                    return ThreePiOverFour;
-                case 6:
-                    return FivePiOverSix;
-                case 7:
-                    return PiOverOne;
-                case 8:
-                    return SevenPiOverSix;
-                case 9:
-                    return FivePiOverFour;
-                case 10:
-                    return FourPiOverThree;
-                case 11:
-                    return ThreePiOverTwo;
-                case 12:
-                    return FivePiOverThree;
-                case 13:
-                    return SevenPiOverFour;
-                case 14:
-                    return ElevenPiOverSix;
-                case 15:
-                    return TwoPi;
-                default:
-                    return 0.00;
-            }
+            var values = Enum.GetValues(enumType);
+            return (Enum)values.GetValue(index);
+        }
+
+        public double IndexedRadianDictionary(int index)
+        {
+            return RadiansDictionary[(CircleRadians)indexedEnumValue(index, typeof(CircleRadians))];
+        }
+
+        private void Initialize()
+        {
+            //Radians dictionary.
+            RadiansDictionary.Add(CircleRadians.PiOverSix, pi / 6);
+            RadiansDictionary.Add(CircleRadians.PiOverFour, pi / 4);
+            RadiansDictionary.Add(CircleRadians.PiOverThree, pi / 3);
+            RadiansDictionary.Add(CircleRadians.PiOverTwo, pi / 2);
+
+            RadiansDictionary.Add(CircleRadians.TwoPiOverThree, (2 * pi) / 3);
+            RadiansDictionary.Add(CircleRadians.ThreePiOverFour, (3 * pi) / 4);
+            RadiansDictionary.Add(CircleRadians.FivePiOverSix, (5 * pi) / 6);
+            RadiansDictionary.Add(CircleRadians.PiOverOne, pi);
+
+            RadiansDictionary.Add(CircleRadians.SevenPiOverSix, (7 * pi) / 6);
+            RadiansDictionary.Add(CircleRadians.FivePiOverFour, (5 * pi) / 4);
+            RadiansDictionary.Add(CircleRadians.FourPiOverThree, (4 * pi) / 3);
+            RadiansDictionary.Add(CircleRadians.ThreePiOverTwo, (3 * pi) / 2);
+
+            RadiansDictionary.Add(CircleRadians.FivePiOverThree, (5 * pi) / 3);
+            RadiansDictionary.Add(CircleRadians.SevenPiOverFour, (7 * pi) / 4);
+            RadiansDictionary.Add(CircleRadians.ElevenPiOverSix, (11 * pi) / 6);
+            RadiansDictionary.Add(CircleRadians.TwoPi, 2 * pi);
+
+            //Degrees dictionary, purely for convenience. Not in use right now.
+            //DegreesDictionary.Add(CircleDegrees.Thirty, RadiansDictionary[CircleRadians.PiOverSix]);
+            //DegreesDictionary.Add(CircleDegrees.FourtyFive, RadiansDictionary[CircleRadians.PiOverFour]);
+            //DegreesDictionary.Add(CircleDegrees.Sixty, RadiansDictionary[CircleRadians.PiOverThree]);
+            //DegreesDictionary.Add(CircleDegrees.Ninety, RadiansDictionary[CircleRadians.PiOverTwo]);
+
+            //DegreesDictionary.Add(CircleDegrees.OneTwenty, RadiansDictionary[CircleRadians.TwoPiOverThree]);
+            //DegreesDictionary.Add(CircleDegrees.OneThirtyFive, RadiansDictionary[CircleRadians.ThreePiOverFour]);
+            //DegreesDictionary.Add(CircleDegrees.OneFifty, RadiansDictionary[CircleRadians.FivePiOverSix]);
+            //DegreesDictionary.Add(CircleDegrees.OneEighty, RadiansDictionary[CircleRadians.PiOverOne]);
+
+            //DegreesDictionary.Add(CircleDegrees.TwoTen, RadiansDictionary[CircleRadians.SevenPiOverSix]);
+            //DegreesDictionary.Add(CircleDegrees.TwoTentyFive, RadiansDictionary[CircleRadians.FivePiOverFour]);
+            //DegreesDictionary.Add(CircleDegrees.TwoFourty, RadiansDictionary[CircleRadians.FourPiOverThree]);
+            //DegreesDictionary.Add(CircleDegrees.TwoSeventy, RadiansDictionary[CircleRadians.ThreePiOverTwo]);
+
+            //DegreesDictionary.Add(CircleDegrees.ThreeHundred, RadiansDictionary[CircleRadians.FivePiOverThree]);
+            //DegreesDictionary.Add(CircleDegrees.ThreeFifteen, RadiansDictionary[CircleRadians.SevenPiOverFour]);
+            //DegreesDictionary.Add(CircleDegrees.ThreeThirty, RadiansDictionary[CircleRadians.ElevenPiOverSix]);
+            //DegreesDictionary.Add(CircleDegrees.ThreeSixty, RadiansDictionary[CircleRadians.TwoPi]);
         }
     }
 }

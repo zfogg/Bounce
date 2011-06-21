@@ -15,14 +15,14 @@ namespace Bounce
         {
             r = new Random();
             this.game = game;
+            unitCircle = new UnitCircle();
             //game.Components.Add(this);
         }
         Random r;
+        UnitCircle unitCircle;
 
         public override void Initialize() //does this method ever even run? Why / why not? If so, what should go into it? $ idea: maybe I should use the constructor to call this.
         {
-            CreateObstacles(r.Next(1, 6));
-            r = new Random();
             base.Initialize();
         }
 
@@ -109,15 +109,17 @@ namespace Bounce
         {
             List<Vector2> positions = Arrangements.HorizontalRow(numberofmetroids, startingposition, pixelsapart);
 
-            List<Metroid> metroids = new List<Metroid>();
+            List<Metroid> metroidList = new List<Metroid>();
             int i = 0;
             foreach (Vector2 position in positions)
             {
-                metroids.Add(CreateMetroid(ConvertUnits.ToSimUnits(position), (float)UnitCircle.Indexed(i), 0f));
+                metroidList.Add(CreateMetroid(ConvertUnits.ToSimUnits(position),
+                    (float)unitCircle.IndexedRadianDictionary(i),
+                    0f));
                 i++;
             }
 
-            return metroids;
+            return metroidList;
         }
 
         public Body CreateMouseCircle()
