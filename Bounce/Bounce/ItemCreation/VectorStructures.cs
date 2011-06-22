@@ -10,7 +10,7 @@ using FarseerPhysics.Common.Decomposition;
 
 namespace Bounce
 {
-    public static class VectorProcessor
+    public static class VectorStructures
     {
         public static List<Vector2> HorizontalRow(int numberofpositions, Vector2 startingposition, int pixelsapart)
         {
@@ -44,7 +44,7 @@ namespace Bounce
 
             Vector2 centroid = -vertices.GetCentroid();
             vertices.Translate(ref centroid);
-            vertices = SimplifyTools.ReduceByDistance(vertices, 4f);
+            vertices = SimplifyTools.ReduceByDistance(vertices, 10f);
 
             List<Vertices> verticesList = BayazitDecomposer.ConvexPartition(vertices);
             Vector2 vertScale = new Vector2(ConvertUnits.ToSimUnits(1));

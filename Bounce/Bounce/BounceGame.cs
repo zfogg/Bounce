@@ -58,8 +58,8 @@ namespace Bounce
             PhysicalSprites = new List<PhysicalSprite>();
             framing = new Framing(this);
             samus = new Samus(this);
-            obstacles = ObjectCreator.CreateObstacles(r.Next(1, 3));
-            ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
+            //obstacles = ObjectCreator.CreateObstacles(r.Next(1, 3));
+            //ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
             metroids = ObjectCreator.CreateHorizontalMetroidRow(5, new Vector2(50, 189), 135);
             base.Initialize();
         }

@@ -119,7 +119,7 @@ namespace Bounce
 
         public List<Metroid> CreateHorizontalMetroidRow(int numberofmetroids, Vector2 startingposition, int pixelsapart)
         {
-            List<Vector2> spawnPositions = VectorProcessor.HorizontalRow(numberofmetroids, startingposition, pixelsapart);
+            List<Vector2> spawnPositions = VectorStructures.HorizontalRow(numberofmetroids, startingposition, pixelsapart);
             List<Metroid> metroidList = new List<Metroid>();
             int radiusIndex = 5;
 

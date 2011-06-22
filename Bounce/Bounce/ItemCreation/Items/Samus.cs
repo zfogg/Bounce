@@ -23,10 +23,10 @@ namespace Bounce
 
             Body = BodyFactory.CreateCompoundPolygon(
                 BounceGame.World,
-                VectorProcessor.VerticesToBayazitList(Texture),
+                VectorStructures.VerticesToBayazitList(Texture),
                 1f, true);
 
-            origin = VectorProcessor.TextureToVertices(Texture).GetCentroid(); //For a polygon body shape.
+            origin = VectorStructures.TextureToVertices(Texture).GetCentroid(); //For a polygon body shape.
             Body.Position = new Vector2(
                 ConvertUnits.ToSimUnits(BounceGame.Graphics.PreferredBackBufferWidth * 0.20f),
                 ConvertUnits.ToSimUnits(ConvertUnits.ToDisplayUnits(Framing.FloorBody.Position.Y) - (Framing.FloorTexture.Height / 2) - (Texture.Height / 2))
