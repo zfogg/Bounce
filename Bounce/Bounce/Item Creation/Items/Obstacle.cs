@@ -22,11 +22,12 @@ namespace Bounce
             Body.BodyType = BodyType.Static;
             Body.Restitution = 0.150f;
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
+
+            BounceGame.PhysicalSprites.Add(this);
         }
 
         public override void Initialize()
         {
-            BounceGame.PhysicalSprites.Add(this);
             base.Initialize();
         }
 

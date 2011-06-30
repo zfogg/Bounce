@@ -93,14 +93,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Bounce.exe" size="26624">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Bounce.exe" size="27648">
       <assemblyIdentity name="Bounce" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>PwDjonqVsKqE7GFvT9yoB60rTWY=</dsig:DigestValue>
+        <dsig:DigestValue>K8ncSMO7T4Q/SHFIKyDXf8Po3tk=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -128,67 +128,67 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="Content\background.xnb" size="1149322">
+  <file name="Content\background.xnb" size="1536187">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>VqsJFnIAYWuLYOtrSN6RwfwuI2M=</dsig:DigestValue>
+      <dsig:DigestValue>NXK6JMRoNKnD5QHkeDtdgYKxAN8=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\floor.xnb" size="1650">
+  <file name="Content\floor.xnb" size="96187">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>yxbDPCa9MnKk1BVof/U+jDa9KHE=</dsig:DigestValue>
+      <dsig:DigestValue>ODsqcAbHKdDS/evRDhm7CpNrNOk=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\font.xnb" size="5312">
+  <file name="Content\font.xnb" size="11950">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>bw5o0z40gQOVnoz2Wc9TZ6dpgj0=</dsig:DigestValue>
+      <dsig:DigestValue>Ni0Nj0VUAn+6+lldp+0PBHFMSKQ=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\metroid.xnb" size="6448">
+  <file name="Content\metroid.xnb" size="10183">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>mJkgCMtkNOVvZGVbBf6LZ7aXauU=</dsig:DigestValue>
+      <dsig:DigestValue>oflxk2+YKdGzPPIDdXZKtNa8BR4=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\obstacle.xnb" size="2402">
+  <file name="Content\obstacle.xnb" size="24547">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>zc1bOlk8OXfyMv+RyAIdmMjtsxc=</dsig:DigestValue>
+      <dsig:DigestValue>3ATMkqPAyr3GjkaOmdLFsZsluOc=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\samus.xnb" size="782">
+  <file name="Content\samus.xnb" size="4987">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>ffBgAZq+78aZOedimoQZQAQg7z8=</dsig:DigestValue>
+      <dsig:DigestValue>4Iu3/tdEGfe+BAu58sbeKhDnwDY=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\side.xnb" size="1544">
+  <file name="Content\side.xnb" size="57787">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>uOczSZ8bBa1vcUZQU9tv37uhBbc=</dsig:DigestValue>
+      <dsig:DigestValue>3DHzZ/lsZgxm6XVmG1VpKcVBn3A=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Game.ico" size="4286">

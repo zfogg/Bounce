@@ -14,30 +14,22 @@ namespace Bounce
             rotation = 0.0f;
             Position = new Vector2(graphicsDevice.Viewport.Width * 0.5f, graphicsDevice.Viewport.Height * 0.5f);
         }
-        //public Camera2D(Game game)
-        //    : base(game)
-        //{
-        //    game.Components.Add(this);
-        //}
 
         private Vector2 cameraPosition;
-
         public Matrix Transform;
-
         public float Zoom
         {
             get { return zoom; }
             set { zoom = value; }
         }
-
         public float Rotation
         {
             get { return rotation; }
             set { rotation = value; }
         }
-
         private Vector2 movement;
-        public void Move()
+
+        public void Step(float movementCoEf)
         {
             movement = Vector2.Zero;
 
@@ -55,7 +47,7 @@ namespace Bounce
                 if (movement != Vector2.Zero)
                     movement.Normalize();
 
-                Position += movement * 3.50f;
+                Position += movement * movementCoEf;
 
                 //Consider changing to exponential multiplication for zoom's value.
                 if (BounceGame.KeyboardState.IsKeyDown(Keys.Add))
@@ -80,6 +72,7 @@ namespace Bounce
                     Matrix.CreateRotationZ(rotation) *
                     Matrix.CreateScale(new Vector3(zoom, zoom, 1)) *
                     Matrix.CreateTranslation(new Vector3(graphicsDevice.Viewport.Width * 0.5f, graphicsDevice.Viewport.Height * 0.5f, 0));
+
             return Transform;
         }
     }

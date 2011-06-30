@@ -8,13 +8,13 @@ namespace Bounce
     public class DebugBounce : Microsoft.Xna.Framework.GameComponent
     {
         DebugViewXNA DebugViewXNA;
+        Game game;
         public DebugBounce(Game game)
             : base(game)
         {
+            this.game = game;
             DebugViewXNA = new DebugViewXNA(BounceGame.World);
-            DebugViewXNA.LoadContent(game.GraphicsDevice, game.Content);
-            DebugViewXNA.RemoveFlags(DebugViewFlags.Shape);
-            this.InitializeDraw();
+
             game.Components.Add(this);
         }
 
@@ -22,7 +22,21 @@ namespace Bounce
 
         public override void Initialize()
         {
-            
+            DebugViewXNA.LoadContent(game.GraphicsDevice, game.Content);
+            DebugViewXNA.RemoveFlags(DebugViewFlags.Shape);
+
+            projection = Matrix.CreateOrthographic(
+                BounceGame.Graphics.PreferredBackBufferWidth / 100.0f,
+                -BounceGame.Graphics.PreferredBackBufferHeight / 100.0f, 0, 1000000);
+
+            Vector3 campos = new Vector3();
+            campos.X = (-BounceGame.Graphics.PreferredBackBufferWidth / 2) / 100.0f;
+            campos.Y = (BounceGame.Graphics.PreferredBackBufferHeight / 2) / -100.0f;
+            campos.Z = 0;
+            Matrix tran = Matrix.Identity;
+            tran.Translation = campos;
+            view = tran;
+
             base.Initialize();
         }
        
@@ -88,20 +102,6 @@ namespace Bounce
         public void Draw()
         {
             DebugViewXNA.RenderDebugData(ref projection, ref view);
-        }
-        protected void InitializeDraw()
-        {
-            projection = Matrix.CreateOrthographic(
-                BounceGame.Graphics.PreferredBackBufferWidth / 100.0f,
-                -BounceGame.Graphics.PreferredBackBufferHeight / 100.0f, 0, 1000000);
-
-            Vector3 campos = new Vector3();
-            campos.X = (-BounceGame.Graphics.PreferredBackBufferWidth / 2) / 100.0f;
-            campos.Y = (BounceGame.Graphics.PreferredBackBufferHeight / 2) / -100.0f;
-            campos.Z = 0;
-            Matrix tran = Matrix.Identity;
-            tran.Translation = campos;
-            view = tran;
         }
     }
 }

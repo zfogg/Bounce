@@ -56,7 +56,7 @@ namespace Bounce
             for (int i = 0; i < number && i < BounceGame.CreationLimit; i++)
             {
                 Obstacle o = new Obstacle(game);
-                //Next, randomly determine the spawning location 
+                //Randomly determine the spawning location
                 spawnPosition.X = ConvertUnits.ToSimUnits(r.Next( //X axis.
                         (0 + o.Texture.Width), //Left: spawn fully inside the screen by at least the obstacle's Texture width.
                         (BounceGame.Graphics.PreferredBackBufferWidth - o.Texture.Width))); //Right: spawn fully inside the screen by at least the obstacle's Texture width.
@@ -104,11 +104,9 @@ namespace Bounce
                 if (r.Next(1, 101) > percentchance)
                 {
                     Metroid m = new Metroid(game);
-                    //Calculate a spawnPosition that is a bit above the center of Obstacle obstacle.
-                    spawnPosition.X = ConvertUnits.ToSimUnits(
-                        obstacle.Body.Position.X);
-                    spawnPosition.Y = ConvertUnits.ToSimUnits(
-                        obstacle.Body.Position.Y - ConvertUnits.ToSimUnits(1.2f * (float)m.Texture.Height));
+                    //Calculate a spawnPosition that is a bit above the center of obstacle.
+                    spawnPosition.X = obstacle.Body.Position.X;
+                    spawnPosition.Y = obstacle.Body.Position.Y - ConvertUnits.ToSimUnits(1.2f * (float)m.Texture.Height);
 
                     m.Body.Position = spawnPosition;
                     metroidList.Add(m);
@@ -121,8 +119,8 @@ namespace Bounce
         {
             List<Vector2> spawnPositions = VectorStructures.HorizontalRow(numberofmetroids, startingposition, pixelsapart);
             List<Metroid> metroidList = new List<Metroid>();
-            int radiusIndex = 5;
 
+            int radiusIndex = 5;
             foreach (Vector2 spawnPosition in spawnPositions)
             {
                 metroidList.Add(CreateMetroid(ConvertUnits.ToSimUnits(spawnPosition),

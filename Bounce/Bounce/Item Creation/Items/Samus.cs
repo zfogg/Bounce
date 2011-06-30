@@ -23,7 +23,7 @@ namespace Bounce
 
             Body = BodyFactory.CreateCompoundPolygon(
                 BounceGame.World,
-                VectorStructures.VerticesToBayazitList(Texture),
+                VectorStructures.TextureToBayazitList(Texture),
                 1f, true);
 
             origin = VectorStructures.TextureToVertices(Texture).GetCentroid(); //For a polygon body shape.

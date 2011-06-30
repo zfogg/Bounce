@@ -38,7 +38,7 @@ namespace Bounce
             return textureVertices;
         }
 
-        public static List<Vertices> VerticesToBayazitList(Texture2D texture)
+        public static List<Vertices> TextureToBayazitList(Texture2D texture)
         {
             Vertices vertices = TextureToVertices(texture);
 
