@@ -20,21 +20,23 @@ namespace Bounce
         public static SpriteBatch SpriteBatch;
         public static KeyboardState KeyboardState, PreviousKeyboardState;
         public static MouseState MouseState, PreviousMouseState;
+        public static GameServiceContainer Services;
+        public static BounceContentManager ContentManager;
 
         //Farseer Physics objects
         public static World World;
         public DebugBounce DebugFarseer;
 
         //Regular objects
-        public ObjectCreator ObjectCreator;
         private Camera2D camera;
-        private List<Obstacle> obstacles;
+        public ObjectCreator ObjectCreator;
         public static List<PhysicalSprite> PhysicalSprites;
+        private List<Obstacle> obstacles;
+        private List<Metroid> metroids;
         private Framing framing;
         private Samus samus;
-        List<Metroid> metroids;
         private Random r;
-        public static float MovementCoEf = 4.00f; //Needs more thought.
+        public static float MovementCoEf = 3.00f; //Needs more thought.
         public static int CreationLimit = 1000; //Needs more thought.
 
         public BounceGame()
@@ -42,6 +44,8 @@ namespace Bounce
             Graphics = new GraphicsDeviceManager(this);
             KeyboardState = new KeyboardState();
             MouseState = new MouseState();
+            Services = new GameServiceContainer();
+            ContentManager = new BounceContentManager(Services);
 
             World = new World(Vector2.UnitY * 5f);
             DebugFarseer = new DebugBounce(this);
@@ -58,8 +62,8 @@ namespace Bounce
             Window.Title = "Project Bounce";
             IsMouseVisible = true;
             Graphics.ApplyChanges();
-            Content.RootDirectory = "Content";
-            Services.AddService(typeof(Game), this);
+            ContentManager.RootDirectory = "Content";
+            Services.AddService(typeof(IGraphicsDeviceService), Graphics);
 
             base.Initialize();
         }
@@ -70,7 +74,7 @@ namespace Bounce
             camera = new Camera2D(GraphicsDevice);
 
             framing = new Framing(this);
-            samus = new Samus(this);
+            samus = new Samus();
             obstacles = ObjectCreator.CreateObstacles(r.Next(0, 6));
             ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
             //metroids = ObjectCreator.CreateHorizontalMetroidRow(5, new Vector2(50, 189), 135);
@@ -99,6 +103,14 @@ namespace Bounce
             MouseState = Mouse.GetState();
             handleInput();
 
+            foreach (PhysicalSprite sprite in PhysicalSprites.ToArray())
+            {
+                if (sprite.IsAlive)
+                    sprite.Update(gameTime);
+                else
+                    sprite.Kill();
+            }
+
             camera.Step(MovementCoEf);
             World.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
             base.Update(gameTime);
@@ -118,6 +130,7 @@ namespace Bounce
             
             SpriteBatch.End();
             DebugFarseer.Draw();
+
             base.Draw(gameTime);
         }
     }

@@ -6,27 +6,17 @@ namespace Bounce
 {
     class Camera2D// : GameComponent
     {
-        protected float zoom;
-        protected float rotation;
         public Camera2D(GraphicsDevice graphicsDevice)
         {
-            zoom = 1.0f;
-            rotation = 0.0f;
+            Zoom = 1.0f;
+            Rotation = 0.0f;
             Position = new Vector2(graphicsDevice.Viewport.Width * 0.5f, graphicsDevice.Viewport.Height * 0.5f);
         }
 
-        private Vector2 cameraPosition;
+        public Vector2 Position;
         public Matrix Transform;
-        public float Zoom
-        {
-            get { return zoom; }
-            set { zoom = value; }
-        }
-        public float Rotation
-        {
-            get { return rotation; }
-            set { rotation = value; }
-        }
+        public float Zoom;
+        public float Rotation;
         private Vector2 movement;
 
         public void Step(float movementCoEf)
@@ -51,26 +41,20 @@ namespace Bounce
 
                 //Consider changing to exponential multiplication for zoom's value.
                 if (BounceGame.KeyboardState.IsKeyDown(Keys.Add))
-                    zoom += 0.025f;
+                    Zoom += 0.025f;
                 if (BounceGame.KeyboardState.IsKeyDown(Keys.Subtract))
-                    zoom += -0.025f;
+                    Zoom += -0.025f;
 
                 //To do: implement camera rotation around the Z axis.
             }
-        }
-
-        public Vector2 Position
-        {
-            get { return cameraPosition; }
-            set { cameraPosition = value; }
         }
 
         public Matrix GetTransformation(GraphicsDevice graphicsDevice)
         {
             Transform =
                 Matrix.CreateTranslation(new Vector3(-Position.X, -Position.Y, 0)) *
-                    Matrix.CreateRotationZ(rotation) *
-                    Matrix.CreateScale(new Vector3(zoom, zoom, 1)) *
+                    Matrix.CreateRotationZ(Rotation) *
+                    Matrix.CreateScale(new Vector3(Zoom, Zoom, 1)) *
                     Matrix.CreateTranslation(new Vector3(graphicsDevice.Viewport.Width * 0.5f, graphicsDevice.Viewport.Height * 0.5f, 0));
 
             return Transform;

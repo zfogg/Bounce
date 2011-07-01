@@ -10,11 +10,9 @@ namespace Bounce
 {
     public class Obstacle : PhysicalSprite
     {
-        public Obstacle(Game game)
-            : base(game)
+        public Obstacle()
         {
-            if (Texture == null)
-                Texture = Game.Content.Load<Texture2D>("obstacle");
+            Texture = BounceGame.ContentManager.Load<Texture2D>("obstacle");
 
             Body = BodyFactory.CreateRectangle(BounceGame.World,
                     ConvertUnits.ToSimUnits(this.Texture.Width),
@@ -22,19 +20,11 @@ namespace Bounce
             Body.BodyType = BodyType.Static;
             Body.Restitution = 0.150f;
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
-
-            BounceGame.PhysicalSprites.Add(this);
-        }
-
-        public override void Initialize()
-        {
-            base.Initialize();
         }
 
         public override void Update(GameTime gameTime)
         {
 
-            base.Update(gameTime);
         }
 
         public override void Draw()

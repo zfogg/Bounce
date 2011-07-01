@@ -15,11 +15,9 @@ namespace Bounce
 {
     public class Samus : PhysicalSprite
     {
-        public Samus(Game game)
-            : base(game)
+        public Samus()
         {
-            if (Texture == null)
-                Texture = Game.Content.Load<Texture2D>("samus");
+            Texture = BounceGame.ContentManager.Load<Texture2D>("samus");
 
             Body = BodyFactory.CreateCompoundPolygon(
                 BounceGame.World,
@@ -38,8 +36,6 @@ namespace Bounce
             Body.Friction = .475f;
             Body.Restitution = 0.025f;
             Body.AngularDamping = 0.50f;
-
-            BounceGame.PhysicalSprites.Add(this);
         }
 
         private Vector2 force;
@@ -77,8 +73,6 @@ namespace Bounce
                 if (BounceGame.KeyboardState.IsKeyDown(Keys.Left))
                     Body.ApplyTorque(1f * BounceGame.MovementCoEf);
             }
-
-            base.Update(gameTime);
         }
 
         public override void Draw()

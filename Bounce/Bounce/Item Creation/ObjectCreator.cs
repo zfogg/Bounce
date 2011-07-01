@@ -9,6 +9,8 @@ namespace Bounce
 {
     public class ObjectCreator : GameComponent //consider making this into a static class.
     {
+        Random r;
+        UnitCircle unitCircle;
         private Game game;
         public ObjectCreator(Game game) //to be static, maybe the constructor could grab Game game as a GameComponent.
             : base(game)
@@ -17,13 +19,6 @@ namespace Bounce
             this.game = game;
             unitCircle = new UnitCircle();
             game.Components.Add(this);
-        }
-        Random r;
-        UnitCircle unitCircle;
-
-        public override void Initialize()
-        {
-            base.Initialize();
         }
 
         public Obstacle CreateObstacle(float spawnPositionX, float spawnPositionY)
@@ -36,7 +31,7 @@ namespace Bounce
 
         public Obstacle CreateObstacle(Vector2 spawnPosition)
         {
-            Obstacle o = new Obstacle(game);
+            Obstacle o = new Obstacle();
             o.Body.Position = spawnPosition;
 
             return o;
@@ -55,7 +50,7 @@ namespace Bounce
 
             for (int i = 0; i < number && i < BounceGame.CreationLimit; i++)
             {
-                Obstacle o = new Obstacle(game);
+                Obstacle o = new Obstacle();
                 //Randomly determine the spawning location
                 spawnPosition.X = ConvertUnits.ToSimUnits(r.Next( //X axis.
                         (0 + o.Texture.Width), //Left: spawn fully inside the screen by at least the obstacle's Texture width.
@@ -73,7 +68,7 @@ namespace Bounce
 
         public Metroid CreateMetroid(Vector2 spawnPosition, float sinRadius, float cosRadius)
         {
-            Metroid m = new Metroid(game, sinRadius, cosRadius);
+            Metroid m = new Metroid(sinRadius, cosRadius);
             m.Body.Position = spawnPosition;
 
             return m;
@@ -89,7 +84,7 @@ namespace Bounce
 
         public Metroid CreateMetroid(Vector2 spawnPosition)
         {
-            Metroid m = new Metroid(game);
+            Metroid m = new Metroid();
             m.Body.Position = spawnPosition;
 
             return m;
@@ -103,7 +98,7 @@ namespace Bounce
             foreach (Obstacle obstacle in obstacles)
                 if (r.Next(1, 101) > percentchance)
                 {
-                    Metroid m = new Metroid(game);
+                    Metroid m = new Metroid();
                     //Calculate a spawnPosition that is a bit above the center of obstacle.
                     spawnPosition.X = obstacle.Body.Position.X;
                     spawnPosition.Y = obstacle.Body.Position.Y - ConvertUnits.ToSimUnits(1.2f * (float)m.Texture.Height);
@@ -134,10 +129,9 @@ namespace Bounce
 
         public Metroid CreateMetroidAtMouse()
         {
-            Metroid m = new Metroid(game);
-            m.Body.Position = new Vector2(
-                ConvertUnits.ToSimUnits(BounceGame.MouseState.X),
-                ConvertUnits.ToSimUnits(BounceGame.MouseState.Y));
+            Metroid m = new Metroid();
+            Vector2 spawnPosition = new Vector2(BounceGame.MouseState.X, BounceGame.MouseState.Y);
+            m.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
 
             return m;
         }

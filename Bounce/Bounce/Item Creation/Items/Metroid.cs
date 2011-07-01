@@ -11,19 +11,17 @@ namespace Bounce
 {
     public class Metroid : PhysicalSprite
     {
-        public Metroid(Game game, float sinRadius, float cosRadius)
-            : this(game)
+        public Metroid(float sinRadius, float cosRadius)
+            : this()
         {
             this.cosRadius = cosRadius;
             this.sinRadius = sinRadius;
         }
-        public Metroid(Game game)
-            : base(game)
+
+        public Metroid()
         {
             this.IsAlive = true;
-
-            if (Texture == null)
-                Texture = Game.Content.Load<Texture2D>("metroid");
+            Texture = BounceGame.ContentManager.Load<Texture2D>("metroid");
 
             unitCircle = new UnitCircle();
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
@@ -38,13 +36,12 @@ namespace Bounce
             Body.Restitution = .35f;
             Body.AngularDamping = 0.075f;
             Body.IgnoreGravity = true;
-
-            BounceGame.PhysicalSprites.Add(this);
         }
 
         UnitCircle unitCircle;
         Vector2 currentPosition, previousPosition;
         Vector2 force = Vector2.Zero;
+
         public override void Update(GameTime gameTime) // Idea: make metroids hover when they near the ground.
         {
             currentPosition = Body.Position;
@@ -91,14 +88,13 @@ namespace Bounce
                     sinCenter.X -= sinCenter.X - Body.Position.X;
             }
 
-            if (!this.IsAlive)
-            {
-                Body.Dispose();
-                BounceGame.PhysicalSprites.Remove(this);
-            }
+            //if (!this.IsAlive)
+            //{
+            //    Body.Dispose();
+            //    BounceGame.PhysicalSprites.Remove(this);
+            //}
 
             previousPosition = currentPosition;
-            base.Update(gameTime);
         }
 
         bool sinActive;
@@ -118,6 +114,12 @@ namespace Bounce
             sinForce = Vector2.Zero;
             sinForce.X = (float)Math.Sin((Body.Position.X - sinCenter.X));
             Body.ApplyForce((-sinForce) * cosRadius);
+        }
+
+        public override void Kill()
+        {
+            Body.Dispose();
+            BounceGame.PhysicalSprites.Remove(this);
         }
         
         public override void Draw()

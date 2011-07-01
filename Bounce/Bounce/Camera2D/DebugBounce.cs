@@ -22,7 +22,7 @@ namespace Bounce
 
         public override void Initialize()
         {
-            DebugViewXNA.LoadContent(game.GraphicsDevice, game.Content);
+            DebugViewXNA.LoadContent(BounceGame.Graphics.GraphicsDevice, BounceGame.ContentManager);
             DebugViewXNA.RemoveFlags(DebugViewFlags.Shape);
 
             projection = Matrix.CreateOrthographic(

@@ -13,11 +13,11 @@ namespace Bounce
         public Framing(Game game)
             : base(game)
         {
-            BackgroundTexture = Game.Content.Load<Texture2D>("background");
-            FloorTexture = Game.Content.Load<Texture2D>("floor");
-            CielingTexture = Game.Content.Load<Texture2D>("floor");
-            RightSideTexture = Game.Content.Load<Texture2D>("side");
-            LeftSideTexture = Game.Content.Load<Texture2D>("side");
+            BackgroundTexture = BounceGame.ContentManager.Load<Texture2D>("background");
+            FloorTexture = BounceGame.ContentManager.Load<Texture2D>("floor");
+            CielingTexture = BounceGame.ContentManager.Load<Texture2D>("floor");
+            RightSideTexture = BounceGame.ContentManager.Load<Texture2D>("side");
+            LeftSideTexture = BounceGame.ContentManager.Load<Texture2D>("side");
             backgroundPosition = Vector2.Zero;
 
             FloorBody = BodyFactory.CreateRectangle(BounceGame.World,

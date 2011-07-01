@@ -6,20 +6,17 @@ using FarseerPhysics.Dynamics;
 
 namespace Bounce
 {
-    public class PhysicalSprite : Microsoft.Xna.Framework.GameComponent
+    public abstract class PhysicalSprite
     {
         
-        public PhysicalSprite(Game game)
-            : base(game)
+        public PhysicalSprite()
         {
             this.IsAlive = true;
-            this.game = game;
             r = new Random();
 
-            game.Components.Add(this);
+            BounceGame.PhysicalSprites.Add(this);
         }
 
-        protected Game game;
         protected Random r;
         public Body Body;
         public bool IsAlive;
@@ -31,7 +28,9 @@ namespace Bounce
         protected float offset;
         protected float radius;
 
-        public virtual void Draw()
+        public abstract void Update(GameTime gametime);
+        public abstract void Draw();
+        public virtual void Kill()
         {
 
         }
