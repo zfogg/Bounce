@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -24,7 +23,7 @@ namespace Bounce
                 VectorStructures.TextureToBayazitList(Texture),
                 1f, true);
 
-            origin = VectorStructures.TextureToVertices(Texture).GetCentroid(); //For a polygon body shape.
+            origin = VectorStructures.TextureToVertices(Texture).GetCentroid(); //Need the centroid, not center, for a polygon body shape.
             Body.Position = new Vector2(
                 ConvertUnits.ToSimUnits(BounceGame.Graphics.PreferredBackBufferWidth * 0.20f),
                 ConvertUnits.ToSimUnits(ConvertUnits.ToDisplayUnits(Framing.FloorBody.Position.Y) - (Framing.FloorTexture.Height / 2) - (Texture.Height / 2))
@@ -73,13 +72,6 @@ namespace Bounce
                 if (BounceGame.KeyboardState.IsKeyDown(Keys.Left))
                     Body.ApplyTorque(1f * BounceGame.MovementCoEf);
             }
-        }
-
-        public override void Draw()
-        {
-            BounceGame.SpriteBatch.Draw(Texture,
-                ConvertUnits.ToDisplayUnits(Body.Position), null, Color.White,
-                Body.Rotation, origin, 1f, SpriteEffects.None, 0f);
         }
     }
 }

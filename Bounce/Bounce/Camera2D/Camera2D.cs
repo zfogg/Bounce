@@ -6,11 +6,11 @@ namespace Bounce
 {
     class Camera2D// : GameComponent
     {
-        public Camera2D(GraphicsDevice graphicsDevice)
+        public Camera2D()
         {
             Zoom = 1.0f;
             Rotation = 0.0f;
-            Position = new Vector2(graphicsDevice.Viewport.Width * 0.5f, graphicsDevice.Viewport.Height * 0.5f);
+            Position = new Vector2(BounceGame.Graphics.GraphicsDevice.Viewport.Width * 0.5f, BounceGame.Graphics.GraphicsDevice.Viewport.Height * 0.5f);
         }
 
         public Vector2 Position;
@@ -19,25 +19,32 @@ namespace Bounce
         public float Rotation;
         private Vector2 movement;
 
-        public void Step(float movementCoEf)
+        public void Step()
         {
             movement = Vector2.Zero;
 
             if (BounceGame.KeyboardState.GetPressedKeys().Length != 0)
             {
-                if (BounceGame.KeyboardState.IsKeyDown((Keys.NumPad8)))
+                if (BounceGame.KeyboardState.IsKeyDown(Keys.NumPad5)) //Reset fields
+                {
+                    Position = new Vector2(BounceGame.Graphics.GraphicsDevice.Viewport.Width * 0.5f, BounceGame.Graphics.GraphicsDevice.Viewport.Height * 0.5f);
+                    Zoom = 1f;
+                    Rotation = 0f;
+                }
+
+                if (BounceGame.KeyboardState.IsKeyDown(Keys.NumPad8))
                     movement.Y += -1f;
-                if (BounceGame.KeyboardState.IsKeyDown((Keys.NumPad6)))
+                if (BounceGame.KeyboardState.IsKeyDown(Keys.NumPad6))
                     movement.X += 1f;
-                if (BounceGame.KeyboardState.IsKeyDown((Keys.NumPad2)))
+                if (BounceGame.KeyboardState.IsKeyDown(Keys.NumPad2))
                     movement.Y += 1f;
-                if (BounceGame.KeyboardState.IsKeyDown((Keys.NumPad4)))
+                if (BounceGame.KeyboardState.IsKeyDown(Keys.NumPad4))
                     movement.X += -1f;
 
                 if (movement != Vector2.Zero)
                     movement.Normalize();
 
-                Position += movement * movementCoEf;
+                Position += movement * BounceGame.MovementCoEf;
 
                 //Consider changing to exponential multiplication for zoom's value.
                 if (BounceGame.KeyboardState.IsKeyDown(Keys.Add))

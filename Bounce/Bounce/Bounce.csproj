@@ -131,7 +131,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BounceContentManager.cs" />
     <Compile Include="Item Creation\VectorStructures.cs" />
     <Compile Include="etc\UnitCircle.cs" />
     <Compile Include="Camera2D\Camera2D.cs" />
@@ -142,7 +141,7 @@
     <Compile Include="Item Creation\PhysicalSprite.cs" />
     <Compile Include="Item Creation\Items\Framing.cs" />
     <Compile Include="etc\InputHelper.cs" />
-    <Compile Include="Item Creation\ObjectCreator.cs" />
+    <Compile Include="Item Creation\ItemFactory.cs" />
     <Compile Include="Item Creation\Items\Obstacle.cs" />
     <Compile Include="Item Creation\Items\Metroid.cs" />
     <Compile Include="Item Creation\Items\Samus.cs" />

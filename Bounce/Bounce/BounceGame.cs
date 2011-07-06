@@ -20,8 +20,7 @@ namespace Bounce
         public static SpriteBatch SpriteBatch;
         public static KeyboardState KeyboardState, PreviousKeyboardState;
         public static MouseState MouseState, PreviousMouseState;
-        public static GameServiceContainer Services;
-        public static BounceContentManager ContentManager;
+        public static ContentManager ContentManager;
 
         //Farseer Physics objects
         public static World World;
@@ -29,7 +28,7 @@ namespace Bounce
 
         //Regular objects
         private Camera2D camera;
-        public ObjectCreator ObjectCreator;
+        public ItemFactory ObjectCreator;
         public static List<PhysicalSprite> PhysicalSprites;
         private List<Obstacle> obstacles;
         private List<Metroid> metroids;
@@ -44,13 +43,12 @@ namespace Bounce
             Graphics = new GraphicsDeviceManager(this);
             KeyboardState = new KeyboardState();
             MouseState = new MouseState();
-            Services = new GameServiceContainer();
-            ContentManager = new BounceContentManager(Services);
+            ContentManager = new ContentManager(Services);
 
             World = new World(Vector2.UnitY * 5f);
             DebugFarseer = new DebugBounce(this);
 
-            ObjectCreator = new ObjectCreator(this);
+            ObjectCreator = new ItemFactory();
             PhysicalSprites = new List<PhysicalSprite>();
             r = new Random();
         }
@@ -59,11 +57,10 @@ namespace Bounce
         {
             Graphics.PreferredBackBufferWidth = 800;
             Graphics.PreferredBackBufferHeight = 480;
-            Window.Title = "Project Bounce";
+            Window.Title = "Bounce";
             IsMouseVisible = true;
             Graphics.ApplyChanges();
             ContentManager.RootDirectory = "Content";
-            Services.AddService(typeof(IGraphicsDeviceService), Graphics);
 
             base.Initialize();
         }
@@ -71,13 +68,13 @@ namespace Bounce
         protected override void LoadContent()
         {
             SpriteBatch = new SpriteBatch(GraphicsDevice);
-            camera = new Camera2D(GraphicsDevice);
+            camera = new Camera2D();
 
             framing = new Framing(this);
             samus = new Samus();
-            obstacles = ObjectCreator.CreateObstacles(r.Next(0, 6));
-            ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
-            //metroids = ObjectCreator.CreateHorizontalMetroidRow(5, new Vector2(50, 189), 135);
+            //obstacles = ObjectCreator.CreateObstacles(r.Next(0, 6));
+            //ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
+            metroids = ObjectCreator.CreateHorizontalMetroidRow(5, new Vector2(50, 189), 135);
         }
 
         protected override void UnloadContent()
@@ -90,7 +87,7 @@ namespace Bounce
             if (MouseState != PreviousMouseState)
             {
                 if (InputHelper.LeftClickRelease())
-                    ObjectCreator.CreateMetroidAtMouse();
+                    ObjectCreator.CreateMetroidAtMouse(camera.GetTransformation(GraphicsDevice));
             }
         }
 
@@ -103,15 +100,19 @@ namespace Bounce
             MouseState = Mouse.GetState();
             handleInput();
 
-            foreach (PhysicalSprite sprite in PhysicalSprites.ToArray())
-            {
-                if (sprite.IsAlive)
-                    sprite.Update(gameTime);
+            for (int i = 0; i < PhysicalSprites.Count; i++)
+            {//TODO Change this to the way flameshadow@##XNA showed you - http://www.monstersoft.com/wp/?p=500#more-500
+                if (PhysicalSprites[i].IsAlive)
+                    PhysicalSprites[i].Update(gameTime);
                 else
-                    sprite.Kill();
+                {
+                    PhysicalSprites[i].Body.Dispose();
+                    PhysicalSprites.RemoveAt(i);
+                    i--;
+                }
             }
 
-            camera.Step(MovementCoEf);
+            camera.Step();
             World.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
             base.Update(gameTime);
         }
@@ -120,17 +121,17 @@ namespace Bounce
         {
             GraphicsDevice.Clear(Color.Black);
 
-            SpriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend,
+            SpriteBatch.Begin(
+                SpriteSortMode.Immediate, BlendState.AlphaBlend,
                 null, null, null, null,
                 camera.GetTransformation(GraphicsDevice));
 
             framing.Draw();
             foreach (PhysicalSprite sprite in PhysicalSprites)
-                sprite.Draw();
+                sprite.Draw(SpriteBatch);
             
             SpriteBatch.End();
             DebugFarseer.Draw();
-
             base.Draw(gameTime);
         }
     }

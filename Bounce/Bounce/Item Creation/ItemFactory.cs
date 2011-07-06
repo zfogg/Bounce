@@ -7,32 +7,28 @@ using FarseerPhysics.Factories;
 
 namespace Bounce
 {
-    public class ObjectCreator : GameComponent //consider making this into a static class.
+    public class ItemFactory
     {
         Random r;
         UnitCircle unitCircle;
-        private Game game;
-        public ObjectCreator(Game game) //to be static, maybe the constructor could grab Game game as a GameComponent.
-            : base(game)
+        public ItemFactory()
         {
             r = new Random();
-            this.game = game;
             unitCircle = new UnitCircle();
-            game.Components.Add(this);
+        }
+
+        public Obstacle CreateObstacle(Vector2 spawnPosition)
+        {
+            Obstacle o = new Obstacle();
+            o.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
+
+            return o;
         }
 
         public Obstacle CreateObstacle(float spawnPositionX, float spawnPositionY)
         {
             Vector2 position = new Vector2(spawnPositionX, spawnPositionY);
             Obstacle o = CreateObstacle(position);
-
-            return o;
-        }
-
-        public Obstacle CreateObstacle(Vector2 spawnPosition)
-        {
-            Obstacle o = new Obstacle();
-            o.Body.Position = spawnPosition;
 
             return o;
         }
@@ -66,10 +62,10 @@ namespace Bounce
             return obstacleList;
         }
 
-        public Metroid CreateMetroid(Vector2 spawnPosition, float sinRadius, float cosRadius)
+        public Metroid CreateMetroid(Vector2 spawnPosition)
         {
-            Metroid m = new Metroid(sinRadius, cosRadius);
-            m.Body.Position = spawnPosition;
+            Metroid m = new Metroid();
+            m.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
 
             return m;
         }
@@ -82,10 +78,18 @@ namespace Bounce
             return m;
         }
 
-        public Metroid CreateMetroid(Vector2 spawnPosition)
+        public Metroid CreateMetroid(Vector2 spawnPosition, float sinRadius, float cosRadius)
         {
-            Metroid m = new Metroid();
-            m.Body.Position = spawnPosition;
+            Metroid m = new Metroid(sinRadius, cosRadius);
+            m.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
+
+            return m;
+        }
+
+        public Metroid CreateMetroid(float spawnPositionX, float spawnPositionY, float sinRadius, float cosRadius)
+        {
+            Vector2 position = new Vector2(spawnPositionX, spawnPositionY);
+            Metroid m = CreateMetroid(position, sinRadius, cosRadius);
 
             return m;
         }
@@ -93,19 +97,20 @@ namespace Bounce
         public List<Metroid> CreateMetroidsOnObstacles(ref List<Obstacle> obstacles, int percentchance)
         {
             List<Metroid> metroidList = new List<Metroid>();
-            Vector2 spawnPosition = new Vector2();
 
-            foreach (Obstacle obstacle in obstacles)
-                if (r.Next(1, 101) > percentchance)
-                {
-                    Metroid m = new Metroid();
-                    //Calculate a spawnPosition that is a bit above the center of obstacle.
-                    spawnPosition.X = obstacle.Body.Position.X;
-                    spawnPosition.Y = obstacle.Body.Position.Y - ConvertUnits.ToSimUnits(1.2f * (float)m.Texture.Height);
+            if (obstacles != null)
+            {
+                foreach (Obstacle obstacle in obstacles)
+                    if (r.Next(1, 101) > percentchance)
+                    {
+                        Metroid m = CreateMetroid(
+                        //Calculate a spawnPosition that is a bit above the center of obstacle.
+                        ConvertUnits.ToDisplayUnits(obstacle.Body.Position.X),
+                        ConvertUnits.ToDisplayUnits(obstacle.Body.Position.Y - ConvertUnits.ToSimUnits(50f)));
 
-                    m.Body.Position = spawnPosition;
-                    metroidList.Add(m);
-                }
+                        metroidList.Add(m);
+                    }
+            }
 
             return metroidList;
         }
@@ -117,9 +122,10 @@ namespace Bounce
 
             int radiusIndex = 5;
             foreach (Vector2 spawnPosition in spawnPositions)
-            {
-                metroidList.Add(CreateMetroid(ConvertUnits.ToSimUnits(spawnPosition),
-                    (float)unitCircle.IndexedRadianDictionary(radiusIndex),
+            {//Possibly change this to a for loop, because it's not currently randomizing sin and cos properly.
+                metroidList.Add(CreateMetroid(
+                    spawnPosition,
+                    (float)unitCircle.RadiansList.Values[radiusIndex],
                     0f));
                 radiusIndex += 2;
             }
@@ -127,18 +133,13 @@ namespace Bounce
             return metroidList;
         }
 
-        public Metroid CreateMetroidAtMouse()
+        public Metroid CreateMetroidAtMouse(Matrix cameraMatrix)
         {
-            Metroid m = new Metroid();
-            Vector2 spawnPosition = new Vector2(BounceGame.MouseState.X, BounceGame.MouseState.Y);
-            m.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
+            Metroid m = CreateMetroid(
+                BounceGame.MouseState.X,
+                BounceGame.MouseState.Y);
 
             return m;
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            base.Update(gameTime);
         }
     }
 }
