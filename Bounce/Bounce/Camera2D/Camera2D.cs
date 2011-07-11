@@ -19,26 +19,26 @@ namespace Bounce
         public float Rotation;
         private Vector2 movement;
 
-        public void Step()
+        public void Update(KeyboardState keyboardState)
         {
             movement = Vector2.Zero;
 
-            if (BounceGame.KeyboardState.GetPressedKeys().Length != 0)
+            if (keyboardState.GetPressedKeys().Length != 0)
             {
-                if (BounceGame.KeyboardState.IsKeyDown(Keys.NumPad5)) //Reset fields
+                if (keyboardState.IsKeyDown(Keys.NumPad5)) //Reset fields
                 {
                     Position = new Vector2(BounceGame.Graphics.GraphicsDevice.Viewport.Width * 0.5f, BounceGame.Graphics.GraphicsDevice.Viewport.Height * 0.5f);
                     Zoom = 1f;
                     Rotation = 0f;
                 }
 
-                if (BounceGame.KeyboardState.IsKeyDown(Keys.NumPad8))
+                if (keyboardState.IsKeyDown(Keys.NumPad8))
                     movement.Y += -1f;
-                if (BounceGame.KeyboardState.IsKeyDown(Keys.NumPad6))
+                if (keyboardState.IsKeyDown(Keys.NumPad6))
                     movement.X += 1f;
-                if (BounceGame.KeyboardState.IsKeyDown(Keys.NumPad2))
+                if (keyboardState.IsKeyDown(Keys.NumPad2))
                     movement.Y += 1f;
-                if (BounceGame.KeyboardState.IsKeyDown(Keys.NumPad4))
+                if (keyboardState.IsKeyDown(Keys.NumPad4))
                     movement.X += -1f;
 
                 if (movement != Vector2.Zero)
@@ -47,9 +47,9 @@ namespace Bounce
                 Position += movement * BounceGame.MovementCoEf;
 
                 //Consider changing to exponential multiplication for zoom's value.
-                if (BounceGame.KeyboardState.IsKeyDown(Keys.Add))
+                if (keyboardState.IsKeyDown(Keys.Add))
                     Zoom += 0.025f;
-                if (BounceGame.KeyboardState.IsKeyDown(Keys.Subtract))
+                if (keyboardState.IsKeyDown(Keys.Subtract))
                     Zoom += -0.025f;
 
                 //To do: implement camera rotation around the Z axis.

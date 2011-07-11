@@ -17,23 +17,17 @@ namespace Bounce
     {
         //XNA Framework objects
         public static GraphicsDeviceManager Graphics;
-        public static SpriteBatch SpriteBatch;
-        public static KeyboardState KeyboardState, PreviousKeyboardState;
-        public static MouseState MouseState, PreviousMouseState;
+        private SpriteBatch spriteBatch;
         public static ContentManager ContentManager;
 
         //Farseer Physics objects
-        public static World World;
-        public DebugBounce DebugFarseer;
+        private World world;
+        private DebugBounce debugFarseer;
 
         //Regular objects
         private Camera2D camera;
-        public ItemFactory ObjectCreator;
-        public static List<PhysicalSprite> PhysicalSprites;
-        private List<Obstacle> obstacles;
-        private List<Metroid> metroids;
+        private List<PhysicalItem> physicalSprites;
         private Framing framing;
-        private Samus samus;
         private Random r;
         public static float MovementCoEf = 3.00f; //Needs more thought.
         public static int CreationLimit = 1000; //Needs more thought.
@@ -41,15 +35,13 @@ namespace Bounce
         public BounceGame()
         {
             Graphics = new GraphicsDeviceManager(this);
-            KeyboardState = new KeyboardState();
-            MouseState = new MouseState();
             ContentManager = new ContentManager(Services);
 
-            World = new World(Vector2.UnitY * 5f);
-            DebugFarseer = new DebugBounce(this);
+            world = new World(Vector2.UnitY * 5f);
+            debugFarseer = new DebugBounce(this, world);
 
-            ObjectCreator = new ItemFactory();
-            PhysicalSprites = new List<PhysicalSprite>();
+            physicalSprites = new List<PhysicalItem>();
+            ItemFactory.ActiveList = physicalSprites;
             r = new Random();
         }
 
@@ -67,14 +59,14 @@ namespace Bounce
 
         protected override void LoadContent()
         {
-            SpriteBatch = new SpriteBatch(GraphicsDevice);
+            spriteBatch = new SpriteBatch(GraphicsDevice);
             camera = new Camera2D();
 
-            framing = new Framing(this);
-            samus = new Samus();
-            //obstacles = ObjectCreator.CreateObstacles(r.Next(0, 6));
-            //ObjectCreator.CreateMetroidsOnObstacles(ref obstacles, 25);
-            metroids = ObjectCreator.CreateHorizontalMetroidRow(5, new Vector2(50, 189), 135);
+            framing = new Framing(world);
+            ItemFactory.CreateSamus(world);
+            List<Obstacle> obstacles = ItemFactory.CreateRandomObstacles(world, r.Next(0, 6));
+            ItemFactory.CreateMetroidsOnObstacles(world, obstacles, 50);
+            //ItemFactory.CreateHorizontalMetroidRow(world, 5, new Vector2(50, 189), 135);
         }
 
         protected override void UnloadContent()
@@ -84,36 +76,33 @@ namespace Bounce
 
         private void handleInput() //This should be refactored to somewhere other than the game loop class.
         {
-            if (MouseState != PreviousMouseState)
+            if (Input.IsNewState())
+
             {
-                if (InputHelper.LeftClickRelease())
-                    ObjectCreator.CreateMetroidAtMouse(camera.GetTransformation(GraphicsDevice));
+                if (Input.LeftClickRelease())
+                    ItemFactory.CreateMetroidAtMouse(world, Input.MouseState);
             }
         }
 
         protected override void Update(GameTime gameTime)
         {
-            PreviousMouseState = MouseState;
-            PreviousKeyboardState = KeyboardState;
-
-            KeyboardState = Keyboard.GetState();
-            MouseState = Mouse.GetState();
+            Input.Update(Mouse.GetState(), Keyboard.GetState());
             handleInput();
 
-            for (int i = 0; i < PhysicalSprites.Count; i++)
+            for (int i = 0; i < physicalSprites.Count; i++)
             {//TODO Change this to the way flameshadow@##XNA showed you - http://www.monstersoft.com/wp/?p=500#more-500
-                if (PhysicalSprites[i].IsAlive)
-                    PhysicalSprites[i].Update(gameTime);
+                if (physicalSprites[i].IsAlive)
+                    physicalSprites[i].Update(gameTime);
                 else
                 {
-                    PhysicalSprites[i].Body.Dispose();
-                    PhysicalSprites.RemoveAt(i);
+                    physicalSprites[i].Body.Dispose();
+                    physicalSprites.RemoveAt(i);
                     i--;
                 }
             }
 
-            camera.Step();
-            World.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
+            camera.Update(Input.KeyboardState);
+            world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
             base.Update(gameTime);
         }
 
@@ -121,17 +110,18 @@ namespace Bounce
         {
             GraphicsDevice.Clear(Color.Black);
 
-            SpriteBatch.Begin(
+            spriteBatch.Begin(
                 SpriteSortMode.Immediate, BlendState.AlphaBlend,
                 null, null, null, null,
                 camera.GetTransformation(GraphicsDevice));
 
-            framing.Draw();
-            foreach (PhysicalSprite sprite in PhysicalSprites)
-                sprite.Draw(SpriteBatch);
+            framing.Draw(spriteBatch);
+
+            foreach (PhysicalItem sprite in physicalSprites)
+                sprite.Draw(spriteBatch);
             
-            SpriteBatch.End();
-            DebugFarseer.Draw();
+            spriteBatch.End();
+            debugFarseer.Draw();
             base.Draw(gameTime);
         }
     }

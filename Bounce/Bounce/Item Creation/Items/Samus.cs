@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -12,14 +13,14 @@ using FarseerPhysics.Factories;
 
 namespace Bounce
 {
-    public class Samus : PhysicalSprite
+    public class Samus : PhysicalItem
     {
-        public Samus()
+        public Samus(World world)
         {
             Texture = BounceGame.ContentManager.Load<Texture2D>("samus");
 
             Body = BodyFactory.CreateCompoundPolygon(
-                BounceGame.World,
+                world,
                 VectorStructures.TextureToBayazitList(Texture),
                 1f, true);
 
@@ -40,26 +41,25 @@ namespace Bounce
         private Vector2 force;
         public override void Update(GameTime gameTime)
         {
-            BounceGame.KeyboardState = Keyboard.GetState();
             force = Vector2.Zero;
 
-            if (BounceGame.KeyboardState.GetPressedKeys().Length != 0)
+            if (Input.KeyboardState.GetPressedKeys().Length != 0)
             {
-                if (BounceGame.KeyboardState.IsKeyDown(Keys.W))
+                if (Input.KeyboardState.IsKeyDown(Keys.W))
                 {
                     force = Vector2.Add(force, -Vector2.UnitY);
-                    if (InputHelper.KeyPressUnique(Keys.W))
+                    if (Input.KeyPressUnique(Keys.W))
                         Body.ApplyLinearImpulse(force * BounceGame.MovementCoEf);
                 }
-                if (BounceGame.KeyboardState.IsKeyDown(Keys.D))
+                if (Input.KeyboardState.IsKeyDown(Keys.D))
                 {
                     force = Vector2.Add(force, Vector2.UnitX);
                 }
-                if (BounceGame.KeyboardState.IsKeyDown(Keys.S))
+                if (Input.KeyboardState.IsKeyDown(Keys.S))
                 {
                     force = Vector2.Add(force, Vector2.UnitY);
                 }
-                if (BounceGame.KeyboardState.IsKeyDown(Keys.A))
+                if (Input.KeyboardState.IsKeyDown(Keys.A))
                 {
                     force = Vector2.Add(force, -Vector2.UnitX);
                 }
@@ -67,9 +67,9 @@ namespace Bounce
                 Vector2.Normalize(force);
                 Body.ApplyForce(force * BounceGame.MovementCoEf);
 
-                if (BounceGame.KeyboardState.IsKeyDown(Keys.Right))
+                if (Input.KeyboardState.IsKeyDown(Keys.Right))
                     Body.ApplyTorque(1f * BounceGame.MovementCoEf);
-                if (BounceGame.KeyboardState.IsKeyDown(Keys.Left))
+                if (Input.KeyboardState.IsKeyDown(Keys.Left))
                     Body.ApplyTorque(1f * BounceGame.MovementCoEf);
             }
         }

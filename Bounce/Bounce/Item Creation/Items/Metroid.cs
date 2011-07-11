@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -9,15 +10,16 @@ using FarseerPhysics.Factories;
 
 namespace Bounce
 {
-    public class Metroid : PhysicalSprite
+    public class Metroid : PhysicalItem
     {
-        public Metroid(float sinRadius, float cosRadius) : this()
+        public Metroid(World world, float sinRadius, float cosRadius)
+            : this(world)
         {
             this.cosRadius = cosRadius;
             this.sinRadius = sinRadius;
         }
 
-        public Metroid()
+        public Metroid(World world)
         {
             this.IsAlive = true;
             Texture = BounceGame.ContentManager.Load<Texture2D>("metroid");
@@ -25,7 +27,7 @@ namespace Bounce
             unitCircle = new UnitCircle();
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
 
-            Body = BodyFactory.CreateCircle(BounceGame.World,
+            Body = BodyFactory.CreateCircle(world,
                         ConvertUnits.ToSimUnits(this.Texture.Width / 2),
                         ConvertUnits.ToSimUnits(this.Texture.Height / 2), 1);
 
@@ -44,12 +46,12 @@ namespace Bounce
         {
             if (this.IsAlive)
             {
-                if (BounceGame.KeyboardState.GetPressedKeys().Length != 0) //All keyboard interactions in the following block
+                if (Input.IsNewState())
                 {
-                    if (InputHelper.KeyPressUnique(Keys.Space)) //Caution: experimental, horribly messy, and convoluted.
+                    if (Input.KeyPressUnique(Keys.Space)) //Caution: experimental, horribly messy, and convoluted.
                     {
                         //Body.IgnoreGravity ^= true;
-                        sinActive ^= true;
+                        sinActive = !sinActive;
 
                         if (sinRadius == 0 && cosRadius == 0)
                         {
@@ -66,22 +68,19 @@ namespace Bounce
                     }
                 }
 
-                if (BounceGame.MouseState != BounceGame.PreviousMouseState) //All mouse interactions inside the following block
-                {
-                    if (InputHelper.RickClickRelease())
-                        this.IsAlive = false;
-                }
+                if (Input.RickClickRelease())
+                    IsAlive = false;
+            }
 
-                if (sinActive)
-                {
-                    SinMotion();
-                    CosMotion();
+            if (sinActive)
+            {
+                SinMotion();
+                CosMotion();
 
-                    if (Body.Position.Y > sinCenter.Y + distanceLimit || Body.Position.Y < sinCenter.Y - distanceLimit)
-                        sinCenter.Y -= sinCenter.Y - Body.Position.Y;
-                    if (Body.Position.X > sinCenter.X + distanceLimit || Body.Position.X < sinCenter.X - distanceLimit)
-                        sinCenter.X -= sinCenter.X - Body.Position.X;
-                }
+                if (Body.Position.Y > sinCenter.Y + distanceLimit || Body.Position.Y < sinCenter.Y - distanceLimit)
+                    sinCenter.Y -= sinCenter.Y - Body.Position.Y;
+                if (Body.Position.X > sinCenter.X + distanceLimit || Body.Position.X < sinCenter.X - distanceLimit)
+                    sinCenter.X -= sinCenter.X - Body.Position.X;
             }
         }
 

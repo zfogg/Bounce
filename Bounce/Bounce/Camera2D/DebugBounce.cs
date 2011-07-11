@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using FarseerPhysics;
+using FarseerPhysics.Dynamics;
 using FarseerPhysics.DebugViews;
 
 namespace Bounce
@@ -9,11 +10,11 @@ namespace Bounce
     {
         DebugViewXNA DebugViewXNA;
         Game game;
-        public DebugBounce(Game game)
+        public DebugBounce(Game game, World world)
             : base(game)
         {
             this.game = game;
-            DebugViewXNA = new DebugViewXNA(BounceGame.World);
+            DebugViewXNA = new DebugViewXNA(world);
 
             game.Components.Add(this);
         }
@@ -39,52 +40,48 @@ namespace Bounce
 
             base.Initialize();
         }
-       
+
         public override void Update(GameTime gameTime)
         {
-            HandleInput(gameTime);
-            base.Update(gameTime);
-        }
-
-        public void HandleInput(GameTime gameTime)
-        {
-            if (BounceGame.KeyboardState.GetPressedKeys().Length != 0)
+            if (Input.IsNewState())
             {
-                if (InputHelper.KeyPressUnique(Keys.F1))
+                if (Input.KeyPressUnique(Keys.F1))
                 {
                     EnableOrDisableFlag(DebugViewFlags.Shape);
                 }
-                if (InputHelper.KeyPressUnique(Keys.F2))
+                if (Input.KeyPressUnique(Keys.F2))
                 {
                     EnableOrDisableFlag(DebugViewFlags.DebugPanel);
                     EnableOrDisableFlag(DebugViewFlags.PerformanceGraph);
                 }
-                if (InputHelper.KeyPressUnique(Keys.F3))
+                if (Input.KeyPressUnique(Keys.F3))
                 {
                     EnableOrDisableFlag(DebugViewFlags.Joint);
                 }
-                if (InputHelper.KeyPressUnique(Keys.F4))
+                if (Input.KeyPressUnique(Keys.F4))
                 {
                     EnableOrDisableFlag(DebugViewFlags.ContactPoints);
                     EnableOrDisableFlag(DebugViewFlags.ContactNormals);
                 }
-                if (InputHelper.KeyPressUnique(Keys.F5))
+                if (Input.KeyPressUnique(Keys.F5))
                 {
                     EnableOrDisableFlag(DebugViewFlags.PolygonPoints);
                 }
-                if (InputHelper.KeyPressUnique(Keys.F6))
+                if (Input.KeyPressUnique(Keys.F6))
                 {
                     EnableOrDisableFlag(DebugViewFlags.Controllers);
                 }
-                if (InputHelper.KeyPressUnique(Keys.F7))
+                if (Input.KeyPressUnique(Keys.F7))
                 {
                     EnableOrDisableFlag(DebugViewFlags.CenterOfMass);
                 }
-                if (InputHelper.KeyPressUnique(Keys.F8))
+                if (Input.KeyPressUnique(Keys.F8))
                 {
                     EnableOrDisableFlag(DebugViewFlags.AABB);
                 }
             }
+
+            base.Update(gameTime);
         }
 
         private void EnableOrDisableFlag(DebugViewFlags flag)

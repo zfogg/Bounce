@@ -1,19 +1,20 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using FarseerPhysics;
 using FarseerPhysics.Dynamics;
 
 
 namespace Bounce
 {
-    public class PhysicalSprite
+    public abstract class PhysicalItem
     {
-        public PhysicalSprite()
+        public PhysicalItem()
         {
             this.IsAlive = true;
             r = new Random();
-            BounceGame.PhysicalSprites.Add(this);
         }
 
         protected Random r;
@@ -23,10 +24,7 @@ namespace Bounce
         protected SpriteEffects spriteEffects;
         protected Vector2 origin;
 
-        public virtual void Update(GameTime gametime)
-        {
-
-        }
+        public abstract void Update(GameTime gametime);
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
