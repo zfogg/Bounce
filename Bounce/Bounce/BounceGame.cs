@@ -77,7 +77,6 @@ namespace Bounce
         private void handleInput() //This should be refactored to somewhere other than the game loop class.
         {
             if (Input.IsNewState())
-
             {
                 if (Input.LeftClickRelease())
                     ItemFactory.CreateMetroidAtMouse(world, Input.MouseState);
@@ -101,7 +100,7 @@ namespace Bounce
                 }
             }
 
-            camera.Update(Input.KeyboardState);
+            camera.Update();
             world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
             base.Update(gameTime);
         }
