@@ -69,14 +69,9 @@ namespace Bounce
             //ItemFactory.CreateHorizontalMetroidRow(world, 5, new Vector2(50, 189), 135);
         }
 
-        protected override void UnloadContent()
-        {
-
-        }
-
         private void handleInput() //This should be refactored to somewhere other than the game loop class.
         {
-            if (Input.IsNewState())
+            if (Input.IsNewState)
             {
                 if (Input.LeftClickRelease())
                     ItemFactory.CreateMetroidAtMouse(world, Input.MouseState);
@@ -85,24 +80,30 @@ namespace Bounce
 
         protected override void Update(GameTime gameTime)
         {
-            Input.Update(Mouse.GetState(), Keyboard.GetState());
-            handleInput();
+            if (this.IsActive)
+            {
+                Input.Update(Mouse.GetState(), Keyboard.GetState());
+                handleInput();
 
-            for (int i = 0; i < physicalSprites.Count; i++)
-            {//TODO Change this to the way flameshadow@##XNA showed you - http://www.monstersoft.com/wp/?p=500#more-500
-                if (physicalSprites[i].IsAlive)
-                    physicalSprites[i].Update(gameTime);
-                else
-                {
-                    physicalSprites[i].Body.Dispose();
-                    physicalSprites.RemoveAt(i);
-                    i--;
+                for (int i = 0; i < physicalSprites.Count; i++)
+                {//TODO Change this to the way flameshadow@##XNA showed you - http://www.monstersoft.com/wp/?p=500#more-500
+                    if (physicalSprites[i].IsAlive)
+                        physicalSprites[i].Update(gameTime);
+                    else
+                    {
+                        physicalSprites[i].Body.Dispose();
+                        physicalSprites.RemoveAt(i);
+                        i--;
+                    }
                 }
-            }
 
-            camera.Update();
-            world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
-            base.Update(gameTime);
+                camera.Update();
+                world.Gravity.X = (float)Math.Sin(camera.Rotation) * 5f;
+                world.Gravity.Y = (float)Math.Cos(camera.Rotation) * 5f;
+
+                world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
+                base.Update(gameTime);
+            }
         }
 
         protected override void Draw(GameTime gameTime)

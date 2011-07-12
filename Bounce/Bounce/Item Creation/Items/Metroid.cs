@@ -44,33 +44,35 @@ namespace Bounce
 
         public override void Update(GameTime gameTime) // Idea: make metroids hover when they near the ground.
         {
-            if (this.IsAlive)
+            if (Input.IsNewState)
             {
-                if (Input.IsNewState())
+                if (Input.KeyPressUnique(Keys.Space)) //Caution: experimental, horribly messy, and convoluted.
                 {
-                    if (Input.KeyPressUnique(Keys.Space)) //Caution: experimental, horribly messy, and convoluted.
+                    sinActive = !sinActive;
+
+                    if (sinRadius == 0 && cosRadius == 0)
                     {
-                        //Body.IgnoreGravity ^= true;
-                        sinActive = !sinActive;
-
-                        if (sinRadius == 0 && cosRadius == 0)
-                        {
-                            sinRadius = (float)unitCircle.RandomSegment();
-                            cosRadius = (float)unitCircle.RandomSegment();
-                        }
-
-                        sinCenter = Body.Position;
-                        sinCenter.X += (float)Math.Cos((double)cosRadius);
-
-                        Body.ApplyLinearImpulse(new Vector2(
-                            cosRadius / 4f,
-                            sinRadius / 2f));
+                        sinRadius = (float)unitCircle.RandomSegment();
+                        cosRadius = (float)unitCircle.RandomSegment();
                     }
-                }
 
-                if (Input.RickClickRelease())
-                    IsAlive = false;
+                    sinCenter = Body.Position;
+                    sinCenter.X += (float)Math.Cos((double)cosRadius);
+
+                    Body.ApplyLinearImpulse(new Vector2(
+                        cosRadius / 4f,
+                        sinRadius / 2f));
+                }
             }
+
+            if (Input.MiddleClickUnique())
+            {
+                Body.Awake = true;
+                Body.IgnoreGravity = !Body.IgnoreGravity;
+            }
+
+            if (Input.RickClickRelease())
+                IsAlive = false;
 
             if (sinActive)
             {

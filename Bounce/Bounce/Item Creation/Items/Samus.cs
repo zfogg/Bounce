@@ -43,7 +43,7 @@ namespace Bounce
         {
             force = Vector2.Zero;
 
-            if (Input.KeyboardState.GetPressedKeys().Length != 0)
+            if (Input.IsNewState)
             {
                 if (Input.KeyboardState.IsKeyDown(Keys.W))
                 {

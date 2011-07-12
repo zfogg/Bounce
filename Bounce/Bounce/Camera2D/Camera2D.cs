@@ -23,7 +23,7 @@ namespace Bounce
         {
             movement = Vector2.Zero;
 
-            if (Input.KeyboardState.GetPressedKeys().Length != 0)
+            if (Input.IsNewState)
             {
                 if (Input.KeyboardState.IsKeyDown(Keys.NumPad5)) //Reset fields
                 {
@@ -31,7 +31,7 @@ namespace Bounce
                     Zoom = 1f;
                     Rotation = 0f;
                 }
-
+                
                 if (Input.KeyboardState.IsKeyDown(Keys.NumPad8))
                     movement.Y += -1f;
                 if (Input.KeyboardState.IsKeyDown(Keys.NumPad6))
@@ -52,7 +52,10 @@ namespace Bounce
                 if (Input.KeyboardState.IsKeyDown(Keys.Subtract))
                     Zoom += -0.025f;
 
-                //To do: implement camera rotation around the Z axis.
+                if (Input.KeyboardState.IsKeyDown(Keys.PageUp))
+                    Rotation += 0.025f;
+                if (Input.KeyboardState.IsKeyDown(Keys.PageDown))
+                    Rotation += -0.025f;
             }
         }
 

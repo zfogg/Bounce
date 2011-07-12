@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
 
@@ -6,32 +7,26 @@ namespace Bounce
 {
     public static class Input
     {
-        public static KeyboardState KeyboardState
-        {
-            get { return keyboardState; }
-        }
-
-        public static MouseState MouseState
-        {
-            get { return mouseState; }
-        }
-
-        private static KeyboardState keyboardState, previousKeyboardState;
+        public static MouseState MouseState { get { return mouseState; } }
+        public static KeyboardState KeyboardState { get { return keyboardState; } }
         private static MouseState mouseState, previousMouseState;
+        private static KeyboardState keyboardState, previousKeyboardState;
+        
+        public static bool IsNewState { get; set; }
+        private static bool isNewMouseState { set { IsNewState = true; } }
+        private static bool isNewKeyboardState { set { IsNewState = true; } }
 
         public static void Update(MouseState newMouseState, KeyboardState newKeyboardState)
         {
-            previousMouseState = mouseState;
-            mouseState = newMouseState;
+                if (newMouseState != previousMouseState)
+                    isNewMouseState = true;
+                previousMouseState = mouseState;
+                mouseState = newMouseState;
 
-            previousKeyboardState = keyboardState;
-            keyboardState = newKeyboardState;
-        }
-
-        public static bool IsNewState()
-        {
-            return (keyboardState == previousKeyboardState) && (mouseState == previousMouseState)
-                ? false : true;
+                if (newKeyboardState != previousKeyboardState)
+                    isNewKeyboardState = true;
+                previousKeyboardState = keyboardState;
+                keyboardState = newKeyboardState;
         }
 
         public static bool KeyPressUnique(Keys key)
@@ -68,6 +63,18 @@ namespace Bounce
         public static bool RickClickRelease()
         {
             return (mouseState.RightButton == ButtonState.Released && previousMouseState.RightButton == ButtonState.Pressed)
+                ? true : false;
+        }
+
+        public static bool MiddleClickUnique()
+        {
+            return (mouseState.MiddleButton == ButtonState.Pressed && previousMouseState.MiddleButton == ButtonState.Released)
+                ? true : false;
+        }
+
+        public static bool MiddleClickRelease()
+        {
+            return (mouseState.MiddleButton == ButtonState.Released && previousMouseState.MiddleButton == ButtonState.Pressed)
                 ? true : false;
         }
     }

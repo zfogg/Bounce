@@ -43,7 +43,7 @@ namespace Bounce
 
         public override void Update(GameTime gameTime)
         {
-            if (Input.IsNewState())
+            if (Input.IsNewState)
             {
                 if (Input.KeyPressUnique(Keys.F1))
                 {
