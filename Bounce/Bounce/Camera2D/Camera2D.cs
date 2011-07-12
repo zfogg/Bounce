@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Bounce
 {
-    class Camera2D// : GameComponent
+    public class Camera2D
     {
         public Camera2D()
         {

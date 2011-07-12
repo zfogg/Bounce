@@ -35,10 +35,10 @@ namespace Bounce
         public BounceGame()
         {
             Graphics = new GraphicsDeviceManager(this);
-            ContentManager = new ContentManager(Services);
+            ContentManager = new ContentManager(this.Services);
 
             world = new World(Vector2.UnitY * 5f);
-            debugFarseer = new DebugBounce(this, world);
+            debugFarseer = new DebugBounce(world);
 
             physicalSprites = new List<PhysicalItem>();
             ItemFactory.ActiveList = physicalSprites;
@@ -54,6 +54,7 @@ namespace Bounce
             Graphics.ApplyChanges();
             ContentManager.RootDirectory = "Content";
 
+            debugFarseer.Initialize();
             base.Initialize();
         }
 
@@ -64,8 +65,8 @@ namespace Bounce
 
             framing = new Framing(world);
             ItemFactory.CreateSamus(world);
-            List<Obstacle> obstacles = ItemFactory.CreateRandomObstacles(world, r.Next(0, 6));
-            ItemFactory.CreateMetroidsOnObstacles(world, obstacles, 50);
+            //List<Obstacle> obstacles = ItemFactory.CreateRandomObstacles(world, r.Next(0, 6));
+            //ItemFactory.CreateMetroidsOnObstacles(world, obstacles, 50);
             //ItemFactory.CreateHorizontalMetroidRow(world, 5, new Vector2(50, 189), 135);
         }
 
@@ -81,29 +82,29 @@ namespace Bounce
         protected override void Update(GameTime gameTime)
         {
             if (this.IsActive)
-            {
                 Input.Update(Mouse.GetState(), Keyboard.GetState());
-                handleInput();
 
-                for (int i = 0; i < physicalSprites.Count; i++)
-                {//TODO Change this to the way flameshadow@##XNA showed you - http://www.monstersoft.com/wp/?p=500#more-500
-                    if (physicalSprites[i].IsAlive)
-                        physicalSprites[i].Update(gameTime);
-                    else
-                    {
-                        physicalSprites[i].Body.Dispose();
-                        physicalSprites.RemoveAt(i);
-                        i--;
-                    }
+            handleInput();
+
+            for (int i = 0; i < physicalSprites.Count; i++)
+            {//TODO Change this to the way flameshadow@##XNA showed you - http://www.monstersoft.com/wp/?p=500#more-500
+                if (physicalSprites[i].IsAlive)
+                    physicalSprites[i].Update(gameTime);
+                else
+                {
+                    physicalSprites[i].Body.Dispose();
+                    physicalSprites.RemoveAt(i);
+                    i--;
                 }
-
-                camera.Update();
-                world.Gravity.X = (float)Math.Sin(camera.Rotation) * 5f;
-                world.Gravity.Y = (float)Math.Cos(camera.Rotation) * 5f;
-
-                world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
-                base.Update(gameTime);
             }
+
+            camera.Update();
+            world.Gravity.X = (float)Math.Sin(camera.Rotation) * 5f;
+            world.Gravity.Y = (float)Math.Cos(camera.Rotation) * 5f;
+
+            world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
+            debugFarseer.Update(gameTime);
+            base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -113,15 +114,15 @@ namespace Bounce
             spriteBatch.Begin(
                 SpriteSortMode.Immediate, BlendState.AlphaBlend,
                 null, null, null, null,
-                camera.GetTransformation(GraphicsDevice));
+                camera.GetTransformation(this.GraphicsDevice));
 
-            framing.Draw(spriteBatch);
+            //framing.Draw(spriteBatch);
 
             foreach (PhysicalItem sprite in physicalSprites)
                 sprite.Draw(spriteBatch);
-            
+
             spriteBatch.End();
-            debugFarseer.Draw();
+            debugFarseer.Draw(camera, this.GraphicsDevice);
             base.Draw(gameTime);
         }
     }

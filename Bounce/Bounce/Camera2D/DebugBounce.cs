@@ -1,4 +1,6 @@
+using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using FarseerPhysics;
 using FarseerPhysics.Dynamics;
@@ -6,22 +8,17 @@ using FarseerPhysics.DebugViews;
 
 namespace Bounce
 {
-    public class DebugBounce : Microsoft.Xna.Framework.GameComponent
+    public class DebugBounce
     {
         DebugViewXNA DebugViewXNA;
-        Game game;
-        public DebugBounce(Game game, World world)
-            : base(game)
+        public DebugBounce(World world)
         {
-            this.game = game;
             DebugViewXNA = new DebugViewXNA(world);
-
-            game.Components.Add(this);
         }
 
         private Matrix projection, view;
 
-        public override void Initialize()
+        public void Initialize()
         {
             DebugViewXNA.LoadContent(BounceGame.Graphics.GraphicsDevice, BounceGame.ContentManager);
             DebugViewXNA.RemoveFlags(DebugViewFlags.Shape);
@@ -37,11 +34,9 @@ namespace Bounce
             Matrix tran = Matrix.Identity;
             tran.Translation = campos;
             view = tran;
-
-            base.Initialize();
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             if (Input.IsNewState)
             {
@@ -80,8 +75,6 @@ namespace Bounce
                     EnableOrDisableFlag(DebugViewFlags.AABB);
                 }
             }
-
-            base.Update(gameTime);
         }
 
         private void EnableOrDisableFlag(DebugViewFlags flag)
@@ -96,8 +89,22 @@ namespace Bounce
             }
         }
 
-        public void Draw()
+        public void Draw(Camera2D camera, GraphicsDevice graphicsDevice)
         {
+            // Projection (location and zoom)
+            float width = (1f / camera.Zoom) * ConvertUnits.ToSimUnits(graphicsDevice.Viewport.Width);
+            float height = (-1f / camera.Zoom) * ConvertUnits.ToSimUnits(graphicsDevice.Viewport.Height);
+            float zNearPlane = 0f;
+            float zFarPlane = 1000000f;
+            projection = Matrix.CreateOrthographic(width, height, zNearPlane, zFarPlane);
+
+            // View (translation and rotation)
+            float xTranslation = -1 * ConvertUnits.ToSimUnits(camera.Position.X);
+            float yTranslation = -1 * ConvertUnits.ToSimUnits(camera.Position.Y);
+            Vector3 translationVector = new Vector3(xTranslation, yTranslation, 0f);
+            view = Matrix.Identity * (Matrix.CreateRotationZ(camera.Rotation));
+            view.Translation = translationVector;
+
             DebugViewXNA.RenderDebugData(ref projection, ref view);
         }
     }
