@@ -29,6 +29,8 @@ namespace Bounce
                 keyboardState = newKeyboardState;
         }
 
+        public static Vector2 MouseCursorPosition { get { return new Vector2(mouseState.X, mouseState.Y); } }
+
         public static bool KeyPressUnique(Keys key)
         {
             return (keyboardState.IsKeyDown(key) && previousKeyboardState.IsKeyUp(key))

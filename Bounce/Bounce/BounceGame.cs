@@ -76,7 +76,7 @@ namespace Bounce
             if (Input.IsNewState)
             {
                 if (Input.LeftClickRelease())
-                    ItemFactory.CreateMetroidAtMouse(world, Input.MouseState);
+                    ItemFactory.CreateMetroid(world, Input.MouseCursorPosition);
             }
         }
 

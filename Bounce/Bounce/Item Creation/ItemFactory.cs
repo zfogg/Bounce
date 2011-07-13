@@ -15,7 +15,11 @@ namespace Bounce
         private static List<PhysicalItem> activeList;
         public static List<PhysicalItem> ActiveList { set { activeList = value; } }
         private static PhysicalItem _newItem;
-        private static PhysicalItem newItem { get { return _newItem; } set { activeList.Add(value); _newItem = value; } }
+        private static PhysicalItem newItem
+        {
+            get { return _newItem; }
+            set { activeList.Add(value); _newItem = value; }
+        }
 
         public static Samus CreateSamus(World world)
         {
@@ -65,11 +69,6 @@ namespace Bounce
             }
 
             return obstacleList;
-        }
-
-        public static void CreateMetroidAtMouse(World world, MouseState mouseState)
-        {
-            CreateMetroid(world, new Vector2(mouseState.X, mouseState.Y));
         }
 
         public static Metroid CreateMetroid(World world, Vector2 spawnPosition)
