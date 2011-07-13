@@ -16,6 +16,7 @@ namespace Bounce
     public class Samus : PhysicalItem
     {
         public Samus(World world)
+            : base(world)
         {
             Texture = BounceGame.ContentManager.Load<Texture2D>("samus");
 

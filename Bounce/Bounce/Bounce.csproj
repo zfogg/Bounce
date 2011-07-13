@@ -131,6 +131,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Item Creation\Items\Paddle.cs" />
     <Compile Include="Item Creation\VectorStructures.cs" />
     <Compile Include="etc\UnitCircle.cs" />
     <Compile Include="Camera2D\Camera2D.cs" />

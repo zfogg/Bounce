@@ -11,12 +11,13 @@ namespace Bounce
 {
     public abstract class PhysicalItem
     {
-        public PhysicalItem()
+        public PhysicalItem(World world)
         {
+            this.world = world;
             this.IsAlive = true;
             r = new Random();
         }
-
+        protected World world;
         protected Random r;
         public Body Body;
         public bool IsAlive;

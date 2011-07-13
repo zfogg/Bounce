@@ -13,26 +13,34 @@ namespace Bounce
     public static class ItemFactory
     {
         private static List<PhysicalItem> activeList;
-        public static List<PhysicalItem> ActiveList
-        {
-            set { activeList = value; }
-        }
+        public static List<PhysicalItem> ActiveList { set { activeList = value; } }
+        private static PhysicalItem _newItem;
+        private static PhysicalItem newItem { get { return _newItem; } set { activeList.Add(value); _newItem = value; } }
 
         public static Samus CreateSamus(World world)
         {
-            Samus s = new Samus(world);
-            activeList.Add(s);
+            newItem = new Samus(world);
+            return (Samus)newItem;
+        }
 
-            return s;
+        public static Paddle CreatePaddle(World world)
+        {
+            newItem = new Paddle(world);
+            return (Paddle)newItem;
+        }
+
+        public static Paddle CreatePaddle(World world, Vector2 spawnPosition)
+        {
+            newItem = new Paddle(world, ConvertUnits.ToSimUnits(spawnPosition));
+            return (Paddle)newItem;
         }
 
         public static Obstacle CreateObstacle(World world, Vector2 spawnPosition)
         {
-            Obstacle o = new Obstacle(world);
-            o.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
+            newItem = new Obstacle(world);
+            newItem.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
 
-            activeList.Add(o);
-            return o;
+            return (Obstacle)newItem;
         }
 
         public static List<Obstacle> CreateRandomObstacles(World world, int number)
@@ -54,7 +62,6 @@ namespace Bounce
                     );
 
                 Obstacle o = CreateObstacle(world, spawnPosition);
-                obstacleList.Add(o);
             }
 
             return obstacleList;
@@ -67,20 +74,18 @@ namespace Bounce
 
         public static Metroid CreateMetroid(World world, Vector2 spawnPosition)
         {
-            Metroid m = new Metroid(world);
-            m.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
+            newItem = new Metroid(world);
+            newItem.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
 
-            activeList.Add(m);
-            return m;
+            return (Metroid)newItem;
         }
 
         public static Metroid CreateMetroid(World world, Vector2 spawnPosition, float sinRadius, float cosRadius)
         {
-            Metroid m = new Metroid(world, sinRadius, cosRadius);
-            m.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
+            newItem = new Metroid(world, sinRadius, cosRadius);
+            newItem.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
 
-            activeList.Add(m);
-            return m;
+            return (Metroid)newItem;
         }
 
         public static List<Metroid> CreateMetroidsOnObstacles(World world, List<Obstacle> obstacles, int percentchance)
@@ -114,10 +119,8 @@ namespace Bounce
             int radiusIndex = 5;
             foreach (Vector2 spawnPosition in spawnPositions)
             {//Possibly change this to a for loop, because it's not currently randomizing sin and cos properly.
-                metroidList.Add(CreateMetroid(world,
-                    spawnPosition,
-                    (float)unitCircle.RadiansList.Values[radiusIndex],
-                    0f));
+                Metroid m = CreateMetroid(world, spawnPosition, (float)unitCircle.RadiansList.Values[radiusIndex], 0f);
+                metroidList.Add(m);
                 radiusIndex += 2;
             }
 

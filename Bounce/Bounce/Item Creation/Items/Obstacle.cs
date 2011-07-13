@@ -11,6 +11,7 @@ namespace Bounce
     public class Obstacle : PhysicalItem
     {
         public Obstacle(World world)
+            : base(world)
         {
             Texture = BounceGame.ContentManager.Load<Texture2D>("obstacle");
 

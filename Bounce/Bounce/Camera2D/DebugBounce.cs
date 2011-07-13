@@ -91,18 +91,22 @@ namespace Bounce
 
         public void Draw(Camera2D camera, GraphicsDevice graphicsDevice)
         {
-            // Projection (location and zoom)
-            float width = (1f / camera.Zoom) * ConvertUnits.ToSimUnits(graphicsDevice.Viewport.Width);
-            float height = (-1f / camera.Zoom) * ConvertUnits.ToSimUnits(graphicsDevice.Viewport.Height);
-            float zNearPlane = 0f;
-            float zFarPlane = 1000000f;
-            projection = Matrix.CreateOrthographic(width, height, zNearPlane, zFarPlane);
+            // Projection (zoom)
+            float width = (1f / camera.Zoom) * ConvertUnits.ToSimUnits(graphicsDevice.Viewport.Width / 2);
+            float height = (-1f / camera.Zoom) * ConvertUnits.ToSimUnits(graphicsDevice.Viewport.Height / 2);
+            //projection = Matrix.CreateOrthographic(width, height, 1f, 1000000f);
+            projection = Matrix.CreateOrthographicOffCenter(
+                -width,
+                width,
+                -height,
+                height,
+                0f, 1000000f);
 
             // View (translation and rotation)
             float xTranslation = -1 * ConvertUnits.ToSimUnits(camera.Position.X);
             float yTranslation = -1 * ConvertUnits.ToSimUnits(camera.Position.Y);
             Vector3 translationVector = new Vector3(xTranslation, yTranslation, 0f);
-            view = Matrix.Identity * (Matrix.CreateRotationZ(camera.Rotation));
+            view = Matrix.CreateRotationZ(camera.Rotation);
             view.Translation = translationVector;
 
             DebugViewXNA.RenderDebugData(ref projection, ref view);

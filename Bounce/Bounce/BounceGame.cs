@@ -65,6 +65,7 @@ namespace Bounce
 
             framing = new Framing(world);
             ItemFactory.CreateSamus(world);
+            ItemFactory.CreatePaddle(world, new Vector2(Graphics.GraphicsDevice.Viewport.Width / 2, Graphics.GraphicsDevice.Viewport.Height - 25));
             //List<Obstacle> obstacles = ItemFactory.CreateRandomObstacles(world, r.Next(0, 6));
             //ItemFactory.CreateMetroidsOnObstacles(world, obstacles, 50);
             //ItemFactory.CreateHorizontalMetroidRow(world, 5, new Vector2(50, 189), 135);
@@ -116,7 +117,7 @@ namespace Bounce
                 null, null, null, null,
                 camera.GetTransformation(this.GraphicsDevice));
 
-            //framing.Draw(spriteBatch);
+            framing.Draw(spriteBatch);
 
             foreach (PhysicalItem sprite in physicalSprites)
                 sprite.Draw(spriteBatch);

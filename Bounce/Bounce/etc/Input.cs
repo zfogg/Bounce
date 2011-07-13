@@ -12,7 +12,7 @@ namespace Bounce
         private static MouseState mouseState, previousMouseState;
         private static KeyboardState keyboardState, previousKeyboardState;
         
-        public static bool IsNewState { get; set; }
+        public static bool IsNewState { get; set; } // It doesn't appear as though this is ever being set to false
         private static bool isNewMouseState { set { IsNewState = true; } }
         private static bool isNewKeyboardState { set { IsNewState = true; } }
 

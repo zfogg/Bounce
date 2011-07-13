@@ -27,7 +27,7 @@ namespace Bounce
             {
                 if (Input.KeyboardState.IsKeyDown(Keys.NumPad5)) //Reset fields
                 {
-                    Position = new Vector2(BounceGame.Graphics.GraphicsDevice.Viewport.Width * 0.5f, BounceGame.Graphics.GraphicsDevice.Viewport.Height * 0.5f);
+                    //Position = new Vector2(BounceGame.Graphics.GraphicsDevice.Viewport.Width * 0.5f, BounceGame.Graphics.GraphicsDevice.Viewport.Height * 0.5f);
                     Zoom = 1f;
                     Rotation = 0f;
                 }

@@ -20,6 +20,7 @@ namespace Bounce
         }
 
         public Metroid(World world)
+            : base(world)
         {
             this.IsAlive = true;
             Texture = BounceGame.ContentManager.Load<Texture2D>("metroid");
@@ -57,11 +58,11 @@ namespace Bounce
                     }
 
                     sinCenter = Body.Position;
-                    sinCenter.X += (float)Math.Cos((double)cosRadius);
+                    sinCenter.X += (float)Math.Sin((double)cosRadius);
 
                     Body.ApplyLinearImpulse(new Vector2(
-                        cosRadius / 4f,
-                        sinRadius / 2f));
+                        (float)unitCircle.RandomSign(unitCircle.RandomSegment()),
+                        (float)unitCircle.RandomSign(unitCircle.RandomSegment())));
                 }
             }
 
