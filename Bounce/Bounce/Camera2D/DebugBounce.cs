@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using FarseerPhysics;
@@ -18,18 +19,18 @@ namespace Bounce
 
         private Matrix projection, view;
 
-        public void Initialize()
+        public void Initialize(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
-            DebugViewXNA.LoadContent(BounceGame.Graphics.GraphicsDevice, BounceGame.ContentManager);
+            DebugViewXNA.LoadContent(graphicsDevice, contentManager);
             DebugViewXNA.RemoveFlags(DebugViewFlags.Shape);
 
             projection = Matrix.CreateOrthographic(
-                BounceGame.Graphics.PreferredBackBufferWidth / 100.0f,
-                -BounceGame.Graphics.PreferredBackBufferHeight / 100.0f, 0, 1000000);
+                graphicsDevice.Viewport.Width / 100.0f,
+                -graphicsDevice.Viewport.Height / 100.0f, 0, 1000000);
 
             Vector3 campos = new Vector3();
-            campos.X = (-BounceGame.Graphics.PreferredBackBufferWidth / 2) / 100.0f;
-            campos.Y = (BounceGame.Graphics.PreferredBackBufferHeight / 2) / -100.0f;
+            campos.X = (-graphicsDevice.Viewport.Width / 2) / 100.0f;
+            campos.Y = (graphicsDevice.Viewport.Height / 2) / -100.0f;
             campos.Z = 0;
             Matrix tran = Matrix.Identity;
             tran.Translation = campos;

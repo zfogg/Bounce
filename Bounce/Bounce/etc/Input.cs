@@ -11,22 +11,25 @@ namespace Bounce
         public static KeyboardState KeyboardState { get { return keyboardState; } }
         private static MouseState mouseState, previousMouseState;
         private static KeyboardState keyboardState, previousKeyboardState;
-        
-        public static bool IsNewState { get; set; } // It doesn't appear as though this is ever being set to false
-        private static bool isNewMouseState { set { IsNewState = true; } }
-        private static bool isNewKeyboardState { set { IsNewState = true; } }
+
+        public static bool IsNewState { get { return isNewState; } set { isNewState = value; } } // It doesn't appear as though this is ever being set to false
+        private static bool isNewState;
 
         public static void Update(MouseState newMouseState, KeyboardState newKeyboardState)
         {
-                if (newMouseState != previousMouseState)
-                    isNewMouseState = true;
-                previousMouseState = mouseState;
-                mouseState = newMouseState;
+            IsNewState = false;
 
-                if (newKeyboardState != previousKeyboardState)
-                    isNewKeyboardState = true;
-                previousKeyboardState = keyboardState;
-                keyboardState = newKeyboardState;
+            if (newMouseState != previousMouseState)
+                isNewState = true;
+
+            previousMouseState = mouseState;
+            mouseState = newMouseState;
+
+            if (newKeyboardState != previousKeyboardState || newKeyboardState.GetPressedKeys().Length != 0)
+                isNewState = true;
+
+            previousKeyboardState = keyboardState;
+            keyboardState = newKeyboardState;
         }
 
         public static Vector2 MouseCursorPosition { get { return new Vector2(mouseState.X, mouseState.Y); } }

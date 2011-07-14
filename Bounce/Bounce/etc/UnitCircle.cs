@@ -7,37 +7,36 @@ namespace Bounce
     {
         public UnitCircle()
         {
-            pi = Math.PI;
-            r = new Random();
+            tau = Math.PI * 2;
             RadiansList = new SortedList<CircleRadians, double>();
             Initialize();
         }
 
-        private double pi;
-        private Random r;
+        private double tau;
+        private static Random r = new Random();
         public SortedList<CircleRadians, double> RadiansList;
 
         public enum CircleRadians
         {
-            PiOverSix, // 30°
-            PiOverFour, // 45°
-            PiOverThree, // 60°
-            PiOverTwo, // 90°
+            Twelfth, // 30°
+            Eighth, // 45°
+            Sixth, // 60°
+            Quarter, // 90°
 
-            TwoPiOverThree, // 120°
-            ThreePiOverFour, // 135°
-            FivePiOverSix, // 150°
-            PiOverOne, // 180°
+            Third, // 120°
+            ThreeEighths, // 135°
+            FiveTwelfths, // 150°
+            Half, // 180°
 
-            SevenPiOverSix, // 210°
-            FivePiOverFour, // 225°
-            FourPiOverThree, // 240°
-            ThreePiOverTwo, //270
+            SevenTwelfths, // 210°
+            FiveEighths, // 225°
+            TwoThirds, // 240°
+            ThreeQuarters, //270
 
-            FivePiOverThree, // 300°
-            SevenPiOverFour, // 315°
-            ElevenPiOverSix, // 330°
-            TwoPi // 360°
+            FiveSixths, // 300°
+            SevenEighths, // 315°
+            ElevenTwefths, // 330°
+            One // 360°
         }
 
         public double RandomSegment()
@@ -52,25 +51,25 @@ namespace Bounce
 
         private void Initialize()
         {
-            RadiansList.Add(CircleRadians.PiOverSix, pi / 6);
-            RadiansList.Add(CircleRadians.PiOverFour, pi / 4);
-            RadiansList.Add(CircleRadians.PiOverThree, pi / 3);
-            RadiansList.Add(CircleRadians.PiOverTwo, pi / 2);
+            RadiansList.Add(CircleRadians.Twelfth, tau / 12);
+            RadiansList.Add(CircleRadians.Eighth, tau / 8);
+            RadiansList.Add(CircleRadians.Sixth, tau / 6);
+            RadiansList.Add(CircleRadians.Quarter, tau / 4);
 
-            RadiansList.Add(CircleRadians.TwoPiOverThree, (2 * pi) / 3);
-            RadiansList.Add(CircleRadians.ThreePiOverFour, (3 * pi) / 4);
-            RadiansList.Add(CircleRadians.FivePiOverSix, (5 * pi) / 6);
-            RadiansList.Add(CircleRadians.PiOverOne, pi);
+            RadiansList.Add(CircleRadians.Third, tau / 3);
+            RadiansList.Add(CircleRadians.ThreeEighths, (3 * tau) / 8);
+            RadiansList.Add(CircleRadians.FiveTwelfths, (5 * tau) / 12);
+            RadiansList.Add(CircleRadians.Half, tau / 2);
 
-            RadiansList.Add(CircleRadians.SevenPiOverSix, (7 * pi) / 6);
-            RadiansList.Add(CircleRadians.FivePiOverFour, (5 * pi) / 4);
-            RadiansList.Add(CircleRadians.FourPiOverThree, (4 * pi) / 3);
-            RadiansList.Add(CircleRadians.ThreePiOverTwo, (3 * pi) / 2);
+            RadiansList.Add(CircleRadians.SevenTwelfths, (7 * tau) / 12);
+            RadiansList.Add(CircleRadians.FiveEighths, (5 * tau) / 8);
+            RadiansList.Add(CircleRadians.TwoThirds, (2 * tau) / 3);
+            RadiansList.Add(CircleRadians.ThreeQuarters, (3 * tau) / 4);
 
-            RadiansList.Add(CircleRadians.FivePiOverThree, (5 * pi) / 3);
-            RadiansList.Add(CircleRadians.SevenPiOverFour, (7 * pi) / 4);
-            RadiansList.Add(CircleRadians.ElevenPiOverSix, (11 * pi) / 6);
-            RadiansList.Add(CircleRadians.TwoPi, 2 * pi);
+            RadiansList.Add(CircleRadians.FiveSixths, (5 * tau) / 6);
+            RadiansList.Add(CircleRadians.SevenEighths, (7 * tau) / 8);
+            RadiansList.Add(CircleRadians.ElevenTwefths, (11 * tau) / 12);
+            RadiansList.Add(CircleRadians.One, tau);
         }
     }
 }

@@ -14,11 +14,12 @@ namespace Bounce
         public PhysicalItem(World world)
         {
             this.world = world;
+            world.ContactManager.OnBroadphaseCollision += OnBroadphaseCollision;
             this.IsAlive = true;
-            r = new Random();
         }
+
         protected World world;
-        protected Random r;
+        protected static Random r = new Random();
         public Body Body;
         public bool IsAlive;
         public Texture2D Texture;
@@ -26,6 +27,7 @@ namespace Bounce
         protected Vector2 origin;
 
         public abstract void Update(GameTime gametime);
+        public virtual void OnBroadphaseCollision(ref FixtureProxy fp1, ref FixtureProxy fp2) { }
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {

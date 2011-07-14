@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using FarseerPhysics;
 using FarseerPhysics.Dynamics;
+using FarseerPhysics.Dynamics.Contacts;
 using FarseerPhysics.Factories;
 
 
@@ -38,6 +39,8 @@ namespace Bounce
             Body.Restitution = .35f;
             Body.AngularDamping = 0.075f;
             Body.IgnoreGravity = true;
+
+            Body.OnCollision += new OnCollisionEventHandler(OnCollision);
         }
 
         private UnitCircle unitCircle;
@@ -60,20 +63,19 @@ namespace Bounce
                     sinCenter = Body.Position;
                     sinCenter.X += (float)Math.Sin((double)cosRadius);
 
-                    Body.ApplyLinearImpulse(new Vector2(
-                        (float)unitCircle.RandomSign(unitCircle.RandomSegment()),
-                        (float)unitCircle.RandomSign(unitCircle.RandomSegment())));
+                    Body.ApplyLinearImpulse(new Vector2((float)cosRadius / 2f, (float)sinRadius / 2f));
                 }
-            }
 
-            if (Input.MiddleClickUnique())
-            {
-                Body.Awake = true;
-                Body.IgnoreGravity = !Body.IgnoreGravity;
-            }
 
-            if (Input.RickClickRelease())
-                IsAlive = false;
+                if (Input.MiddleClickUnique())
+                {
+                    Body.Awake = true;
+                    Body.IgnoreGravity = !Body.IgnoreGravity;
+                }
+
+                if (Input.RickClickRelease())
+                    IsAlive = false;
+            }
 
             if (sinActive)
             {
@@ -87,9 +89,9 @@ namespace Bounce
             }
         }
 
-        bool sinActive;
-        Vector2 sinForce, sinCenter;
-        float sinRadius, distanceLimit = 2f;
+        private bool sinActive;
+        private Vector2 sinForce, sinCenter;
+        private float sinRadius, distanceLimit = 2f;
         private void SinMotion() //Messy and experimental.
         {
             sinForce = Vector2.Zero;
@@ -103,6 +105,14 @@ namespace Bounce
             sinForce = Vector2.Zero;
             sinForce.X = (float)Math.Sin((Body.Position.X - sinCenter.X));
             Body.ApplyForce((-sinForce) * cosRadius);
+        }
+
+        public bool OnCollision(Fixture fixtureA, Fixture fixtureB, Contact contact)
+        {
+            if (fixtureB.Body.UserData == typeof(Framing))
+                this.IsAlive = false;
+
+            return true;
         }
     }
 }

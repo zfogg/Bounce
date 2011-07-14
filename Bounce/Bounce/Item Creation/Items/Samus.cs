@@ -24,12 +24,7 @@ namespace Bounce
                 world,
                 VectorStructures.TextureToBayazitList(Texture),
                 1f, true);
-
             origin = VectorStructures.TextureToVertices(Texture).GetCentroid(); //Need the centroid, not center, for a polygon body shape.
-            Body.Position = new Vector2(
-                ConvertUnits.ToSimUnits(BounceGame.Graphics.PreferredBackBufferWidth * 0.20f),
-                ConvertUnits.ToSimUnits(ConvertUnits.ToDisplayUnits(Framing.FloorBody.Position.Y) - (Framing.FloorTexture.Height / 2) - (Texture.Height / 2))
-            );
 
             Body.BodyType = BodyType.Dynamic;
             Body.FixedRotation = true; //This causes Body.Mass to reset.

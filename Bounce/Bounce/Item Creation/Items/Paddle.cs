@@ -26,7 +26,7 @@ namespace Bounce
             Body.BodyType = BodyType.Dynamic;
             Body.Mass = 4f;
             Body.Restitution = 1.0125f;
-            Body.Friction = 1f;
+            Body.Friction = float.MaxValue;
 
             fixedPrismJoint = JointFactory.CreateFixedPrismaticJoint(world, Body, Body.Position, new Vector2(1f, 0f));
             fixedPrismJoint.MaxMotorForce = 100.0f; // maximum force in Newtons
@@ -36,6 +36,7 @@ namespace Bounce
             fixedPrismJoint.MotorEnabled = true;
 
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
+            Body.UserData = this.GetType();
         }
 
         public Paddle(World world)

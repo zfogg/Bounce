@@ -6,11 +6,11 @@ namespace Bounce
 {
     public class Camera2D
     {
-        public Camera2D()
+        public Camera2D(Viewport viewPort)
         {
             Zoom = 1.0f;
             Rotation = 0.0f;
-            Position = new Vector2(BounceGame.Graphics.GraphicsDevice.Viewport.Width * 0.5f, BounceGame.Graphics.GraphicsDevice.Viewport.Height * 0.5f);
+            Position = new Vector2(viewPort.Width * 0.5f, viewPort.Height * 0.5f);
         }
 
         public Vector2 Position;

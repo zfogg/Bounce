@@ -16,7 +16,7 @@ namespace Bounce
     public class BounceGame : Microsoft.Xna.Framework.Game
     {
         //XNA Framework objects
-        public static GraphicsDeviceManager Graphics;
+        private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         public static ContentManager ContentManager;
 
@@ -34,7 +34,7 @@ namespace Bounce
 
         public BounceGame()
         {
-            Graphics = new GraphicsDeviceManager(this);
+            graphics = new GraphicsDeviceManager(this);
             ContentManager = new ContentManager(this.Services);
 
             world = new World(Vector2.UnitY * 5f);
@@ -47,28 +47,28 @@ namespace Bounce
 
         protected override void Initialize()
         {
-            Graphics.PreferredBackBufferWidth = 800;
-            Graphics.PreferredBackBufferHeight = 480;
+            graphics.PreferredBackBufferWidth = 800;
+            graphics.PreferredBackBufferHeight = 480;
             Window.Title = "Bounce";
             IsMouseVisible = true;
-            Graphics.ApplyChanges();
+            graphics.ApplyChanges();
             ContentManager.RootDirectory = "Content";
 
-            debugFarseer.Initialize();
+            debugFarseer.Initialize(GraphicsDevice, ContentManager);
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            camera = new Camera2D();
+            camera = new Camera2D(GraphicsDevice.Viewport);
 
-            framing = new Framing(world);
-            ItemFactory.CreateSamus(world);
-            ItemFactory.CreatePaddle(world, new Vector2(Graphics.GraphicsDevice.Viewport.Width / 2, Graphics.GraphicsDevice.Viewport.Height - 25));
-            //List<Obstacle> obstacles = ItemFactory.CreateRandomObstacles(world, r.Next(0, 6));
+            framing = new Framing(world, GraphicsDevice.Viewport);
+            ItemFactory.CreateSamus(world, GraphicsDevice.Viewport);
+            ItemFactory.CreatePaddle(world, new Vector2(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Height - 25));
+            //List<Obstacle> obstacles = ItemFactory.CreateRandomObstacles(world, GraphicsDevice.Viewport, r.Next(0, 6));
             //ItemFactory.CreateMetroidsOnObstacles(world, obstacles, 50);
-            //ItemFactory.CreateHorizontalMetroidRow(world, 5, new Vector2(50, 189), 135);
+            ItemFactory.CreateHorizontalMetroidRow(world, 5, new Vector2(50, 189), 135);
         }
 
         private void handleInput() //This should be refactored to somewhere other than the game loop class.
@@ -77,6 +77,9 @@ namespace Bounce
             {
                 if (Input.LeftClickRelease())
                     ItemFactory.CreateMetroid(world, Input.MouseCursorPosition);
+
+                if (Input.KeyPressUnique(Keys.Scroll))
+                    ItemFactory.CreateHorizontalMetroidRow(world, 5, Input.MouseCursorPosition, 10);
             }
         }
 
@@ -123,7 +126,7 @@ namespace Bounce
                 sprite.Draw(spriteBatch);
 
             spriteBatch.End();
-            debugFarseer.Draw(camera, this.GraphicsDevice);
+            debugFarseer.Draw(camera, GraphicsDevice);
             base.Draw(gameTime);
         }
     }

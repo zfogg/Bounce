@@ -8,6 +8,7 @@ using FarseerPhysics;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
 
+
 namespace Bounce
 {
     public static class ItemFactory
@@ -15,15 +16,15 @@ namespace Bounce
         private static List<PhysicalItem> activeList;
         public static List<PhysicalItem> ActiveList { set { activeList = value; } }
         private static PhysicalItem _newItem;
-        private static PhysicalItem newItem
-        {
-            get { return _newItem; }
-            set { activeList.Add(value); _newItem = value; }
-        }
+        private static PhysicalItem newItem { get { return _newItem; } set { activeList.Add(value); _newItem = value; } }
 
-        public static Samus CreateSamus(World world)
+        public static Samus CreateSamus(World world, Viewport viewPort)
         {
             newItem = new Samus(world);
+            newItem.Body.Position = new Vector2(
+                ConvertUnits.ToSimUnits(viewPort.Width * 0.20f),
+                ConvertUnits.ToSimUnits(viewPort.Height - (newItem.Texture.Height / 2)));
+
             return (Samus)newItem;
         }
 
@@ -47,7 +48,7 @@ namespace Bounce
             return (Obstacle)newItem;
         }
 
-        public static List<Obstacle> CreateRandomObstacles(World world, int number)
+        public static List<Obstacle> CreateRandomObstacles(World world, Viewport viewPort, int number)
         {
             List<Obstacle> obstacleList = new List<Obstacle>();
             Random r = new Random();
@@ -59,13 +60,14 @@ namespace Bounce
                 //Randomly determine the spawning location
                     r.Next( //X axis.
                         (obstacleTexture.Width / 2), //Left: spawn fully inside the screen by at least the obstacle's Texture width.
-                        (BounceGame.Graphics.PreferredBackBufferWidth - obstacleTexture.Width)), //Right: spawn fully inside the screen by at least the obstacle's Texture width.
+                        (viewPort.Width - obstacleTexture.Width)), //Right: spawn fully inside the screen by at least the obstacle's Texture width.
                     r.Next( //Y axis.
-                        (int)((float)BounceGame.Graphics.PreferredBackBufferHeight * 0.20f), //Top: spawn below x% of the screen's height.
-                        (BounceGame.Graphics.PreferredBackBufferHeight - (obstacleTexture.Height * 2))) //Bottom: spawn above the floor by two of obstacle's Texture height.
+                        (int)((float)viewPort.Width * 0.20f), //Top: spawn below x% of the screen's height.
+                        (viewPort.Height - (obstacleTexture.Height * 2))) //Bottom: spawn above the floor by two of obstacle's Texture height.
                     );
 
-                Obstacle o = CreateObstacle(world, spawnPosition);
+                newItem = CreateObstacle(world, spawnPosition);
+                obstacleList.Add((Obstacle)newItem);
             }
 
             return obstacleList;
@@ -97,12 +99,12 @@ namespace Bounce
                 foreach (Obstacle obstacle in obstacles)
                     if (r.Next(1, 101) > percentchance)
                     {
-                        Metroid m = CreateMetroid(world, new Vector2(
+                        newItem = CreateMetroid(world, new Vector2(
                         //Calculate a spawnPosition that is a bit above the center of obstacle.
                         ConvertUnits.ToDisplayUnits(obstacle.Body.Position.X),
                         ConvertUnits.ToDisplayUnits(obstacle.Body.Position.Y - ConvertUnits.ToSimUnits(50f))));
 
-                        metroidList.Add(m);
+                        metroidList.Add((Metroid)newItem);
                     }
             }
 
