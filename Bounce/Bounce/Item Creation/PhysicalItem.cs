@@ -26,9 +26,12 @@ namespace Bounce
         protected SpriteEffects spriteEffects;
         protected Vector2 origin;
 
-        public abstract void Update(GameTime gametime);
         public virtual void OnBroadphaseCollision(ref FixtureProxy fp1, ref FixtureProxy fp2) { }
+        public virtual void Update(GameTime gametime) { }
 
+        /// <summary>
+        /// Classes that inherit from this need to override this method if they don't set Texture to something.
+        /// </summary>
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(

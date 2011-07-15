@@ -12,16 +12,31 @@ namespace Bounce
 {
     public static class VectorStructures
     {
-        public static List<Vector2> HorizontalRow(int numberofpositions, Vector2 startingposition, int pixelsapart)
+        public static List<Vector2> HorizontalRow(int numberOfPositions, Vector2 startingPosition, int pixelsApart)
         {
             
             List<Vector2> positions = new List<Vector2>();
-            positions.Add(startingposition);
+            positions.Add(startingPosition);
 
-            Vector2 position = startingposition;
-            for (int i = 0; i < numberofpositions * pixelsapart; i += pixelsapart)
+            Vector2 position = startingPosition;
+            for (int i = 0; i < numberOfPositions * pixelsApart; i += pixelsApart)
             {
-                position.X += (float)pixelsapart;
+                position.X += (float)pixelsApart;
+                positions.Add(position);
+            }
+
+            return positions;
+        }
+
+        public static List<Vector2> VerticalRow(int numberOfPositions, Vector2 startingPosition, int pixelsApart)
+        {
+            List<Vector2> positions = new List<Vector2>();
+            positions.Add(startingPosition);
+
+            Vector2 position = startingPosition;
+            for (int i = 0; i < numberOfPositions * pixelsApart; i += pixelsApart)
+            {
+                position.Y += (float)pixelsApart;
                 positions.Add(position);
             }
 

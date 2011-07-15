@@ -63,7 +63,7 @@ namespace Bounce
             spriteBatch = new SpriteBatch(GraphicsDevice);
             camera = new Camera2D(GraphicsDevice.Viewport);
 
-            background = new Background();
+            background = new Background(Vector2.Zero);
             ItemFactory.CreateFraming(world, 20);
             ItemFactory.CreateSamus(world);
             ItemFactory.CreatePaddle(world, new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height - 25));
@@ -79,8 +79,11 @@ namespace Bounce
                 if (Input.LeftClickRelease())
                     ItemFactory.CreateMetroid(world, Input.MouseCursorPosition);
 
+                if (Input.KeyPressUnique(Keys.PrintScreen))
+                    ItemFactory.CreateHorizontalMetroidRow(world, 5, Input.MouseCursorPosition, 20);
+
                 if (Input.KeyPressUnique(Keys.Scroll))
-                    ItemFactory.CreateHorizontalMetroidRow(world, 5, Input.MouseCursorPosition, 10);
+                    ItemFactory.CreateVerticalMetroidRow(world, 5, Input.MouseCursorPosition, 20);
             }
         }
 
@@ -106,8 +109,8 @@ namespace Bounce
             camera.Update();
             world.Gravity.X = (float)Math.Sin(camera.Rotation) * 5f;
             world.Gravity.Y = (float)Math.Cos(camera.Rotation) * 5f;
-
             world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
+
             debugFarseer.Update(gameTime);
             base.Update(gameTime);
         }
@@ -121,7 +124,7 @@ namespace Bounce
                 null, null, null, null,
                 camera.GetTransformation(this.GraphicsDevice));
 
-            background.Draw(spriteBatch);
+            //background.Draw(spriteBatch);
 
             foreach (PhysicalItem sprite in physicalSprites)
                 sprite.Draw(spriteBatch);

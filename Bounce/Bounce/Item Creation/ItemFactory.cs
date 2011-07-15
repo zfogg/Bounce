@@ -59,9 +59,9 @@ namespace Bounce
             return (Paddle)newItem;
         }
 
-        public static List<Body> CreateFraming(World world, int width)
+        public static List<PhysicalItem> CreateFraming(World world, int width)
         {
-            List<Body> bodyList = new List<Body>();
+            List<PhysicalItem> newItems = new List<PhysicalItem>();
 
             float x = WindowSize.X;
             float y = WindowSize.Y;
@@ -69,25 +69,22 @@ namespace Bounce
             {
                 for (float j = 0f; j <= y; j += y)
                 {
-                    Body newBody = BodyFactory.CreateRectangle(world,
-                        ConvertUnits.ToSimUnits(i == 0 ? x : width),
-                        ConvertUnits.ToSimUnits(i == 0 ? width : y),
-                        1f);
+                    newItem = new Rectangle(world,
+                        ConvertUnits.ToSimUnits(i == 0 ? (int)x : width),
+                        ConvertUnits.ToSimUnits(i == 0 ? width : (int)y));
 
                     Vector2 position = new Vector2(
                         i == 0 ? x / 2 : (i + (j == 0 ? width / 2 : -i + (-width / 2))),
                         j == 0 ? (i == 0 ? -width / 2 : y / 2) : (i == 0 ? j + width / 2 : j / 2));
 
-                    newBody.Position = ConvertUnits.ToSimUnits(position);
-                    newBody.BodyType = BodyType.Static;
-                    bodyList.Add(newBody);
+                    newItem.Body.Position = ConvertUnits.ToSimUnits(position);
+                    newItem.Body.BodyType = BodyType.Static;
+                    newItems.Add(newItem);
                 }
             }
 
-            return bodyList;
+            return newItems;
         }
-
-
 
         public static Obstacle CreateObstacle(World world, Vector2 spawnPosition)
         {
@@ -138,7 +135,7 @@ namespace Bounce
             return (Metroid)newItem;
         }
 
-        public static List<Metroid> CreateMetroidsOnObstacles(World world, List<Obstacle> obstacles, int percentchance)
+        public static List<Metroid> CreateMetroidsOnObstacles(World world, List<Obstacle> obstacles, int percentChance)
         {
             List<Metroid> metroidList = new List<Metroid>();
 
@@ -146,7 +143,7 @@ namespace Bounce
             {
                 Random r = new Random();
                 foreach (Obstacle obstacle in obstacles)
-                    if (r.Next(1, 101) > percentchance)
+                    if (r.Next(1, 101) > percentChance)
                     {
                         newItem = CreateMetroid(world, new Vector2(
                         //Calculate a spawnPosition that is a bit above the center of obstacle.
@@ -160,18 +157,34 @@ namespace Bounce
             return metroidList;
         }
 
-        public static List<Metroid> CreateHorizontalMetroidRow(World world, int numberofmetroids, Vector2 startingposition, int pixelsapart)
+        public static List<Metroid> CreateHorizontalMetroidRow(World world, int numberOfMetroids, Vector2 startingPosition, int pixelsApart)
         {
-            List<Vector2> spawnPositions = VectorStructures.HorizontalRow(numberofmetroids, startingposition, pixelsapart);
+            List<Vector2> spawnPositions = VectorStructures.HorizontalRow(numberOfMetroids, startingPosition, pixelsApart);
             List<Metroid> metroidList = new List<Metroid>();
 
             UnitCircle unitCircle = new UnitCircle();
             int radiusIndex = 5;
             foreach (Vector2 spawnPosition in spawnPositions)
-            {//Possibly change this to a for loop, because it's not currently randomizing sin and cos properly.
-                Metroid m = CreateMetroid(world, spawnPosition, (float)unitCircle.RadiansList.Values[radiusIndex], 0f);
-                metroidList.Add(m);
+            {
+                metroidList.Add(CreateMetroid(world, spawnPosition, (float)unitCircle.RadiansList.Values[radiusIndex], 0f));
                 radiusIndex += 2;
+            }
+
+            return metroidList;
+        }
+
+        public static List<Metroid> CreateVerticalMetroidRow(World world, int numberOfMetroids, Vector2 startingPosition, int pixelsApart)
+        {
+            List<Vector2> spawnPositions = VectorStructures.VerticalRow(numberOfMetroids, startingPosition, pixelsApart);
+            List<Metroid> metroidList = new List<Metroid>();
+
+            UnitCircle unitCircle = new UnitCircle();
+            int radiusIndex = 5;
+            foreach (Vector2 spawnPosition in spawnPositions)
+            {
+                metroidList.Add(CreateMetroid(world, spawnPosition, (float)unitCircle.RadiansList.Values[radiusIndex], 0f));
+                radiusIndex += 2;
+                
             }
 
             return metroidList;
