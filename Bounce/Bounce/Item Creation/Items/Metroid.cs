@@ -109,7 +109,7 @@ namespace Bounce
 
         public bool OnCollision(Fixture fixtureA, Fixture fixtureB, Contact contact)
         {
-            if (fixtureB.Body.UserData == typeof(Framing))
+            if (fixtureB.Body.UserData == typeof(Background))
                 this.IsAlive = false;
 
             return true;

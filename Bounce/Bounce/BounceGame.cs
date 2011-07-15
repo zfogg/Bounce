@@ -27,10 +27,9 @@ namespace Bounce
         //Regular objects
         private Camera2D camera;
         private List<PhysicalItem> physicalSprites;
-        private Framing framing;
+        private Background background;
         private Random r;
-        public static float MovementCoEf = 3.00f; //Needs more thought.
-        public static int CreationLimit = 1000; //Needs more thought.
+        public const float MovementCoEf = 3.00f; //Needs more thought.
 
         public BounceGame()
         {
@@ -41,7 +40,6 @@ namespace Bounce
             debugFarseer = new DebugBounce(world);
 
             physicalSprites = new List<PhysicalItem>();
-            ItemFactory.ActiveList = physicalSprites;
             r = new Random();
         }
 
@@ -54,6 +52,8 @@ namespace Bounce
             graphics.ApplyChanges();
             ContentManager.RootDirectory = "Content";
 
+            ItemFactory.ActiveList = physicalSprites;
+            ItemFactory.WindowSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             debugFarseer.Initialize(GraphicsDevice, ContentManager);
             base.Initialize();
         }
@@ -63,11 +63,12 @@ namespace Bounce
             spriteBatch = new SpriteBatch(GraphicsDevice);
             camera = new Camera2D(GraphicsDevice.Viewport);
 
-            framing = new Framing(world, GraphicsDevice.Viewport);
-            ItemFactory.CreateSamus(world, GraphicsDevice.Viewport);
-            ItemFactory.CreatePaddle(world, new Vector2(graphics.GraphicsDevice.Viewport.Width / 2, graphics.GraphicsDevice.Viewport.Height - 25));
-            //List<Obstacle> obstacles = ItemFactory.CreateRandomObstacles(world, GraphicsDevice.Viewport, r.Next(0, 6));
-            //ItemFactory.CreateMetroidsOnObstacles(world, obstacles, 50);
+            background = new Background();
+            ItemFactory.CreateFraming(world, 20);
+            ItemFactory.CreateSamus(world);
+            ItemFactory.CreatePaddle(world, new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height - 25));
+            List<Obstacle> obstacles = ItemFactory.CreateRandomObstacles(world, r.Next(0, 6));
+            ItemFactory.CreateMetroidsOnObstacles(world, obstacles, 50);
             ItemFactory.CreateHorizontalMetroidRow(world, 5, new Vector2(50, 189), 135);
         }
 
@@ -120,7 +121,7 @@ namespace Bounce
                 null, null, null, null,
                 camera.GetTransformation(this.GraphicsDevice));
 
-            framing.Draw(spriteBatch);
+            background.Draw(spriteBatch);
 
             foreach (PhysicalItem sprite in physicalSprites)
                 sprite.Draw(spriteBatch);

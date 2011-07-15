@@ -12,7 +12,9 @@ namespace Bounce
         private static MouseState mouseState, previousMouseState;
         private static KeyboardState keyboardState, previousKeyboardState;
 
-        public static bool IsNewState { get { return isNewState; } set { isNewState = value; } } // It doesn't appear as though this is ever being set to false
+        public static Vector2 MouseCursorPosition { get { return new Vector2(mouseState.X, mouseState.Y); } }
+
+        public static bool IsNewState { get { return isNewState; } set { isNewState = value; } }
         private static bool isNewState;
 
         public static void Update(MouseState newMouseState, KeyboardState newKeyboardState)
@@ -31,8 +33,6 @@ namespace Bounce
             previousKeyboardState = keyboardState;
             keyboardState = newKeyboardState;
         }
-
-        public static Vector2 MouseCursorPosition { get { return new Vector2(mouseState.X, mouseState.Y); } }
 
         public static bool KeyPressUnique(Keys key)
         {
