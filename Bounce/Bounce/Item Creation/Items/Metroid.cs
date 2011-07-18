@@ -36,7 +36,7 @@ namespace Bounce
             Body.IgnoreGravity = true;
 
             Body.OnCollision += new OnCollisionEventHandler(OnCollision);
-            Body.UserData = GetType();
+            Body.UserData = this;
         }
 
         private UnitCircle unitCircle;

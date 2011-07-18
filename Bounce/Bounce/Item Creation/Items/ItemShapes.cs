@@ -18,7 +18,7 @@ namespace Bounce
             : base(world)
         {
             Body = BodyFactory.CreateRectangle(world, width, height, 1f);
-            Body.UserData = this.GetType();
+            Body.UserData = this;
 
             Rectangle = new Rectangle(0, 0, (int)ConvertUnits.ToDisplayUnits(width), (int)ConvertUnits.ToDisplayUnits(height));
             UpdatePosition();
@@ -51,7 +51,7 @@ namespace Bounce
             : base(world)
         {
             Body = BodyFactory.CreateCircle(world, radius, 1f);
-            Body.UserData = this.GetType();
+            Body.UserData = this;
         }
     }
 }

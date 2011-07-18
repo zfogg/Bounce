@@ -14,8 +14,9 @@ namespace Bounce
         public PhysicalItem(World world)
         {
             this.world = world;
-            world.ContactManager.OnBroadphaseCollision += OnBroadphaseCollision;
             this.IsAlive = true;
+
+            world.ContactManager.OnBroadphaseCollision += OnBroadphaseCollision;
         }
 
         protected World world;
@@ -27,8 +28,14 @@ namespace Bounce
         protected Color drawColor = Color.White;
         protected Vector2 origin;
         public IndexKey IndexKey;
+        public MouseEvent MouseEvents;
 
         public virtual void OnBroadphaseCollision(ref FixtureProxy fp1, ref FixtureProxy fp2) { }
+        public virtual void OnMouseHover() { }
+        public virtual void OnLeftClick() { }
+        public virtual void OnRightClick() { }
+        public virtual void OnMouseWheel() { }
+
         public virtual void Kill()
         {
             this.IsAlive = false;

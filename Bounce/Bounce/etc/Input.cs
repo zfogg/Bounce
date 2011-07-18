@@ -1,10 +1,15 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using FarseerPhysics;
+using FarseerPhysics.Common;
+using FarseerPhysics.Dynamics;
 
 
 namespace Bounce
 {
+    public delegate void MouseEvent();
+
     public static class Input
     {
         public static MouseState MouseState { get { return mouseState; } }
@@ -13,10 +18,18 @@ namespace Bounce
         private static KeyboardState keyboardState, previousKeyboardState;
 
         public static Vector2 MouseCursorVector2 { get { return new Vector2(mouseState.X, mouseState.Y); } }
+        private static Vector2 previousMouseCursorVector2;
         public static Point MouseCursorPoint { get { return new Point(mouseState.X, mouseState.Y); } }
 
         public static bool IsNewState { get { return isNewState; } set { isNewState = value; } }
         private static bool isNewState;
+
+        //public static event MouseEvent OnMouseHover;
+        //public static event MouseEvent OnLeftClick;
+        //public static event MouseEvent OnRightClick;
+        //public static event MouseEvent OnMouseWheel;
+
+        private static PhysicalItem currentlySelectedItem;
 
         public static void Update(MouseState newMouseState, KeyboardState newKeyboardState)
         {
@@ -25,7 +38,25 @@ namespace Bounce
             if (newMouseState != previousMouseState)
                 isNewState = true;
 
+            if (isNewState)
+            {
+                try
+                {
+                    currentlySelectedItem = (PhysicalItem)BounceGame.World.TestPoint(
+                                            ConvertUnits.ToSimUnits(MouseCursorVector2))
+                                            .Body.UserData;
+                    if (LeftClickUnique())
+                        currentlySelectedItem.OnLeftClick();
+                    if (RightClickUnique())
+                        currentlySelectedItem.OnRightClick();
+                    if (MouseWheelForwards() || MouseWheelReverse())
+                        currentlySelectedItem.OnMouseWheel();
+                }
+                catch { currentlySelectedItem = null; }
+            }
+
             previousMouseState = mouseState;
+            previousMouseCursorVector2 = MouseCursorVector2;
             mouseState = newMouseState;
 
             if (newKeyboardState != previousKeyboardState || newKeyboardState.GetPressedKeys().Length != 0)
