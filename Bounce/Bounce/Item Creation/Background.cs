@@ -11,7 +11,7 @@ namespace Bounce
         public Background(Vector2 position)
         {
             this.position = position;
-            backgroundTexture = BounceGame.ContentManager.Load<Texture2D>("background");
+            backgroundTexture = BounceGame.ContentManager.Load<Texture2D>("background2");
         }
 
         private Texture2D backgroundTexture;

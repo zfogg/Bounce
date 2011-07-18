@@ -26,21 +26,24 @@ namespace Bounce
 
         //Regular objects
         private Camera2D camera;
-        private List<PhysicalItem> physicalSprites;
+        private Vector2 windowSize;
+        private Dictionary<IndexKey, PhysicalItem> physicalItems;
+        private List<PhysicalItem> itemsToKill;
         private Background background;
-        private Random r;
+        public static Random r = new Random();
         public const float MovementCoEf = 3.00f; //Needs more thought.
 
         public BounceGame()
         {
             graphics = new GraphicsDeviceManager(this);
+            windowSize = new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
             ContentManager = new ContentManager(this.Services);
 
             world = new World(Vector2.UnitY * 5f);
             debugFarseer = new DebugBounce(world);
 
-            physicalSprites = new List<PhysicalItem>();
-            r = new Random();
+            physicalItems = new Dictionary<IndexKey, PhysicalItem>();
+            itemsToKill = new List<PhysicalItem>(ItemFactory.CreationLimit);
         }
 
         protected override void Initialize()
@@ -52,8 +55,8 @@ namespace Bounce
             graphics.ApplyChanges();
             ContentManager.RootDirectory = "Content";
 
-            ItemFactory.ActiveList = physicalSprites;
-            ItemFactory.WindowSize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            ItemFactory.ActiveDict = physicalItems;
+            ItemFactory.WindowSize = windowSize;
             debugFarseer.Initialize(GraphicsDevice, ContentManager);
             base.Initialize();
         }
@@ -64,27 +67,15 @@ namespace Bounce
             camera = new Camera2D(GraphicsDevice.Viewport);
 
             background = new Background(Vector2.Zero);
-            ItemFactory.CreateFraming(world, 20);
+            ItemStructures.CreateFraming(world, windowSize, 20);
             ItemFactory.CreateSamus(world);
-            ItemFactory.CreatePaddle(world, new Vector2(GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height - 25));
-            List<Obstacle> obstacles = ItemFactory.CreateRandomObstacles(world, r.Next(0, 6));
-            ItemFactory.CreateMetroidsOnObstacles(world, obstacles, 50);
-            ItemFactory.CreateHorizontalMetroidRow(world, 5, new Vector2(50, 189), 135);
-        }
-
-        private void handleInput() //This should be refactored to somewhere other than the game loop class.
-        {
-            if (Input.IsNewState)
-            {
-                if (Input.LeftClickRelease())
-                    ItemFactory.CreateMetroid(world, Input.MouseCursorPosition);
-
-                if (Input.KeyPressUnique(Keys.PrintScreen))
-                    ItemFactory.CreateHorizontalMetroidRow(world, 5, Input.MouseCursorPosition, 20);
-
-                if (Input.KeyPressUnique(Keys.Scroll))
-                    ItemFactory.CreateVerticalMetroidRow(world, 5, Input.MouseCursorPosition, 20);
-            }
+            ItemFactory.CreatePaddle(world);
+            List<Obstacle> obstacles = ItemStructures.CreateRandomlyPositionedObstacles(world, windowSize, r.Next(10));
+            ItemStructures.MetroidsNearItems(world,
+                obstacles.ConvertAll<PhysicalItem>(x => (PhysicalItem)x),
+                Vector2.UnitY * 50f, 50);
+            //ItemStructures.MetroidRow(world, 5, new Vector2(50, 189), 135);
+            //ItemStructures.MetroidColumn(world, 5, new Vector2(windowSize.X / 2, 40), 80);
         }
 
         protected override void Update(GameTime gameTime)
@@ -94,17 +85,21 @@ namespace Bounce
 
             handleInput();
 
-            for (int i = 0; i < physicalSprites.Count; i++)
-            {//TODO Change this to the way flameshadow@##XNA showed you - http://www.monstersoft.com/wp/?p=500#more-500
-                if (physicalSprites[i].IsAlive)
-                    physicalSprites[i].Update(gameTime);
+            foreach (PhysicalItem item in physicalItems.Values)
+            {
+                if (item.IsAlive)
+                    item.Update(gameTime);
                 else
-                {
-                    physicalSprites[i].Body.Dispose();
-                    physicalSprites.RemoveAt(i);
-                    i--;
-                }
+                    itemsToKill.Add(item);
             }
+
+            foreach (PhysicalItem item in itemsToKill)
+            {
+                item.Kill();
+                physicalItems.Remove(item.IndexKey);
+            }
+
+            itemsToKill.RemoveRange(0, itemsToKill.Count);
 
             camera.Update();
             world.Gravity.X = (float)Math.Sin(camera.Rotation) * 5f;
@@ -113,6 +108,46 @@ namespace Bounce
 
             debugFarseer.Update(gameTime);
             base.Update(gameTime);
+        }
+
+        private Fixture grabFixtureAt(Vector2 position)
+        {
+            return world.TestPoint(position);
+        }
+
+        private void handleInput() //This should be refactored to somewhere other than the game loop class.
+        {
+            
+            if (Input.IsNewState)
+            {
+                if (Input.RightClickUnique() && Input.KeyboardState.IsKeyDown(Keys.Delete))
+                {
+                    Fixture fixture = world.TestPoint(ConvertUnits.ToSimUnits(Input.MouseCursorVector2));
+                    if (fixture != null)
+                        if (fixture.Body.UserData == typeof(Metroid) ||
+                            fixture.Body.UserData == typeof(Obstacle) ||
+                            fixture.Body.UserData == typeof(Brick))
+                            physicalItems[(IndexKey)fixture.Body.BodyId].Kill();
+                }
+
+                if (Input.KeyboardState.IsKeyDown(Keys.D1) && Input.LeftClickRelease())
+                    ItemFactory.CreateMetroid(world, Input.MouseCursorVector2);
+
+                if (Input.KeyboardState.IsKeyDown(Keys.D2) && Input.LeftClickRelease())
+                    ItemFactory.CreateBrick(world, Input.MouseCursorVector2);
+
+                if (Input.KeyboardState.IsKeyDown(Keys.D3) && Input.LeftClickRelease())
+                    ItemFactory.CreateObstacle(world, Input.MouseCursorVector2);
+
+                if (Input.KeyPressUnique(Keys.PrintScreen))
+                    ItemStructures.MetroidRow(world, 5, Input.MouseCursorVector2, 50);
+
+                if (Input.KeyPressUnique(Keys.Scroll))
+                    ItemStructures.MetroidColumn(world, 5, Input.MouseCursorVector2, 50);
+
+                if (Input.KeyPressUnique(Keys.D2) && Input.LeftClickRelease())
+                    ItemStructures.BrickRow(world, 5, Input.MouseCursorVector2, 40);
+            }
         }
 
         protected override void Draw(GameTime gameTime)
@@ -124,9 +159,9 @@ namespace Bounce
                 null, null, null, null,
                 camera.GetTransformation(this.GraphicsDevice));
 
-            //background.Draw(spriteBatch);
+            background.Draw(spriteBatch);
 
-            foreach (PhysicalItem sprite in physicalSprites)
+            foreach (PhysicalItem sprite in physicalItems.Values)
                 sprite.Draw(spriteBatch);
 
             spriteBatch.End();

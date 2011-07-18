@@ -43,21 +43,21 @@ namespace Bounce
             {
                 if (Input.KeyboardState.IsKeyDown(Keys.W))
                 {
-                    force = Vector2.Add(force, -Vector2.UnitY);
+                    force = -Vector2.UnitY;
                     if (Input.KeyPressUnique(Keys.W))
                         Body.ApplyLinearImpulse(force * BounceGame.MovementCoEf);
                 }
                 if (Input.KeyboardState.IsKeyDown(Keys.D))
                 {
-                    force = Vector2.Add(force, Vector2.UnitX);
+                    force += Vector2.UnitX;
                 }
                 if (Input.KeyboardState.IsKeyDown(Keys.S))
                 {
-                    force = Vector2.Add(force, Vector2.UnitY);
+                    force = Vector2.UnitY;
                 }
                 if (Input.KeyboardState.IsKeyDown(Keys.A))
                 {
-                    force = Vector2.Add(force, -Vector2.UnitX);
+                    force = -Vector2.UnitX;
                 }
 
                 Vector2.Normalize(force);
@@ -68,6 +68,8 @@ namespace Bounce
                 if (Input.KeyboardState.IsKeyDown(Keys.Left))
                     Body.ApplyTorque(1f * BounceGame.MovementCoEf);
             }
+
+            base.Update(gameTime);
         }
     }
 }

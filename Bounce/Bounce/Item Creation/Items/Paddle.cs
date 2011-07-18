@@ -10,52 +10,36 @@ using FarseerPhysics.Dynamics.Joints;
 
 namespace Bounce
 {
-    public class Paddle : PhysicalItem
+    public class Paddle : RectangleItem
     {
         FixedPrismaticJoint fixedPrismJoint;
 
-        public Paddle(World world, Vector2 spawnPosition)
-            : base(world)
+        public Paddle(World world, Texture2D texture, Vector2 spawnPosition)
+            : base(world, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height))
         {
-            Texture = BounceGame.ContentManager.Load<Texture2D>("obstacle");
+            this.Texture = texture;
+            drawColor = Color.MidnightBlue;
 
-            Body = BodyFactory.CreateRectangle(world,
-                    ConvertUnits.ToSimUnits(this.Texture.Width),
-                    ConvertUnits.ToSimUnits(this.Texture.Height), 1);
             Body.Position = spawnPosition;
             Body.BodyType = BodyType.Dynamic;
-            Body.Mass = 4f;
+            Body.IgnoreGravity = true;
+            Body.Mass = 1f;
             Body.Restitution = 1.0125f;
-            Body.Friction = 10f;
+            Body.Friction = 2.5f;
 
-            fixedPrismJoint = JointFactory.CreateFixedPrismaticJoint(world, Body, Body.Position, new Vector2(1f, 0f));
-            fixedPrismJoint.MaxMotorForce = 100.0f; // maximum force in Newtons
+            fixedPrismJoint = JointFactory.CreateFixedPrismaticJoint(
+                world, Body, Body.Position, Vector2.UnitX);
+            fixedPrismJoint.MaxMotorForce = 10f; //maximum force in Newtons
             fixedPrismJoint.UpperLimit = 3f;
             fixedPrismJoint.LowerLimit = -3f;
             fixedPrismJoint.LimitEnabled = true;
             fixedPrismJoint.MotorEnabled = true;
 
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
-            Body.UserData = this.GetType();
+            Body.UserData = GetType();
         }
 
-        public Paddle(World world)
-            : base(world)
-        {
-            Texture = BounceGame.ContentManager.Load<Texture2D>("obstacle");
-
-            Body = BodyFactory.CreateRectangle(world,
-                    ConvertUnits.ToSimUnits(this.Texture.Width),
-                    ConvertUnits.ToSimUnits(this.Texture.Height), 1);
-
-            Body.BodyType = BodyType.Dynamic;
-            Body.Restitution = 0f;
-            Body.Friction = 0f;
-
-            origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
-        }
-
-        public override void Update(GameTime gametime)
+        public override void Update(GameTime gameTime)
         {
             fixedPrismJoint.MotorSpeed = 0f;
             Vector2 orientation = Vector2.Normalize(world.Gravity);
@@ -65,18 +49,20 @@ namespace Bounce
                 if (Input.KeyboardState.IsKeyDown(Keys.Right))
                 {
                     if (orientation.Y >= 0)
-                        fixedPrismJoint.MotorSpeed = 2f;
+                        fixedPrismJoint.MotorSpeed = BounceGame.MovementCoEf * Body.Mass;
                     if (orientation.Y < 0)
-                        fixedPrismJoint.MotorSpeed = -2f;
+                        fixedPrismJoint.MotorSpeed = -BounceGame.MovementCoEf * Body.Mass;
                 }
                 if (Input.KeyboardState.IsKeyDown(Keys.Left))
                 {
                     if (orientation.Y >= 0)
-                        fixedPrismJoint.MotorSpeed = -2f;
+                        fixedPrismJoint.MotorSpeed = -BounceGame.MovementCoEf * Body.Mass;
                     if (orientation.Y < 0)
-                        fixedPrismJoint.MotorSpeed = 2f;
+                        fixedPrismJoint.MotorSpeed = BounceGame.MovementCoEf * Body.Mass;
                 }
             }
+
+            base.Update(gameTime);
         }
     }
 }

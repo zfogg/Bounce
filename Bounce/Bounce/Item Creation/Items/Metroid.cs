@@ -11,28 +11,23 @@ using FarseerPhysics.Factories;
 
 namespace Bounce
 {
-    public class Metroid : PhysicalItem
+    public class Metroid : CircleItem
     {
-        public Metroid(World world, float sinRadius, float cosRadius)
-            : this(world)
+        public Metroid(World world, Texture2D texture, float sinRadius, float cosRadius)
+            : this(world, texture)
         {
             this.cosRadius = cosRadius;
             this.sinRadius = sinRadius;
         }
 
-        public Metroid(World world)
-            : base(world)
+        public Metroid(World world, Texture2D texture)
+            : base(world, ConvertUnits.ToSimUnits(texture.Width / 2))
         {
-            this.IsAlive = true;
-            Texture = BounceGame.ContentManager.Load<Texture2D>("metroid");
-
-            unitCircle = new UnitCircle();
+            this.Texture = texture;
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
 
-            Body = BodyFactory.CreateCircle(world,
-                        ConvertUnits.ToSimUnits(this.Texture.Width / 2),
-                        ConvertUnits.ToSimUnits(this.Texture.Height / 2), 1);
-
+            unitCircle = new UnitCircle();
+            
             Body.BodyType = BodyType.Dynamic;
             Body.Mass = 1f;
             Body.Friction = 0.25f;
@@ -41,6 +36,7 @@ namespace Bounce
             Body.IgnoreGravity = true;
 
             Body.OnCollision += new OnCollisionEventHandler(OnCollision);
+            Body.UserData = GetType();
         }
 
         private UnitCircle unitCircle;
@@ -61,19 +57,18 @@ namespace Bounce
                     }
 
                     sinCenter = Body.Position;
-                    sinCenter.X += (float)Math.Sin((double)cosRadius);
+                    sinCenter.X -= (float)Math.Sin(cosRadius);
 
-                    Body.ApplyLinearImpulse(new Vector2((float)cosRadius / 2f, (float)sinRadius / 2f));
+                    Body.ApplyLinearImpulse(new Vector2((float)cosRadius / 2f, (float)sinRadius));
                 }
-
 
                 if (Input.MiddleClickUnique())
                 {
                     Body.Awake = true;
-                    Body.IgnoreGravity = !Body.IgnoreGravity;
+                    Body.IgnoreGravity ^= true;
                 }
 
-                if (Input.RickClickRelease())
+                if (Input.KeyboardState.IsKeyDown(Keys.D1) && Input.RickClickRelease())
                     IsAlive = false;
             }
 
@@ -87,6 +82,8 @@ namespace Bounce
                 if (Body.Position.X > sinCenter.X + distanceLimit || Body.Position.X < sinCenter.X - distanceLimit)
                     sinCenter.X -= sinCenter.X - Body.Position.X;
             }
+
+            base.Update(gameTime);
         }
 
         private bool sinActive;
@@ -109,7 +106,7 @@ namespace Bounce
 
         public bool OnCollision(Fixture fixtureA, Fixture fixtureB, Contact contact)
         {
-            if (fixtureB.Body.UserData == typeof(Rectangle))
+            if (fixtureB.Body.UserData == "floor")
                 this.IsAlive = false;
 
             return true;

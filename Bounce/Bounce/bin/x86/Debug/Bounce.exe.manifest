@@ -93,14 +93,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Bounce.exe" size="29184">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Bounce.exe" size="34816">
       <assemblyIdentity name="Bounce" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>WUJjgjPVkD8u1Nk53f47Os81AHI=</dsig:DigestValue>
+        <dsig:DigestValue>HHkbT6oNmf1VUtLh3nBy/E2l/iA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -135,6 +135,24 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
       <dsig:DigestValue>NXK6JMRoNKnD5QHkeDtdgYKxAN8=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\background2.xnb" size="1536187">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>UOCrVqQKxRN224hCrJssM+QunAU=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Content\brick.xnb" size="3387">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>jejp4aGurBx+ZuTqIzqldX+DsJc=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\floor.xnb" size="96187">

@@ -24,26 +24,36 @@ namespace Bounce
         public bool IsAlive;
         public Texture2D Texture;
         protected SpriteEffects spriteEffects;
+        protected Color drawColor = Color.White;
         protected Vector2 origin;
+        public IndexKey IndexKey;
 
         public virtual void OnBroadphaseCollision(ref FixtureProxy fp1, ref FixtureProxy fp2) { }
-        public virtual void Update(GameTime gametime) { }
+        public virtual void Kill()
+        {
+            this.IsAlive = false;
+            Body.Dispose();
+        }
 
-        /// <summary>
-        /// Classes that inherit from this need to override this method if they don't set Texture to something.
-        /// </summary>
+        public virtual void Update(GameTime gametime)
+        {
+            if (Body.IsDisposed)
+                this.IsAlive = false;
+        }
+
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(
-                Texture,
-                ConvertUnits.ToDisplayUnits(Body.Position),
-                null,
-                Color.White,
-                Body.Rotation,
-                origin,
-                1f,
-                spriteEffects,
-                0);
+            if (Texture != null)
+                spriteBatch.Draw(
+                    Texture,
+                    ConvertUnits.ToDisplayUnits(Body.Position),
+                    null,
+                    drawColor,
+                    Body.Rotation,
+                    origin,
+                    1f,
+                    spriteEffects,
+                    0);
         }
     }
 }

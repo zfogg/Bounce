@@ -12,7 +12,7 @@ namespace Bounce
 {
     public static class VectorStructures
     {
-        public static List<Vector2> HorizontalRow(int numberOfPositions, Vector2 startingPosition, int pixelsApart)
+        public static List<Vector2> Row(uint numberOfPositions, Vector2 startingPosition, int pixelsApart)
         {
             
             List<Vector2> positions = new List<Vector2>();
@@ -28,7 +28,7 @@ namespace Bounce
             return positions;
         }
 
-        public static List<Vector2> VerticalRow(int numberOfPositions, Vector2 startingPosition, int pixelsApart)
+        public static List<Vector2> Column(uint numberOfPositions, Vector2 startingPosition, int pixelsApart)
         {
             List<Vector2> positions = new List<Vector2>();
             positions.Add(startingPosition);
@@ -41,6 +41,24 @@ namespace Bounce
             }
 
             return positions;
+        }
+
+        public static Vector2 RandomPosition(Vector2 windowSize)
+        {
+            Vector2 randomPosition = new Vector2();
+            randomPosition.X = BounceGame.r.Next((int)windowSize.X);
+            randomPosition.Y = BounceGame.r.Next((int)windowSize.Y);
+
+            return randomPosition;
+        }
+
+        public static Vector2 RandomPosition(Vector2 windowSize, Vector2 offset)
+        {
+            Vector2 randomPosition = new Vector2(
+            randomPosition.X = BounceGame.r.Next((int)offset.X, (int)(windowSize.X - offset.X)),
+            randomPosition.Y = BounceGame.r.Next((int)offset.Y, (int)(windowSize.Y - offset.Y)));
+
+            return randomPosition;
         }
 
         public static Vertices TextureToVertices(Texture2D texture)
@@ -59,7 +77,7 @@ namespace Bounce
 
             Vector2 centroid = -vertices.GetCentroid();
             vertices.Translate(ref centroid);
-            vertices = SimplifyTools.ReduceByDistance(vertices, 10f);
+            vertices = SimplifyTools.ReduceByDistance(vertices, 5f);
 
             List<Vertices> verticesList = BayazitDecomposer.ConvexPartition(vertices);
             Vector2 vertScale = new Vector2(ConvertUnits.ToSimUnits(1));
