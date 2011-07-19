@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using FarseerPhysics;
 using FarseerPhysics.Dynamics;
+using FarseerPhysics.Dynamics.Contacts;
 
 
 namespace Bounce
@@ -71,10 +72,10 @@ namespace Bounce
             ItemStructures.CreateFraming(World, windowSize, 20);
             ItemFactory.CreateSamus(World);
             ItemFactory.CreatePaddle(World);
-            //List<Obstacle> obstacles = ItemStructures.CreateRandomlyPositionedObstacles(World, windowSize, r.Next(10));
-            //ItemStructures.MetroidsNearItems(World,
-            //    obstacles.ConvertAll<PhysicalItem>(x => (PhysicalItem)x),
-            //    Vector2.UnitY * 50f, 50);
+            List<Obstacle> obstacles = ItemStructures.CreateRandomlyPositionedObstacles(World, windowSize, r.Next(10));
+            ItemStructures.MetroidsNearItems(World,
+                obstacles.ConvertAll<PhysicalItem>(x => (PhysicalItem)x),
+                Vector2.UnitY * 50f, 50);
             //ItemStructures.MetroidRow(world, 5, new Vector2(50, 189), 135);
             //ItemStructures.MetroidColumn(world, 5, new Vector2(windowSize.X / 2, 40), 80);
         }
@@ -106,7 +107,6 @@ namespace Bounce
             World.Gravity.X = (float)Math.Sin(camera.Rotation) * 5f;
             World.Gravity.Y = (float)Math.Cos(camera.Rotation) * 5f;
             World.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
-
             debugFarseer.Update(gameTime);
             base.Update(gameTime);
         }
@@ -121,34 +121,23 @@ namespace Bounce
             
             if (Input.IsNewState)
             {
-                if (Input.RightClickUnique())
-                {
-                    Fixture fixture = World.TestPoint(ConvertUnits.ToSimUnits(Input.MouseCursorVector2));
-                    PhysicalItem item = physicalItems[(IndexKey)fixture.Body.BodyId];
-                    if (fixture != null)
-                        if (fixture.Body.UserData == typeof(Metroid) ||
-                            fixture.Body.UserData == typeof(Obstacle) ||
-                            fixture.Body.UserData == typeof(Brick))
-                            physicalItems[(IndexKey)fixture.Body.BodyId].Kill();
-                }
-
                 if (Input.KeyboardState.IsKeyDown(Keys.D1) && Input.LeftClickRelease())
-                    ItemFactory.CreateMetroid(World, Input.MouseCursorVector2);
+                    ItemFactory.CreateMetroid(World, Input.MousePosition);
 
                 if (Input.KeyboardState.IsKeyDown(Keys.D2) && Input.LeftClickRelease())
-                    ItemFactory.CreateBrick(World, Input.MouseCursorVector2);
+                    ItemFactory.CreateBrick(World, Input.MousePosition);
 
                 if (Input.KeyboardState.IsKeyDown(Keys.D3) && Input.LeftClickRelease())
-                    ItemFactory.CreateObstacle(World, Input.MouseCursorVector2);
+                    ItemFactory.CreateObstacle(World, Input.MousePosition);
 
                 if (Input.KeyPressUnique(Keys.PrintScreen))
-                    ItemStructures.MetroidRow(World, 5, Input.MouseCursorVector2, 50);
+                    ItemStructures.MetroidRow(World, 5, Input.MousePosition, 50);
 
                 if (Input.KeyPressUnique(Keys.Scroll))
-                    ItemStructures.MetroidColumn(World, 5, Input.MouseCursorVector2, 50);
+                    ItemStructures.MetroidColumn(World, 5, Input.MousePosition, 50);
 
                 if (Input.KeyPressUnique(Keys.D2) && Input.LeftClickRelease())
-                    ItemStructures.BrickRow(World, 5, Input.MouseCursorVector2, 40);
+                    ItemStructures.BrickRow(World, 5, Input.MousePosition, 40);
             }
         }
 
@@ -161,7 +150,7 @@ namespace Bounce
                 null, null, null, null,
                 camera.GetTransformation(this.GraphicsDevice));
 
-            //background.Draw(spriteBatch);
+            background.Draw(spriteBatch);
 
             foreach (PhysicalItem sprite in physicalItems.Values)
                 sprite.Draw(spriteBatch);

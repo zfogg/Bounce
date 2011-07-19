@@ -36,7 +36,7 @@ namespace Bounce
             fixedPrismJoint.MotorEnabled = true;
 
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
-            Body.UserData = GetType();
+            Body.UserData = this;
         }
 
         public override void Update(GameTime gameTime)

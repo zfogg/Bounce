@@ -31,12 +31,31 @@ namespace Bounce
             Body.BodyType = BodyType.Dynamic;
             Body.Mass = 1f;
             Body.Friction = 0.25f;
-            Body.Restitution = .35f;
+            Body.Restitution = 0.75f;
             Body.AngularDamping = 0.075f;
-            Body.IgnoreGravity = true;
 
             Body.OnCollision += new OnCollisionEventHandler(OnCollision);
+            Input.OnKeyDown += OnKeyDown;
             Body.UserData = this;
+        }
+
+        void OnKeyDown(KeyboardState keyboardState)
+        {
+            if (keyboardState.IsKeyDown(Keys.Space)) //Caution: experimental, horribly messy, and convoluted.
+            {
+                //sinActive = !sinActive;
+
+                if (sinRadius == 0 && cosRadius == 0)
+                {
+                    sinRadius = (float)unitCircle.RandomSegment();
+                    cosRadius = (float)unitCircle.RandomSegment();
+                }
+
+                sinCenter = Body.Position;
+                sinCenter.X -= (float)Math.Sin(cosRadius);
+
+                Body.ApplyLinearImpulse(new Vector2((float)cosRadius / 2f, (float)sinRadius));
+            }
         }
 
         private UnitCircle unitCircle;
@@ -44,33 +63,14 @@ namespace Bounce
 
         public override void Update(GameTime gameTime) // Idea: make metroids hover when they near the ground.
         {
-            if (Input.IsNewState)
+            if (Input.MiddleClickUnique())
             {
-                if (Input.KeyPressUnique(Keys.Space)) //Caution: experimental, horribly messy, and convoluted.
-                {
-                    sinActive = !sinActive;
-
-                    if (sinRadius == 0 && cosRadius == 0)
-                    {
-                        sinRadius = (float)unitCircle.RandomSegment();
-                        cosRadius = (float)unitCircle.RandomSegment();
-                    }
-
-                    sinCenter = Body.Position;
-                    sinCenter.X -= (float)Math.Sin(cosRadius);
-
-                    Body.ApplyLinearImpulse(new Vector2((float)cosRadius / 2f, (float)sinRadius));
-                }
-
-                if (Input.MiddleClickUnique())
-                {
-                    Body.Awake = true;
-                    Body.IgnoreGravity ^= true;
-                }
-
-                if (Input.KeyboardState.IsKeyDown(Keys.D1) && Input.RickClickRelease())
-                    IsAlive = false;
+                Body.Awake = true;
+                Body.IgnoreGravity ^= true;
             }
+
+            if (Input.KeyboardState.IsKeyDown(Keys.D1) && Input.RickClickRelease())
+                IsAlive = false;
 
             if (sinActive)
             {
@@ -106,8 +106,6 @@ namespace Bounce
 
         public bool OnCollision(Fixture fixtureA, Fixture fixtureB, Contact contact)
         {
-            if (fixtureB.Body.UserData == "floor")
-                this.IsAlive = false;
 
             return true;
         }

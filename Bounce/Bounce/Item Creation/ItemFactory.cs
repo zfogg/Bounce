@@ -6,6 +6,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using FarseerPhysics;
 using FarseerPhysics.Dynamics;
+using FarseerPhysics.Dynamics.Contacts;
+using FarseerPhysics.Dynamics.Joints;
 using FarseerPhysics.Factories;
 
 
@@ -76,6 +78,7 @@ namespace Bounce
         {
             Obstacle o = CreateObstacle(world);
             o.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
+            o.Initialize();
 
             return o;
         }
@@ -177,7 +180,18 @@ namespace Bounce
                 }
             }
 
-            rectangles[1].Body.UserData = "floor";
+            rectangles[1].Body.OnCollision += delegate(Fixture fixtureA, Fixture fixtureB, Contact contact)
+            {
+                
+                if (fixtureB.Body.UserData.GetType() == typeof(Metroid))
+                {
+                    var m = (Metroid)fixtureB.Body.UserData;
+                    m.Kill();
+                }
+
+                return true;
+            };
+
             return rectangles;
         }
 

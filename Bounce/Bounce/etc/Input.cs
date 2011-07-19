@@ -8,7 +8,8 @@ using FarseerPhysics.Dynamics;
 
 namespace Bounce
 {
-    public delegate void MouseEvent();
+    public delegate void MouseEvent(int selectedItemID, MouseState mouseState);
+    public delegate void KeyboardEvent(KeyboardState keyboardState);
 
     public static class Input
     {
@@ -17,53 +18,96 @@ namespace Bounce
         private static MouseState mouseState, previousMouseState;
         private static KeyboardState keyboardState, previousKeyboardState;
 
-        public static Vector2 MouseCursorVector2 { get { return new Vector2(mouseState.X, mouseState.Y); } }
-        private static Vector2 previousMouseCursorVector2;
-        public static Point MouseCursorPoint { get { return new Point(mouseState.X, mouseState.Y); } }
+        public static Vector2 MousePosition { get { return new Vector2(mouseState.X, mouseState.Y); } }
+        private static Vector2 previousMousePosition;
+        public static Point MousePoint { get { return new Point(mouseState.X, mouseState.Y); } }
 
         public static bool IsNewState { get { return isNewState; } set { isNewState = value; } }
         private static bool isNewState;
 
         //public static event MouseEvent OnMouseHover;
-        //public static event MouseEvent OnLeftClick;
-        //public static event MouseEvent OnRightClick;
-        //public static event MouseEvent OnMouseWheel;
+        public static event MouseEvent OnLeftClick;
+        public static event MouseEvent OnRightClick;
+        public static event MouseEvent OnMiddleClick;
+        public static event MouseEvent OnMouseHover;
+        public static event MouseEvent OnMouseWheel;
 
-        private static PhysicalItem currentlySelectedItem;
+        public static event KeyboardEvent OnKeyDown;
+        public static event KeyboardEvent OnKeyUp;
+        public static event KeyboardEvent OnKeyHoldDown;
+
+        public static PhysicalItem SelectedItem { get { return selectedItem; } private set { selectedItem = value; } }
+        private static PhysicalItem selectedItem;
 
         public static void Update(MouseState newMouseState, KeyboardState newKeyboardState)
         {
             IsNewState = false;
 
-            if (newMouseState != previousMouseState)
-                isNewState = true;
-
-            if (isNewState)
-            {
-                try
-                {
-                    currentlySelectedItem = (PhysicalItem)BounceGame.World.TestPoint(
-                                            ConvertUnits.ToSimUnits(MouseCursorVector2))
-                                            .Body.UserData;
-                    if (LeftClickUnique())
-                        currentlySelectedItem.OnLeftClick();
-                    if (RightClickUnique())
-                        currentlySelectedItem.OnRightClick();
-                    if (MouseWheelForwards() || MouseWheelReverse())
-                        currentlySelectedItem.OnMouseWheel();
-                }
-                catch { currentlySelectedItem = null; }
-            }
-
             previousMouseState = mouseState;
-            previousMouseCursorVector2 = MouseCursorVector2;
+            previousMousePosition = MousePosition;
             mouseState = newMouseState;
-
-            if (newKeyboardState != previousKeyboardState || newKeyboardState.GetPressedKeys().Length != 0)
-                isNewState = true;
 
             previousKeyboardState = keyboardState;
             keyboardState = newKeyboardState;
+
+            if (newMouseState != previousMouseState)
+                isNewState = true;
+
+            if (newKeyboardState != previousKeyboardState)
+            {
+                isNewState = true;
+                if (OnKeyDown != null) OnKeyDown(keyboardState);
+                if (OnKeyUp != null) OnKeyUp(keyboardState);
+            }
+
+            if (newKeyboardState.GetPressedKeys().Length != 0)
+                if (OnKeyHoldDown != null) OnKeyHoldDown(keyboardState);
+
+            //Mouse hover event.
+            int selectedItemID = 0;
+            try
+            {
+                selectedItem = mouseOverItem();
+                selectedItemID = selectedItem.Body.BodyId;
+            }
+            catch (NullReferenceException e) { selectedItem = null; }
+            finally { if (OnMouseHover != null) OnMouseHover(selectedItemID, mouseState); }
+
+            if (newMouseState != previousMouseState)
+            {
+                if (LeftClickUnique())
+                {
+                    try { selectedItemID = selectedItem.Body.BodyId; }
+                    catch (NullReferenceException e) { selectedItemID = -1; }
+                    finally { if (OnLeftClick != null) OnLeftClick(selectedItemID, mouseState); }
+                }
+
+                if (RightClickUnique())
+                {
+                    try { selectedItemID = selectedItem.Body.BodyId; }
+                    catch(NullReferenceException e) { selectedItemID = -1; }
+                    finally { if (OnRightClick != null) OnRightClick(selectedItemID, mouseState); }
+                }
+
+                if (MiddleClickUnique())
+                {
+                    try {  selectedItemID = selectedItem.Body.BodyId; }
+                    catch (NullReferenceException e) { selectedItemID = -1; }
+                    finally { if (OnMiddleClick != null) OnMiddleClick(selectedItemID, mouseState); }
+                }
+
+                if (MouseWheelForwards() || MouseWheelReverse())
+                {
+                    try { selectedItemID = selectedItem.Body.BodyId; }
+                    catch (NullReferenceException e) { selectedItemID = -1; }
+                    finally { if (OnMouseWheel != null) OnMouseWheel(selectedItemID, mouseState); }
+                }
+            }
+        }
+
+        private static PhysicalItem mouseOverItem()
+        {
+            return (PhysicalItem)BounceGame.World.TestPoint(ConvertUnits.ToSimUnits(MousePosition)).Body.UserData;
         }
 
         public static bool KeyPressUnique(Keys key)
@@ -122,6 +166,12 @@ namespace Bounce
         public static bool MouseWheelReverse()
         {
             return (mouseState.ScrollWheelValue < previousMouseState.ScrollWheelValue);
+        }
+
+        public static float MouseWheelVelocity()
+        {
+            return MathHelper.Clamp(
+                (mouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue) * 0.125f, -1, 1);
         }
     }
 }

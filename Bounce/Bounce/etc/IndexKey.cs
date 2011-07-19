@@ -20,6 +20,12 @@ namespace Bounce
         public static bool operator ==(IndexKey key1, IndexKey key2)
         { return key1.key == key2.key; }
 
+        public static bool operator ==(IndexKey key, int ID)
+        { return key.key == ID; }
+
+        public static bool operator !=(IndexKey key, int ID)
+        { return key.key != ID; }
+
         public static bool operator !=(IndexKey key1, IndexKey key2)
         { return key1.key != key2.key; }
 
@@ -27,6 +33,6 @@ namespace Bounce
         { return (IndexKey)obj == this; }
 
         public override int GetHashCode()
-        { return key; }
+        { return key ^ 7; }
     }
 }

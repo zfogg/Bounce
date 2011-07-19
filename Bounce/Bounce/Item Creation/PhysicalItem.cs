@@ -17,6 +17,11 @@ namespace Bounce
             this.IsAlive = true;
 
             world.ContactManager.OnBroadphaseCollision += OnBroadphaseCollision;
+            Input.OnRightClick += delegate(int ID, MouseState mouseState)
+            {
+                if (this.IndexKey == ID)
+                    if (Input.KeyboardState.IsKeyDown(Keys.Delete)) Kill();
+            };
         }
 
         protected World world;
@@ -31,10 +36,7 @@ namespace Bounce
         public MouseEvent MouseEvents;
 
         public virtual void OnBroadphaseCollision(ref FixtureProxy fp1, ref FixtureProxy fp2) { }
-        public virtual void OnMouseHover() { }
-        public virtual void OnLeftClick() { }
-        public virtual void OnRightClick() { }
-        public virtual void OnMouseWheel() { }
+        public virtual void OnRightClick() {}
 
         public virtual void Kill()
         {
