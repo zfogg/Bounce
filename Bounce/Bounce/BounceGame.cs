@@ -1,15 +1,10 @@
 using System;
 using System.Collections.Generic;
+using FarseerPhysics.Dynamics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
-using FarseerPhysics;
-using FarseerPhysics.Dynamics;
-using FarseerPhysics.Dynamics.Contacts;
 
 
 namespace Bounce
@@ -41,11 +36,13 @@ namespace Bounce
             windowSize = new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
             ContentManager = new ContentManager(this.Services);
 
-            World = new World(Vector2.UnitY * 5f);
+            World = new World(Vector2.UnitY * GravityCoEf);
             debugFarseer = new DebugBounce(World);
 
             physicalItems = new Dictionary<IndexKey, PhysicalItem>();
             itemsToKill = new List<PhysicalItem>(ItemFactory.CreationLimit);
+
+            Input.OnKeyHoldDown += new KeyboardEvent(OnKeyHoldDown);
         }
 
         protected override void Initialize()
@@ -85,8 +82,6 @@ namespace Bounce
             if (this.IsActive)
                 Input.Update(Mouse.GetState(), Keyboard.GetState());
 
-            handleInput();
-
             foreach (PhysicalItem item in physicalItems.Values)
             {
                 if (item.IsAlive)
@@ -104,41 +99,32 @@ namespace Bounce
             itemsToKill.RemoveRange(0, itemsToKill.Count);
 
             camera.Update();
-            World.Gravity.X = (float)Math.Sin(camera.Rotation) * 5f;
-            World.Gravity.Y = (float)Math.Cos(camera.Rotation) * 5f;
+            World.Gravity.X = (float)Math.Sin(camera.Rotation) * GravityCoEf;
+            World.Gravity.Y = (float)Math.Cos(camera.Rotation) * GravityCoEf;
             World.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
             debugFarseer.Update(gameTime);
             base.Update(gameTime);
         }
 
-        private Fixture grabFixtureAt(Vector2 position)
+        void OnKeyHoldDown(KeyboardState keyboardState) //This should be refactored to somewhere other than the game loop class.
         {
-            return World.TestPoint(position);
-        }
+            if (keyboardState.IsKeyDown(Keys.D1) && Input.LeftClickRelease())
+                ItemFactory.CreateMetroid(World, Input.MousePosition);
 
-        private void handleInput() //This should be refactored to somewhere other than the game loop class.
-        {
-            
-            if (Input.IsNewState)
-            {
-                if (Input.KeyboardState.IsKeyDown(Keys.D1) && Input.LeftClickRelease())
-                    ItemFactory.CreateMetroid(World, Input.MousePosition);
+            if (keyboardState.IsKeyDown(Keys.D2) && Input.LeftClickRelease())
+                ItemFactory.CreateBrick(World, Input.MousePosition);
 
-                if (Input.KeyboardState.IsKeyDown(Keys.D2) && Input.LeftClickRelease())
-                    ItemFactory.CreateBrick(World, Input.MousePosition);
+            if (keyboardState.IsKeyDown(Keys.D3) && Input.LeftClickRelease())
+                ItemFactory.CreateObstacle(World, Input.MousePosition);
 
-                if (Input.KeyboardState.IsKeyDown(Keys.D3) && Input.LeftClickRelease())
-                    ItemFactory.CreateObstacle(World, Input.MousePosition);
+            if (keyboardState.IsKeyDown(Keys.PrintScreen) && Input.LeftClickRelease())
+                ItemStructures.MetroidRow(World, 5, Input.MousePosition, 50);
 
-                if (Input.KeyPressUnique(Keys.PrintScreen))
-                    ItemStructures.MetroidRow(World, 5, Input.MousePosition, 50);
+            if (keyboardState.IsKeyDown(Keys.Scroll) && Input.LeftClickRelease())
+                ItemStructures.MetroidColumn(World, 5, Input.MousePosition, 50);
 
-                if (Input.KeyPressUnique(Keys.Scroll))
-                    ItemStructures.MetroidColumn(World, 5, Input.MousePosition, 50);
-
-                if (Input.KeyPressUnique(Keys.D2) && Input.LeftClickRelease())
-                    ItemStructures.BrickRow(World, 5, Input.MousePosition, 40);
-            }
+            if (keyboardState.IsKeyDown(Keys.D2) && Input.LeftClickRelease())
+                ItemStructures.BrickRow(World, 5, Input.MousePosition, 40);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -150,7 +136,7 @@ namespace Bounce
                 null, null, null, null,
                 camera.GetTransformation(this.GraphicsDevice));
 
-            background.Draw(spriteBatch);
+            //background.Draw(spriteBatch);
 
             foreach (PhysicalItem sprite in physicalItems.Values)
                 sprite.Draw(spriteBatch);

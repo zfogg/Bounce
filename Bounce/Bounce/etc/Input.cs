@@ -1,9 +1,7 @@
 ﻿using System;
+using FarseerPhysics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using FarseerPhysics;
-using FarseerPhysics.Common;
-using FarseerPhysics.Dynamics;
 
 
 namespace Bounce
@@ -64,17 +62,17 @@ namespace Bounce
                 if (OnKeyHoldDown != null) OnKeyHoldDown(keyboardState);
 
             //Mouse hover event.
-            int selectedItemID = 0;
-            try
-            {
-                selectedItem = mouseOverItem();
-                selectedItemID = selectedItem.Body.BodyId;
-            }
-            catch (NullReferenceException e) { selectedItem = null; }
-            finally { if (OnMouseHover != null) OnMouseHover(selectedItemID, mouseState); }
-
             if (newMouseState != previousMouseState)
             {
+                int selectedItemID = 0;
+                try
+                {
+                    selectedItem = mouseOverItem();
+                    selectedItemID = selectedItem.Body.BodyId;
+                }
+                catch (NullReferenceException e) { selectedItem = null; }
+                finally { if (OnMouseHover != null) OnMouseHover(selectedItemID, mouseState); }
+
                 if (LeftClickUnique())
                 {
                     try { selectedItemID = selectedItem.Body.BodyId; }
@@ -85,13 +83,13 @@ namespace Bounce
                 if (RightClickUnique())
                 {
                     try { selectedItemID = selectedItem.Body.BodyId; }
-                    catch(NullReferenceException e) { selectedItemID = -1; }
+                    catch (NullReferenceException e) { selectedItemID = -1; }
                     finally { if (OnRightClick != null) OnRightClick(selectedItemID, mouseState); }
                 }
 
                 if (MiddleClickUnique())
                 {
-                    try {  selectedItemID = selectedItem.Body.BodyId; }
+                    try { selectedItemID = selectedItem.Body.BodyId; }
                     catch (NullReferenceException e) { selectedItemID = -1; }
                     finally { if (OnMiddleClick != null) OnMiddleClick(selectedItemID, mouseState); }
                 }

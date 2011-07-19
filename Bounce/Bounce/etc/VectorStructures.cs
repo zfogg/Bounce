@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using System.Collections.Generic;
 using FarseerPhysics;
 using FarseerPhysics.Common;
-using FarseerPhysics.Common.PolygonManipulation;
 using FarseerPhysics.Common.Decomposition;
+using FarseerPhysics.Common.PolygonManipulation;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 
 namespace Bounce
