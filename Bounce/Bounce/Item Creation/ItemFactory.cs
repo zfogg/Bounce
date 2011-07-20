@@ -182,7 +182,6 @@ namespace Bounce
 
             rectangles[1].Body.OnCollision += delegate(Fixture fixtureA, Fixture fixtureB, Contact contact)
             {
-                
                 if (fixtureB.Body.UserData.GetType() == typeof(Metroid))
                 {
                     var m = (Metroid)fixtureB.Body.UserData;
@@ -225,7 +224,7 @@ namespace Bounce
         {
             foreach (Rectangle rectangleToTest in rectangleList)
             {
-                rectangleToTest.Inflate(5, 20);
+                rectangleToTest.Inflate(10, 25);
                 if (o.Rectangle.Intersects(rectangleToTest))
                     return true;
             }
@@ -242,7 +241,9 @@ namespace Bounce
             int radiusIndex = 5;
             foreach (Vector2 spawnPosition in spawnPositions)
             {
-                metroidList.Add(ItemFactory.CreateMetroid(world, spawnPosition, (float)unitCircle.RadiansList.Values[radiusIndex], 0f));
+                metroidList.Add(
+                    ItemFactory.CreateMetroid(
+                        world, spawnPosition, (float)unitCircle.RadiansList.Values[radiusIndex], 0f));
                 radiusIndex += 2;
             }
 
@@ -258,7 +259,9 @@ namespace Bounce
             int radiusIndex = 2;
             foreach (Vector2 spawnPosition in spawnPositions)
             {
-                metroidList.Add(ItemFactory.CreateMetroid(world, spawnPosition, 0f, (float)unitCircle.RadiansList.Values[radiusIndex]));
+                metroidList.Add(
+                    ItemFactory.CreateMetroid(
+                        world, spawnPosition, 0f, (float)unitCircle.RadiansList.Values[radiusIndex]));
                 radiusIndex += 2;
             }
 

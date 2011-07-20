@@ -18,10 +18,10 @@ namespace Bounce
         {
             this.Texture = texture;
             Body.BodyType = BodyType.Dynamic;
-            Body.Mass = 3f;
+            Body.Mass = 1f;
             Body.Restitution = 0.1f * restitutionCoEf;
             Body.Friction = 0.1f * frictionCoEf;
-            Body.AngularDamping = 1f;
+            Body.AngularDamping = 0f;
 
             drawColor = new Color(Vector4.UnitW);
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
@@ -31,23 +31,29 @@ namespace Bounce
             Input.OnMouseWheel += OnMouseWheel;
             Input.OnMouseHover += OnMouseHover;
             Input.OnKeyDown += OnKeyDown;
+            Input.OnKeyUp += OnKeyUp;
             Body.UserData = this;
         }
         
-        FixedRevoluteJoint j;
-        FixedFrictionJoint fj;
+        FixedRevoluteJoint fRevoluteJoint;
+        FixedAngleJoint fAngleJoint;
         private float restitutionCoEf = 1.5f;
         private float frictionCoEf = 2f;
 
         public void Initialize()
         {
-            j = JointFactory.CreateFixedRevoluteJoint(world, Body, Body.LocalCenter, Body.Position);
-            j.MaxMotorTorque = 20f;
-            j.MotorSpeed = 0f;
-            j.MotorTorque = 10f;
-            j.MotorEnabled = true;
+            fRevoluteJoint = JointFactory.CreateFixedRevoluteJoint(world, Body, Body.LocalCenter, Body.Position);
+            fRevoluteJoint.MaxMotorTorque = 20f;
+            fRevoluteJoint.MotorSpeed = 0f;
+            fRevoluteJoint.MotorTorque = 10f;
+            fRevoluteJoint.MotorEnabled = false;
 
-            fj = JointFactory.CreateFixedFrictionJoint(world, Body, Body.LocalCenter * 100);
+            fAngleJoint = JointFactory.CreateFixedAngleJoint(world, Body);
+            fAngleJoint.TargetAngle = 0f;
+            fAngleJoint.MaxImpulse = 5f;
+            fAngleJoint.BiasFactor = 1f;
+            fAngleJoint.Softness = .96f;
+
             //world.AddJoint(JointFactory.CreateFixedFrictionJoint(world, Body, Body.LocalCenter * 100));
             
         }
@@ -56,7 +62,9 @@ namespace Bounce
         {
             updateBodyProperties();
 
-            //j.MotorSpeed = -Body.AngularVelocity;
+            fRevoluteJoint.MotorSpeed = motorForce;
+
+            //fRevoluteJoint.MotorSpeed = -Body.AngularVelocity;
             base.Update(gametime);
         }
 
@@ -111,7 +119,7 @@ namespace Bounce
         {
             if (this.IndexKey == ID)
             {
-                Body.ApplyTorque(Input.MouseWheelVelocity() * BounceGame.MovementCoEf * 20f);
+                
             }
         }
 
@@ -119,17 +127,23 @@ namespace Bounce
         {
             if (this.IndexKey == ID)
             {
-                j.MotorSpeed = Body.AngularVelocity * BounceGame.MovementCoEf;
+                Body.ApplyTorque(Input.MouseWheelVelocity() * BounceGame.MovementCoEf * 20f); 
+                //fRevoluteJoint.MotorSpeed = Body.AngularVelocity * BounceGame.MovementCoEf;
             }
-            else j.MotorSpeed = 0f;
         }
 
+        float motorForce;
         void OnKeyDown(KeyboardState keyboardState)
         {
             if (keyboardState.IsKeyDown(Keys.Up))
-                j.MotorSpeed = 5f;
+                motorForce = 5f;
             if (keyboardState.IsKeyDown(Keys.Down))
-                j.MotorSpeed = -5f;
+                motorForce = -5f;
+        }
+
+        void OnKeyUp(KeyboardState keyboardState)
+        {
+            motorForce = 0f;
         }
     }
 }
