@@ -11,6 +11,10 @@ namespace Bounce
             Zoom = 1.0f;
             Rotation = 0.0f;
             Position = new Vector2(viewPort.Width * 0.5f, viewPort.Height * 0.5f);
+
+            Input.OnKeyDown += new KeyboardEvent(OnKeyDown);
+            Input.OnKeyHoldDown += new KeyboardEvent(OnKeyHoldDown);
+            Input.OnKeyUp += new KeyboardEvent(OnKeyUp);
         }
 
         public Vector2 Position;
@@ -21,42 +25,50 @@ namespace Bounce
 
         public void Update()
         {
-            movement = Vector2.Zero;
+            
+        }
 
-            if (Input.IsNewState)
+        void OnKeyHoldDown(KeyboardState keyboardState)
+        {
+            //Move
+            if (keyboardState.IsKeyDown(Keys.NumPad8))
+                movement.Y += -1f;
+            if (keyboardState.IsKeyDown(Keys.NumPad6))
+                movement.X += 1f;
+            if (keyboardState.IsKeyDown(Keys.NumPad2))
+                movement.Y += 1f;
+            if (keyboardState.IsKeyDown(Keys.NumPad4))
+                movement.X += -1f;
+
+            if (movement != Vector2.Zero)
+                Position += Vector2.Normalize(movement) * BounceGame.MovementCoEf;
+
+            //Zoom
+            if (keyboardState.IsKeyDown(Keys.Add))
+                Zoom += 0.025f;
+            if (keyboardState.IsKeyDown(Keys.Subtract))
+                Zoom += -0.025f;
+
+            //Rotate
+            if (keyboardState.IsKeyDown(Keys.PageUp))
+                Rotation += 0.025f;
+            if (keyboardState.IsKeyDown(Keys.PageDown))
+                Rotation += -0.025f;
+        }
+
+        void OnKeyDown(KeyboardState keyboardState)
+        {
+            if (keyboardState.IsKeyDown(Keys.NumPad5)) //Reset fields
             {
-                if (Input.KeyboardState.IsKeyDown(Keys.NumPad5)) //Reset fields
-                {
-                    //Position = new Vector2(BounceGame.Graphics.GraphicsDevice.Viewport.Width * 0.5f, BounceGame.Graphics.GraphicsDevice.Viewport.Height * 0.5f);
-                    Zoom = 1f;
-                    Rotation = 0f;
-                }
-                
-                if (Input.KeyboardState.IsKeyDown(Keys.NumPad8))
-                    movement.Y += -1f;
-                if (Input.KeyboardState.IsKeyDown(Keys.NumPad6))
-                    movement.X += 1f;
-                if (Input.KeyboardState.IsKeyDown(Keys.NumPad2))
-                    movement.Y += 1f;
-                if (Input.KeyboardState.IsKeyDown(Keys.NumPad4))
-                    movement.X += -1f;
-
-                if (movement != Vector2.Zero)
-                    movement.Normalize();
-
-                Position += movement * BounceGame.MovementCoEf;
-
-                //Consider changing to exponential multiplication for zoom's value.
-                if (Input.KeyboardState.IsKeyDown(Keys.Add))
-                    Zoom += 0.025f;
-                if (Input.KeyboardState.IsKeyDown(Keys.Subtract))
-                    Zoom += -0.025f;
-
-                if (Input.KeyboardState.IsKeyDown(Keys.PageUp))
-                    Rotation += 0.025f;
-                if (Input.KeyboardState.IsKeyDown(Keys.PageDown))
-                    Rotation += -0.025f;
+                //Position = new Vector2(BounceGame.Graphics.GraphicsDevice.Viewport.Width * 0.5f, BounceGame.Graphics.GraphicsDevice.Viewport.Height * 0.5f);
+                Zoom = 1f;
+                Rotation = 0f;
             }
+        }
+
+        void OnKeyUp(KeyboardState keyboardState)
+        {
+            movement = Vector2.Zero;
         }
 
         public Matrix GetTransformation(GraphicsDevice graphicsDevice)

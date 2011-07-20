@@ -48,24 +48,16 @@ namespace Bounce
             previousKeyboardState = keyboardState;
             keyboardState = newKeyboardState;
 
-            if (newKeyboardState.GetPressedKeys().Length > previousKeyboardState.GetPressedKeys().Length)
-            {
+            if (keyboardState != previousKeyboardState || mouseState != previousMouseState)
                 isNewState = true;
-                if (OnKeyDown != null) OnKeyDown(keyboardState);
-            }
-            else if (newKeyboardState.GetPressedKeys().Length < previousKeyboardState.GetPressedKeys().Length)
-            {
-                if (OnKeyUp != null) OnKeyUp(keyboardState);
-                isNewState = true;
-            }
-            if (newKeyboardState.GetPressedKeys().Length != 0)
-            {
-                if (OnKeyHoldDown != null) OnKeyHoldDown(keyboardState);
-                isNewState = true;
-            }
 
-            if (newMouseState != previousMouseState)
-                isNewState = true;
+            if (newKeyboardState.GetPressedKeys().Length > previousKeyboardState.GetPressedKeys().Length)
+                if (OnKeyDown != null) OnKeyDown(keyboardState);
+            if (newKeyboardState.GetPressedKeys().Length < previousKeyboardState.GetPressedKeys().Length)
+                if (OnKeyUp != null) OnKeyUp(keyboardState);
+            if (newKeyboardState.GetPressedKeys().Length != 0)
+                if (OnKeyHoldDown != null) OnKeyHoldDown(keyboardState);
+
             //Mouse hover event.
             if (newMouseState != previousMouseState)
             {

@@ -18,6 +18,7 @@ namespace Bounce
             : base(world, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height))
         {
             this.Texture = texture;
+            origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
             drawColor = Color.MidnightBlue;
 
             Body.Position = spawnPosition;
@@ -35,34 +36,29 @@ namespace Bounce
             fixedPrismJoint.LimitEnabled = true;
             fixedPrismJoint.MotorEnabled = true;
 
-            origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
+            Input.OnKeyHoldDown += OnKeyHoldDown;
+            Input.OnKeyUp += OnKeyUp;
             Body.UserData = this;
         }
 
         public override void Update(GameTime gameTime)
         {
-            fixedPrismJoint.MotorSpeed = 0f;
+            base.Update(gameTime);
+        }
+
+        void OnKeyHoldDown(KeyboardState keyboardState)
+        {
             Vector2 orientation = Vector2.Normalize(world.Gravity);
 
-            if (Input.IsNewState)
-            {
-                if (Input.KeyboardState.IsKeyDown(Keys.Right))
-                {
-                    if (orientation.Y >= 0)
-                        fixedPrismJoint.MotorSpeed = BounceGame.MovementCoEf * Body.Mass;
-                    if (orientation.Y < 0)
-                        fixedPrismJoint.MotorSpeed = -BounceGame.MovementCoEf * Body.Mass;
-                }
-                if (Input.KeyboardState.IsKeyDown(Keys.Left))
-                {
-                    if (orientation.Y >= 0)
-                        fixedPrismJoint.MotorSpeed = -BounceGame.MovementCoEf * Body.Mass;
-                    if (orientation.Y < 0)
-                        fixedPrismJoint.MotorSpeed = BounceGame.MovementCoEf * Body.Mass;
-                }
-            }
+            if (keyboardState.IsKeyDown(Keys.Right))
+                    fixedPrismJoint.MotorSpeed = (orientation.Y * BounceGame.MovementCoEf) * Body.Mass;
+            if (keyboardState.IsKeyDown(Keys.Left))
+                    fixedPrismJoint.MotorSpeed = (-orientation.Y * BounceGame.MovementCoEf) * Body.Mass;
+        }
 
-            base.Update(gameTime);
+        void OnKeyUp(KeyboardState keyboardState)
+        {
+            fixedPrismJoint.MotorSpeed = 0f;
         }
     }
 }

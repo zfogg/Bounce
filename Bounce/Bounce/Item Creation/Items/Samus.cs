@@ -21,9 +21,7 @@ namespace Bounce
             Texture = BounceGame.ContentManager.Load<Texture2D>("samus");
 
             Body = BodyFactory.CreateCompoundPolygon(
-                world,
-                VectorStructures.TextureToBayazitList(Texture),
-                1f, true);
+                world, VectorStructures.TextureToBayazitList(Texture), 1f, true);
             origin = VectorStructures.TextureToVertices(Texture).GetCentroid(); //Need the centroid, not center, for a polygon body shape.
 
             Body.BodyType = BodyType.Dynamic;
@@ -35,10 +33,16 @@ namespace Bounce
 
             Input.OnKeyDown += OnKeyPressDown;
             Input.OnKeyHoldDown += OnKeyHoldDown;
+            Input.OnKeyUp += OnKeyUp;
             Body.UserData = this;
         }
 
         private Vector2 force;
+
+        public override void Update(GameTime gameTime)
+        {
+            base.Update(gameTime);
+        }
 
         public void OnKeyPressDown(KeyboardState keyboardState)
         {
@@ -59,18 +63,11 @@ namespace Bounce
 
             Vector2.Normalize(force);
             Body.ApplyForce(force * BounceGame.MovementCoEf);
-
-            if (keyboardState.IsKeyDown(Keys.Right))
-                Body.ApplyTorque(1f * BounceGame.MovementCoEf);
-            if (keyboardState.IsKeyDown(Keys.Left))
-                Body.ApplyTorque(1f * BounceGame.MovementCoEf);
         }
 
-        public override void Update(GameTime gameTime)
+        void OnKeyUp(KeyboardState keyboardState)
         {
             force = Vector2.Zero;
-
-            base.Update(gameTime);
         }
     }
 }
