@@ -6,103 +6,89 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Bounce
 {
-    public delegate void MouseEvent(int selectedItemID, MouseState mouseState);
     public delegate void KeyboardEvent(KeyboardState keyboardState);
+    public delegate void MouseEvent(int selectedItemID, MouseState mouseState);
 
     public static class Input
     {
-        public static MouseState MouseState { get { return mouseState; } }
         public static KeyboardState KeyboardState { get { return keyboardState; } }
-        private static MouseState mouseState, previousMouseState;
         private static KeyboardState keyboardState, previousKeyboardState;
 
         public static Vector2 MousePosition { get { return new Vector2(mouseState.X, mouseState.Y); } }
         private static Vector2 previousMousePosition;
         public static Point MousePoint { get { return new Point(mouseState.X, mouseState.Y); } }
-
-        public static bool IsNewState { get { return isNewState; } set { isNewState = value; } }
-        private static bool isNewState;
-
-        //public static event MouseEvent OnMouseHover;
-        public static event MouseEvent OnLeftClick;
-        public static event MouseEvent OnRightClick;
-        public static event MouseEvent OnMiddleClick;
-        public static event MouseEvent OnMouseHover;
-        public static event MouseEvent OnMouseWheel;
-
-        public static event KeyboardEvent OnKeyDown;
-        public static event KeyboardEvent OnKeyUp;
-        public static event KeyboardEvent OnKeyHoldDown;
+        public static MouseState MouseState { get { return mouseState; } }
+        private static MouseState mouseState, previousMouseState;
 
         public static PhysicalItem SelectedItem { get { return selectedItem; } private set { selectedItem = value; } }
         private static PhysicalItem selectedItem;
 
+        public static event KeyboardEvent OnKeyDown;
+        public static event KeyboardEvent OnKeyHoldDown;
+        public static event KeyboardEvent OnKeyUp;
+
+        public static event MouseEvent OnLeftClickDown;
+        public static event MouseEvent OnLeftClickUp;
+        public static event MouseEvent OnRightClickDown;
+        public static event MouseEvent OnRightClickUp;
+        public static event MouseEvent OnMiddleClickDown;
+        public static event MouseEvent OnMiddleClickUp;
+        public static event MouseEvent OnMouseHover;
+        public static event MouseEvent OnMouseWheel;
+
         public static void Update(MouseState newMouseState, KeyboardState newKeyboardState)
         {
-            IsNewState = false;
+            previousKeyboardState = keyboardState;
+            keyboardState = newKeyboardState;
 
             previousMouseState = mouseState;
             previousMousePosition = MousePosition;
             mouseState = newMouseState;
 
-            previousKeyboardState = keyboardState;
-            keyboardState = newKeyboardState;
-
-            if (keyboardState != previousKeyboardState || mouseState != previousMouseState)
-                isNewState = true;
-
-            if (newKeyboardState.GetPressedKeys().Length > previousKeyboardState.GetPressedKeys().Length)
-                if (OnKeyDown != null) OnKeyDown(keyboardState);
-            if (newKeyboardState.GetPressedKeys().Length < previousKeyboardState.GetPressedKeys().Length)
-                if (OnKeyUp != null) OnKeyUp(keyboardState);
-            if (newKeyboardState.GetPressedKeys().Length != 0)
+            //Keyboard events.
+            if (keyboardState != previousKeyboardState)
+            {
+                if (keyboardState.GetPressedKeys().Length > previousKeyboardState.GetPressedKeys().Length)
+                    if (OnKeyDown != null) OnKeyDown(keyboardState);
+                if (keyboardState.GetPressedKeys().Length < previousKeyboardState.GetPressedKeys().Length)
+                    if (OnKeyUp != null) OnKeyUp(keyboardState);
+            }
+            if (keyboardState.GetPressedKeys().Length != 0)
                 if (OnKeyHoldDown != null) OnKeyHoldDown(keyboardState);
 
-            //Mouse hover event.
-            if (newMouseState != previousMouseState)
+            //Mouse events.
+            if (mouseState != previousMouseState)
             {
                 int selectedItemID = 0;
+
                 try
                 {
                     selectedItem = mouseOverItem();
                     selectedItemID = selectedItem.Body.BodyId;
                 }
-                catch (NullReferenceException e) { selectedItem = null; }
-                finally { if (OnMouseHover != null) OnMouseHover(selectedItemID, mouseState); }
+                catch (NullReferenceException e)
+                    { selectedItem = null; }
+                finally
+                    { if (OnMouseHover != null) OnMouseHover(selectedItemID, mouseState); }
 
                 if (LeftClickUnique())
-                {
-                    try { selectedItemID = selectedItem.Body.BodyId; }
-                    catch (NullReferenceException e) { selectedItemID = -1; }
-                    finally { if (OnLeftClick != null) OnLeftClick(selectedItemID, mouseState); }
-                }
+                    if (OnLeftClickDown != null) OnLeftClickDown(selectedItemID, mouseState);
+                else if (LeftClickRelease())
+                    if (OnLeftClickUp != null) OnLeftClickUp(selectedItemID, mouseState);
 
                 if (RightClickUnique())
-                {
-                    try { selectedItemID = selectedItem.Body.BodyId; }
-                    catch (NullReferenceException e) { selectedItemID = -1; }
-                    finally { if (OnRightClick != null) OnRightClick(selectedItemID, mouseState); }
-                }
+                    if (OnRightClickDown != null) OnRightClickDown(selectedItemID, mouseState);
+                else if (RightClickRelease())
+                    if (OnRightClickUp != null) OnRightClickUp(selectedItemID, mouseState);
 
                 if (MiddleClickUnique())
-                {
-                    try { selectedItemID = selectedItem.Body.BodyId; }
-                    catch (NullReferenceException e) { selectedItemID = -1; }
-                    finally { if (OnMiddleClick != null) OnMiddleClick(selectedItemID, mouseState); }
-                }
+                    if (OnMiddleClickDown != null) OnMiddleClickDown(selectedItemID, mouseState);
+                else if (MiddleClickRelease())
+                    if (OnMiddleClickUp != null) OnMiddleClickUp(selectedItemID, mouseState);
 
                 if (MouseWheelForwards() || MouseWheelReverse())
-                {
-                    try { selectedItemID = selectedItem.Body.BodyId; }
-                    catch (NullReferenceException e) { selectedItemID = -1; }
-                    finally { if (OnMouseWheel != null) OnMouseWheel(selectedItemID, mouseState); }
-                }
+                    if (OnMouseWheel != null) OnMouseWheel(selectedItemID, mouseState);
             }
-        }
-
-        private static PhysicalItem mouseOverItem()
-        {
-            return (PhysicalItem)BounceGame.World.TestPoint(ConvertUnits.ToSimUnits(MousePosition)).Body.UserData;
         }
 
         public static bool KeyPressUnique(Keys key)
@@ -135,7 +121,7 @@ namespace Bounce
                     previousMouseState.RightButton == ButtonState.Released);
         }
 
-        public static bool RickClickRelease()
+        public static bool RightClickRelease()
         {
             return (mouseState.RightButton == ButtonState.Released &&
                     previousMouseState.RightButton == ButtonState.Pressed);
@@ -166,7 +152,12 @@ namespace Bounce
         public static float MouseWheelVelocity()
         {
             return MathHelper.Clamp(
-                (mouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue) * 0.125f, -1, 1);
+                (mouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue) * 0.20f, -1, 1);
+        }
+
+        private static PhysicalItem mouseOverItem()
+        {
+            return (PhysicalItem)BounceGame.World.TestPoint(ConvertUnits.ToSimUnits(MousePosition)).Body.UserData;
         }
     }
 }

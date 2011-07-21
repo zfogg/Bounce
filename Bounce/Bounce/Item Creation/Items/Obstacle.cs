@@ -26,8 +26,8 @@ namespace Bounce
             drawColor = new Color(Vector4.UnitW);
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
 
-            Input.OnRightClick += OnRightClick;
-            Input.OnLeftClick += OnLeftClick;
+            Input.OnRightClickDown += OnRightClick;
+            Input.OnLeftClickDown += OnLeftClick;
             Input.OnMouseWheel += OnMouseWheel;
             Input.OnMouseHover += OnMouseHover;
             Input.OnKeyDown += OnKeyDown;
@@ -42,6 +42,7 @@ namespace Bounce
 
         public void Initialize()
         {
+            JointFactory.CreateFixedFrictionJoint(world, Body, Body.LocalCenter);
             fRevoluteJoint = JointFactory.CreateFixedRevoluteJoint(world, Body, Body.LocalCenter, Body.Position);
             fRevoluteJoint.MaxMotorTorque = 20f;
             fRevoluteJoint.MotorSpeed = 0f;
@@ -53,9 +54,6 @@ namespace Bounce
             fAngleJoint.MaxImpulse = 5f;
             fAngleJoint.BiasFactor = 1f;
             fAngleJoint.Softness = .96f;
-
-            //world.AddJoint(JointFactory.CreateFixedFrictionJoint(world, Body, Body.LocalCenter * 100));
-            
         }
 
         public override void Update(GameTime gametime)
@@ -63,8 +61,8 @@ namespace Bounce
             updateBodyProperties();
 
             fRevoluteJoint.MotorSpeed = motorForce;
-
             //fRevoluteJoint.MotorSpeed = -Body.AngularVelocity;
+
             base.Update(gametime);
         }
 
@@ -113,13 +111,16 @@ namespace Bounce
                 if (Input.KeyboardState.IsKeyDown(Keys.B))
                     change3 += -Vector3.UnitZ;
             }
+
+            if (Input.KeyboardState.IsKeyDown(Keys.D3))
+                this.Kill();
         }
 
         public void OnMouseWheel(int ID, MouseState mouseState)
         {
             if (this.IndexKey == ID)
             {
-                
+                Body.ApplyTorque(Input.MouseWheelVelocity() * BounceGame.MovementCoEf * 20f); 
             }
         }
 
@@ -127,7 +128,6 @@ namespace Bounce
         {
             if (this.IndexKey == ID)
             {
-                Body.ApplyTorque(Input.MouseWheelVelocity() * BounceGame.MovementCoEf * 20f); 
                 //fRevoluteJoint.MotorSpeed = Body.AngularVelocity * BounceGame.MovementCoEf;
             }
         }

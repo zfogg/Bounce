@@ -29,7 +29,7 @@ namespace Bounce
 
         public override void Update(GameTime gametime)
         {
-            if (Input.KeyboardState.IsKeyDown(Keys.D2) && Input.RickClickRelease())
+            if (Input.KeyboardState.IsKeyDown(Keys.D2) && Input.RightClickRelease())
                 this.IsAlive = false;
 
             base.Update(gametime);

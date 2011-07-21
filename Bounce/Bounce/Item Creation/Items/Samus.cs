@@ -46,7 +46,7 @@ namespace Bounce
 
         public void OnKeyPressDown(KeyboardState keyboardState)
         {
-            if (keyboardState.IsKeyDown(Keys.W))
+            if (Input.KeyPressUnique(Keys.W))
                 Body.ApplyLinearImpulse(-Vector2.UnitY * BounceGame.MovementCoEf);
         }
 
@@ -55,7 +55,7 @@ namespace Bounce
             if (keyboardState.IsKeyDown(Keys.W))
                 force = -Vector2.UnitY;
             if (keyboardState.IsKeyDown(Keys.D))
-                force += Vector2.UnitX;
+                force = Vector2.UnitX;
             if (keyboardState.IsKeyDown(Keys.S))
                 force = Vector2.UnitY;
             if (keyboardState.IsKeyDown(Keys.A))

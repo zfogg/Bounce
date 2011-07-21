@@ -53,7 +53,7 @@ namespace Bounce
         /// <summary>
         /// Creates and returns a paddle placed 95% above the bottom of the window, in the middle.
         /// </summary>
-        public static Paddle CreatePaddle(World world)
+        public static Paddle CreatePaddleCenterFloor(World world)
         {
             Vector2 spawnPosition = new Vector2(WindowSize.X / 2, (WindowSize.Y * 0.95f));
             return CreatePaddle(world, spawnPosition);
@@ -138,7 +138,7 @@ namespace Bounce
 
     public static class ItemStructures
     {
-        public static List<Metroid> MetroidsNearItems(World world, List<PhysicalItem> items, Vector2 offset, int percentChance)
+        public static List<Metroid> MetroidsNearItems(World world, List<PhysicalItem> items, Vector2 offsetFromItem, int percentChance)
         {
             var metroidList = new List<Metroid>();
 
@@ -148,8 +148,8 @@ namespace Bounce
                     if (BounceGame.r.Next(1, 101) < percentChance)
                     {
                         metroidList.Add(ItemFactory.CreateMetroid(world, new Vector2(
-                            ConvertUnits.ToDisplayUnits(item.Body.Position.X) + offset.X,
-                            ConvertUnits.ToDisplayUnits(item.Body.Position.Y) - offset.Y)));
+                            ConvertUnits.ToDisplayUnits(item.Body.Position.X) + offsetFromItem.X,
+                            ConvertUnits.ToDisplayUnits(item.Body.Position.Y) - offsetFromItem.Y)));
                     }
             }
 
@@ -180,6 +180,7 @@ namespace Bounce
                 }
             }
 
+            //Metroids Kill() on contact with floor.
             rectangles[1].Body.OnCollision += delegate(Fixture fixtureA, Fixture fixtureB, Contact contact)
             {
                 if (fixtureB.Body.UserData.GetType() == typeof(Metroid))
@@ -201,7 +202,7 @@ namespace Bounce
             Texture2D texture = BounceGame.ContentManager.Load<Texture2D>("obstacle");
             Vector2 spawnPositionOffset = new Vector2(texture.Width / 2, (texture.Height / 2) * 5f);
 
-            for (int i = 0; i <= number; i++)
+            for (int i = 0; i < number; i++)
             {
                 Obstacle o = ItemFactory.CreateObstacle(world,
                     VectorStructures.RandomPosition(frameSize, spawnPositionOffset));
@@ -237,7 +238,7 @@ namespace Bounce
             var spawnPositions = VectorStructures.Row(numberOfMetroids, startingPosition, pixelsApart);
             var metroidList = new List<Metroid>();
 
-            UnitCircle unitCircle = new UnitCircle();
+            var unitCircle = new UnitCircle();
             int radiusIndex = 5;
             foreach (Vector2 spawnPosition in spawnPositions)
             {
@@ -255,7 +256,7 @@ namespace Bounce
             var spawnPositions = VectorStructures.Column(numberOfMetroids, startingPosition, pixelsApart);
             var metroidList = new List<Metroid>((int)numberOfMetroids);
 
-            UnitCircle unitCircle = new UnitCircle();
+            var unitCircle = new UnitCircle();
             int radiusIndex = 2;
             foreach (Vector2 spawnPosition in spawnPositions)
             {

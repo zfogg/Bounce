@@ -12,12 +12,16 @@ namespace Bounce
     public class DebugBounce
     {
         DebugViewXNA DebugViewXNA;
-        public DebugBounce(World world)
+        public DebugBounce(World world, GraphicsDevice graphicsDevice, Camera2D camera)
         {
+            this.graphicsDevice = graphicsDevice;
+            this.camera = camera;
             DebugViewXNA = new DebugViewXNA(world);
         }
 
         private Matrix projection, view;
+        private GraphicsDevice graphicsDevice;
+        private Camera2D camera;
 
         public void Initialize(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
@@ -35,62 +39,11 @@ namespace Bounce
             Matrix tran = Matrix.Identity;
             tran.Translation = campos;
             view = tran;
+
+            Input.OnKeyDown += OnKeyDown;
         }
 
         public void Update(GameTime gameTime)
-        {
-            if (Input.IsNewState)
-            {
-                if (Input.KeyPressUnique(Keys.F1))
-                {
-                    EnableOrDisableFlag(DebugViewFlags.Shape);
-                }
-                if (Input.KeyPressUnique(Keys.F2))
-                {
-                    EnableOrDisableFlag(DebugViewFlags.DebugPanel);
-                    EnableOrDisableFlag(DebugViewFlags.PerformanceGraph);
-                }
-                if (Input.KeyPressUnique(Keys.F3))
-                {
-                    EnableOrDisableFlag(DebugViewFlags.Joint);
-                }
-                if (Input.KeyPressUnique(Keys.F4))
-                {
-                    EnableOrDisableFlag(DebugViewFlags.ContactPoints);
-                    EnableOrDisableFlag(DebugViewFlags.ContactNormals);
-                }
-                if (Input.KeyPressUnique(Keys.F5))
-                {
-                    EnableOrDisableFlag(DebugViewFlags.PolygonPoints);
-                }
-                if (Input.KeyPressUnique(Keys.F6))
-                {
-                    EnableOrDisableFlag(DebugViewFlags.Controllers);
-                }
-                if (Input.KeyPressUnique(Keys.F7))
-                {
-                    EnableOrDisableFlag(DebugViewFlags.CenterOfMass);
-                }
-                if (Input.KeyPressUnique(Keys.F8))
-                {
-                    EnableOrDisableFlag(DebugViewFlags.AABB);
-                }
-            }
-        }
-
-        private void EnableOrDisableFlag(DebugViewFlags flag)
-        {
-            if ((DebugViewXNA.Flags & flag) == flag)
-            {
-                DebugViewXNA.RemoveFlags(flag);
-            }
-            else
-            {
-                DebugViewXNA.AppendFlags(flag);
-            }
-        }
-
-        public void Draw(Camera2D camera, GraphicsDevice graphicsDevice)
         {
             // Projection (zoom)
             float width = (1f / camera.Zoom) * ConvertUnits.ToSimUnits(graphicsDevice.Viewport.Width / 2);
@@ -109,7 +62,51 @@ namespace Bounce
             Vector3 translationVector = new Vector3(xTranslation, yTranslation, 0f);
             view = Matrix.CreateRotationZ(camera.Rotation);
             view.Translation = translationVector;
+        }
 
+        public void OnKeyDown(KeyboardState keyboardState)
+        {
+            if (Input.KeyPressUnique(Keys.F1))
+                EnableOrDisableFlag(DebugViewFlags.Shape);
+
+            if (Input.KeyPressUnique(Keys.F2))
+            {
+                EnableOrDisableFlag(DebugViewFlags.DebugPanel);
+                EnableOrDisableFlag(DebugViewFlags.PerformanceGraph);
+            }
+            
+            if (Input.KeyPressUnique(Keys.F3))
+                EnableOrDisableFlag(DebugViewFlags.Joint);
+
+            if (Input.KeyPressUnique(Keys.F4))
+            {
+                EnableOrDisableFlag(DebugViewFlags.ContactPoints);
+                EnableOrDisableFlag(DebugViewFlags.ContactNormals);
+            }
+            
+            if (Input.KeyPressUnique(Keys.F5))
+                EnableOrDisableFlag(DebugViewFlags.PolygonPoints);
+            
+            if (Input.KeyPressUnique(Keys.F6))
+                EnableOrDisableFlag(DebugViewFlags.Controllers);
+            
+            if (Input.KeyPressUnique(Keys.F7))
+                EnableOrDisableFlag(DebugViewFlags.CenterOfMass);
+            
+            if (Input.KeyPressUnique(Keys.F8))
+                EnableOrDisableFlag(DebugViewFlags.AABB);
+        }
+
+        private void EnableOrDisableFlag(DebugViewFlags flag)
+        {
+            if ((DebugViewXNA.Flags & flag) == flag)
+                DebugViewXNA.RemoveFlags(flag);
+            else
+                DebugViewXNA.AppendFlags(flag);
+        }
+
+        public void Draw(Camera2D camera, GraphicsDevice graphicsDevice)
+        {
             DebugViewXNA.RenderDebugData(ref projection, ref view);
         }
     }

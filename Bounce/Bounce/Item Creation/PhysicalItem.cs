@@ -17,7 +17,7 @@ namespace Bounce
             this.IsAlive = true;
 
             world.ContactManager.OnBroadphaseCollision += OnBroadphaseCollision;
-            Input.OnRightClick += delegate(int ID, MouseState mouseState)
+            Input.OnRightClickDown += delegate(int ID, MouseState mouseState)
             {
                 if (this.IndexKey == ID)
                     if (Input.KeyboardState.IsKeyDown(Keys.Delete)) Kill();
@@ -27,16 +27,14 @@ namespace Bounce
         protected World world;
         protected static Random r = new Random();
         public Body Body;
-        public bool IsAlive;
+        public bool IsAlive { get; protected set; }
         public Texture2D Texture;
         protected SpriteEffects spriteEffects;
         protected Color drawColor = Color.White;
         protected Vector2 origin;
         public IndexKey IndexKey;
-        public MouseEvent MouseEvents;
 
         public virtual void OnBroadphaseCollision(ref FixtureProxy fp1, ref FixtureProxy fp2) { }
-        public virtual void OnRightClick() {}
 
         public virtual void Kill()
         {

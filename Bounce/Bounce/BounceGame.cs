@@ -37,7 +37,6 @@ namespace Bounce
             ContentManager = new ContentManager(this.Services);
 
             World = new World(Vector2.UnitY * GravityCoEf);
-            debugFarseer = new DebugBounce(World);
 
             physicalItems = new Dictionary<IndexKey, PhysicalItem>();
             itemsToKill = new List<PhysicalItem>(ItemFactory.CreationLimit);
@@ -47,29 +46,32 @@ namespace Bounce
 
         protected override void Initialize()
         {
+            ContentManager.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = 800;
             graphics.PreferredBackBufferHeight = 480;
             Window.Title = "Bounce";
             IsMouseVisible = true;
             graphics.ApplyChanges();
-            ContentManager.RootDirectory = "Content";
 
             ItemFactory.ActiveDict = physicalItems;
             ItemFactory.WindowSize = windowSize;
+
+            camera = new Camera2D(GraphicsDevice.Viewport);
+            debugFarseer = new DebugBounce(World, GraphicsDevice, camera);
             debugFarseer.Initialize(GraphicsDevice, ContentManager);
+
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            camera = new Camera2D(GraphicsDevice.Viewport);
 
             background = new Background(Vector2.Zero);
             ItemStructures.CreateFraming(World, windowSize, 20);
             ItemFactory.CreateSamus(World);
-            ItemFactory.CreatePaddle(World);
-            List<Obstacle> obstacles = ItemStructures.CreateRandomlyPositionedObstacles(World, windowSize, r.Next(10));
+            ItemFactory.CreatePaddleCenterFloor(World);
+            List<Obstacle> obstacles = ItemStructures.CreateRandomlyPositionedObstacles(World, windowSize, 1);
             ItemStructures.MetroidsNearItems(World,
                 obstacles.ConvertAll<PhysicalItem>(x => (PhysicalItem)x),
                 Vector2.UnitY * 50f, 50);
@@ -117,19 +119,20 @@ namespace Bounce
             if (keyboardState.IsKeyDown(Keys.D3) && Input.LeftClickRelease())
                 ItemFactory.CreateObstacle(World, Input.MousePosition);
 
-            if (keyboardState.IsKeyDown(Keys.PrintScreen) && Input.LeftClickRelease())
+            if (keyboardState.IsKeyDown(Keys.F10) && Input.LeftClickRelease())
                 ItemStructures.MetroidRow(World, 5, Input.MousePosition, 50);
 
-            if (keyboardState.IsKeyDown(Keys.Scroll) && Input.LeftClickRelease())
+            if (keyboardState.IsKeyDown(Keys.F11) && Input.LeftClickRelease())
                 ItemStructures.MetroidColumn(World, 5, Input.MousePosition, 50);
 
-            if (keyboardState.IsKeyDown(Keys.D2) && Input.LeftClickRelease())
+            if (keyboardState.IsKeyDown(Keys.F12) && Input.LeftClickRelease())
                 ItemStructures.BrickRow(World, 5, Input.MousePosition, 40);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.DarkSlateGray);
+            //GraphicsDevice.Clear(new Color(new Vector3((float)Math.Sin(World.Gravity.X), (float)Math.Cos(World.Gravity.Y), (float)Math.Tan(camera.Zoom))));
 
             spriteBatch.Begin(
                 SpriteSortMode.Immediate, BlendState.AlphaBlend,

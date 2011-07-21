@@ -69,7 +69,7 @@ namespace Bounce
                 Body.IgnoreGravity ^= true;
             }
 
-            if (Input.KeyboardState.IsKeyDown(Keys.D1) && Input.RickClickRelease())
+            if (Input.KeyboardState.IsKeyDown(Keys.D1) && Input.RightClickRelease())
                 IsAlive = false;
 
             if (sinActive)
