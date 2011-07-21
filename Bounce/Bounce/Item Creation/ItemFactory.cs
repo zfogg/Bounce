@@ -1,14 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using FarseerPhysics;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Dynamics.Contacts;
-using FarseerPhysics.Dynamics.Joints;
-using FarseerPhysics.Factories;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 
 namespace Bounce
@@ -138,7 +135,7 @@ namespace Bounce
 
     public static class ItemStructures
     {
-        public static List<Metroid> MetroidsNearItems(World world, List<PhysicalItem> items, Vector2 offsetFromItem, int percentChance)
+        public static List<Metroid> MetroidsNearItems(World world, ICollection items, Vector2 offsetFromItem, int percentChance)
         {
             var metroidList = new List<Metroid>();
 
@@ -162,6 +159,9 @@ namespace Bounce
 
             float x = frameSize.X;
             float y = frameSize.Y;
+
+            //The following algorithm is absolutely ridiculous, and was written purely for fun.
+            //That said, it works perfectly.
             for (float i = 0f; i <= x; i += x)
             {
                 for (float j = 0f; j <= y; j += y)
@@ -183,9 +183,9 @@ namespace Bounce
             //Metroids Kill() on contact with floor.
             rectangles[1].Body.OnCollision += delegate(Fixture fixtureA, Fixture fixtureB, Contact contact)
             {
-                if (fixtureB.Body.UserData.GetType() == typeof(Metroid))
+                if (fixtureB.Body.UserData is Metroid)
                 {
-                    var m = (Metroid)fixtureB.Body.UserData;
+                    var m = fixtureB.Body.UserData as Metroid;
                     m.Kill();
                 }
 

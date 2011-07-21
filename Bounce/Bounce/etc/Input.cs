@@ -1,5 +1,6 @@
 ﻿using System;
 using FarseerPhysics;
+using FarseerPhysics.Dynamics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 
@@ -22,6 +23,7 @@ namespace Bounce
 
         public static PhysicalItem SelectedItem { get { return selectedItem; } private set { selectedItem = value; } }
         private static PhysicalItem selectedItem;
+        private static int selectedItemID;
 
         public static event KeyboardEvent OnKeyDown;
         public static event KeyboardEvent OnKeyHoldDown;
@@ -59,18 +61,6 @@ namespace Bounce
             //Mouse events.
             if (mouseState != previousMouseState)
             {
-                int selectedItemID = 0;
-
-                try
-                {
-                    selectedItem = mouseOverItem();
-                    selectedItemID = selectedItem.Body.BodyId;
-                }
-                catch (NullReferenceException e)
-                    { selectedItem = null; }
-                finally
-                    { if (OnMouseHover != null) OnMouseHover(selectedItemID, mouseState); }
-
                 if (LeftClickUnique())
                     if (OnLeftClickDown != null) OnLeftClickDown(selectedItemID, mouseState);
                 else if (LeftClickRelease())
@@ -155,9 +145,24 @@ namespace Bounce
                 (mouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue) * 0.20f, -1, 1);
         }
 
-        private static PhysicalItem mouseOverItem()
+        public static PhysicalItem MouseHoverPhysicalItem(World world)
         {
-            return (PhysicalItem)BounceGame.World.TestPoint(ConvertUnits.ToSimUnits(MousePosition)).Body.UserData;
+            try
+            {
+                selectedItem = (PhysicalItem)world.TestPoint(ConvertUnits.ToSimUnits(MousePosition)).Body.UserData;
+                selectedItemID = selectedItem.Body.BodyId;
+            }
+            catch (NullReferenceException)
+            {
+                selectedItemID = -1;
+                selectedItem = null;
+            }
+            finally
+            {
+                if (OnMouseHover != null) OnMouseHover(selectedItemID, mouseState);
+            }
+
+            return selectedItem;
         }
     }
 }

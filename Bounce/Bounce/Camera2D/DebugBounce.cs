@@ -12,11 +12,10 @@ namespace Bounce
     public class DebugBounce
     {
         DebugViewXNA DebugViewXNA;
-        public DebugBounce(World world, GraphicsDevice graphicsDevice, Camera2D camera)
-        {
-            this.graphicsDevice = graphicsDevice;
-            this.camera = camera;
+        public DebugBounce(World world, Camera2D camera)
+        {   
             DebugViewXNA = new DebugViewXNA(world);
+            this.camera = camera;
         }
 
         private Matrix projection, view;
@@ -25,6 +24,8 @@ namespace Bounce
 
         public void Initialize(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
+            this.graphicsDevice = graphicsDevice;
+
             DebugViewXNA.LoadContent(graphicsDevice, contentManager);
             DebugViewXNA.RemoveFlags(DebugViewFlags.Shape);
 
