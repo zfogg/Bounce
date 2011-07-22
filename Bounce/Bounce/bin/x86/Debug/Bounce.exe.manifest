@@ -100,7 +100,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>cOqg9+lIAAwZwelxbY6gUWutxjs=</dsig:DigestValue>
+        <dsig:DigestValue>Fo+Evb6WoFgY65V5YzLoIjcDdXw=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -128,6 +128,15 @@
       </hash>
     </dependentAssembly>
   </dependency>
+  <file name="Content\arial.xnb" size="12462">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
+      <dsig:DigestValue>9ylkTktSqibyqPEG2jmaGwzhZqs=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="Content\background.xnb" size="1536187">
     <hash>
       <dsig:Transforms>
@@ -164,13 +173,13 @@
       <dsig:DigestValue>ODsqcAbHKdDS/evRDhm7CpNrNOk=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="Content\font.xnb" size="11950">
+  <file name="Content\font.xnb" size="12462">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-      <dsig:DigestValue>Ni0Nj0VUAn+6+lldp+0PBHFMSKQ=</dsig:DigestValue>
+      <dsig:DigestValue>9ylkTktSqibyqPEG2jmaGwzhZqs=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Content\metroid.xnb" size="10183">

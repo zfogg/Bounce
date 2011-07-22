@@ -8,10 +8,10 @@ namespace Bounce
     public class Background
     {
         private Vector2 position;
-        public Background(Vector2 position)
+        public Background(Vector2 position, string textureName)
         {
             this.position = position;
-            backgroundTexture = BounceGame.ContentManager.Load<Texture2D>("background2");
+            backgroundTexture = BounceGame.ContentManager.Load<Texture2D>(textureName);
         }
 
         private Texture2D backgroundTexture;

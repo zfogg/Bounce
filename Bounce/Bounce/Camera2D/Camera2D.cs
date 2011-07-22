@@ -6,22 +6,24 @@ namespace Bounce
 {
     public class Camera2D
     {
-        public Camera2D(Viewport viewPort)
-        {
-            Zoom = 1.0f;
-            Rotation = 0.0f;
-            Position = new Vector2(viewPort.Width * 0.5f, viewPort.Height * 0.5f);
-
-            Input.OnKeyDown += new KeyboardEvent(OnKeyDown);
-            Input.OnKeyHoldDown += new KeyboardEvent(OnKeyHoldDown);
-            Input.OnKeyUp += new KeyboardEvent(OnKeyUp);
-        }
-
+        private GraphicsDevice graphicsDevice;
         public Vector2 Position;
         public Matrix Transform;
         public float Zoom;
         public float Rotation;
         private Vector2 movement;
+
+        public Camera2D(GraphicsDevice graphicsDevice)
+        {
+            Zoom = 1.0f;
+            Rotation = 0.0f;
+            Position = new Vector2(graphicsDevice.Viewport.Width / 2f, graphicsDevice.Viewport.Height / 2f);
+            this.graphicsDevice = graphicsDevice;
+
+            Input.OnKeyDown += new KeyboardEvent(OnKeyDown);
+            Input.OnKeyHoldDown += new KeyboardEvent(OnKeyHoldDown);
+            Input.OnKeyUp += new KeyboardEvent(OnKeyUp);
+        }
 
         public void Update()
         {
@@ -71,7 +73,7 @@ namespace Bounce
             movement = Vector2.Zero;
         }
 
-        public Matrix GetTransformation(GraphicsDevice graphicsDevice)
+        public Matrix GetTransformation()
         {
             Transform =
                 Matrix.CreateTranslation(new Vector3(-Position.X, -Position.Y, 0)) *
