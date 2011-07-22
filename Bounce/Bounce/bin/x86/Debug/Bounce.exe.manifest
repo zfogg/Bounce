@@ -93,14 +93,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Bounce.exe" size="40448">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Bounce.exe" size="42496">
       <assemblyIdentity name="Bounce" version="1.0.0.0" language="neutral" processorArchitecture="x86" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1" />
-        <dsig:DigestValue>TmWbShz3P3ZzsjDYMCzntGwOQog=</dsig:DigestValue>
+        <dsig:DigestValue>cOqg9+lIAAwZwelxbY6gUWutxjs=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

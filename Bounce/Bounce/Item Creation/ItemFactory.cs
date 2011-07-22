@@ -12,10 +12,12 @@ namespace Bounce
 {
     public static class ItemFactory
     {
-        public static Vector2 WindowSize { private get; set; }
-        public const int CreationLimit = 1000;
         private static Dictionary<IndexKey, PhysicalItem> activeDict;
         public static Dictionary<IndexKey, PhysicalItem> ActiveDict { set { activeDict = value; } }
+
+        public const int CreationLimit = 1000;
+        public static Vector2 WindowSize { private get; set; }
+
         private static PhysicalItem _newItem;
         private static PhysicalItem newItem
         {
@@ -42,7 +44,7 @@ namespace Bounce
             newItem = new Samus(world);
             newItem.Body.Position = new Vector2(
                 ConvertUnits.ToSimUnits(WindowSize.X * 0.20f),
-                ConvertUnits.ToSimUnits(WindowSize.Y - (newItem.Texture.Height / 2)));
+                ConvertUnits.ToSimUnits(WindowSize.Y - (newItem.Texture.Height)));
 
             return (Samus)newItem;
         }
@@ -153,9 +155,9 @@ namespace Bounce
             return metroidList;
         }
 
-        public static List<RectangleItem> CreateFraming(World world, Vector2 frameSize, int width)
+        public static Dictionary<IndexKey, RectangleItem> CreateFraming(World world, Vector2 frameSize, int width)
         {
-            var rectangles = new List<RectangleItem>();
+            var rectangles = new Dictionary<IndexKey, RectangleItem>();
 
             float x = frameSize.X;
             float y = frameSize.Y;
@@ -176,21 +178,9 @@ namespace Bounce
 
                     newItem.Body.Position = ConvertUnits.ToSimUnits(position);
                     newItem.Body.BodyType = BodyType.Static;
-                    rectangles.Add(newItem);
+                    rectangles.Add(new IndexKey(newItem.Body.BodyId), newItem);
                 }
             }
-
-            //Metroids Kill() on contact with floor.
-            rectangles[1].Body.OnCollision += delegate(Fixture fixtureA, Fixture fixtureB, Contact contact)
-            {
-                if (fixtureB.Body.UserData is Metroid)
-                {
-                    var m = fixtureB.Body.UserData as Metroid;
-                    m.Kill();
-                }
-
-                return true;
-            };
 
             return rectangles;
         }

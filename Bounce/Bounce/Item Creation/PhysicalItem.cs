@@ -11,6 +11,16 @@ namespace Bounce
 {
     public abstract class PhysicalItem
     {
+        protected World world;
+        protected static Random r = new Random();
+        public Body Body;
+        public bool IsAlive { get; protected set; }
+        public Texture2D Texture;
+        protected SpriteEffects spriteEffects;
+        protected Color drawColor = Color.White;
+        protected Vector2 origin;
+        public IndexKey IndexKey;
+
         public PhysicalItem(World world)
         {
             this.world = world;
@@ -23,16 +33,6 @@ namespace Bounce
                     if (Input.KeyboardState.IsKeyDown(Keys.Delete)) Kill();
             };
         }
-
-        protected World world;
-        protected static Random r = new Random();
-        public Body Body;
-        public bool IsAlive { get; protected set; }
-        public Texture2D Texture;
-        protected SpriteEffects spriteEffects;
-        protected Color drawColor = Color.White;
-        protected Vector2 origin;
-        public IndexKey IndexKey;
 
         public virtual void OnBroadphaseCollision(ref FixtureProxy fp1, ref FixtureProxy fp2) { }
 

@@ -1,4 +1,5 @@
 using System;
+using Bounce.Scenes;
 using System.Collections.Generic;
 using FarseerPhysics.Dynamics;
 using Microsoft.Xna.Framework;
@@ -16,16 +17,12 @@ namespace Bounce
         private SpriteBatch spriteBatch;
         public static ContentManager ContentManager;
 
-        //Farseer Physics objects
-        private static World world;
-        private DebugBounce debugFarseer;
-
         //Regular objects
         private Camera2D camera;
         private Vector2 windowSize;
+        private SceneStack sceneStack;
         private Dictionary<IndexKey, PhysicalItem> physicalItems;
-        private List<PhysicalItem> itemsToKill;
-        private Background background;
+
         public static Random r = new Random();
         public const float MovementCoEf = 3.00f; //Needs more thought.
         public const float GravityCoEf = 5f;
@@ -36,12 +33,20 @@ namespace Bounce
             windowSize = new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
             ContentManager = new ContentManager(this.Services);
 
-            world = new World(Vector2.UnitY * GravityCoEf);
-
+            sceneStack = new SceneStack();
             physicalItems = new Dictionary<IndexKey, PhysicalItem>();
-            itemsToKill = new List<PhysicalItem>(ItemFactory.CreationLimit);
 
-            Input.OnKeyHoldDown += new KeyboardEvent(OnKeyHoldDown);
+            Input.OnKeyDown += new KeyboardEvent(OnKeyDown);
+        }
+
+        void OnKeyDown(KeyboardState keyboardState)
+        {
+            if (keyboardState.IsKeyDown(Keys.RightControl) && keyboardState.IsKeyDown(Keys.D1))
+                sceneStack.Push(new BrickBreaker(this, camera, GraphicsDevice, spriteBatch));
+            if (keyboardState.IsKeyDown(Keys.RightControl) && keyboardState.IsKeyDown(Keys.Delete))
+                sceneStack.Pop();
+            if (keyboardState.IsKeyDown(Keys.RightShift) && keyboardState.IsKeyDown(Keys.Delete))
+                sceneStack.PopToHead();
         }
 
         protected override void Initialize()
@@ -53,12 +58,8 @@ namespace Bounce
             IsMouseVisible = true;
             graphics.ApplyChanges();
 
-            ItemFactory.ActiveDict = physicalItems;
             ItemFactory.WindowSize = windowSize;
-
             camera = new Camera2D(GraphicsDevice.Viewport);
-            debugFarseer = new DebugBounce(world, camera);
-            debugFarseer.Initialize(GraphicsDevice, ContentManager);
 
             base.Initialize();
         }
@@ -66,17 +67,6 @@ namespace Bounce
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            background = new Background(Vector2.Zero);
-            ItemStructures.CreateFraming(world, windowSize, 20);
-            ItemFactory.CreateSamus(world);
-            ItemFactory.CreatePaddleCenterFloor(world);
-            List<Obstacle> obstacles = ItemStructures.CreateRandomlyPositionedObstacles(world, windowSize, r.Next(5));
-            ItemStructures.MetroidsNearItems(world,
-                obstacles.ConvertAll<PhysicalItem>(x => (PhysicalItem)x),
-                Vector2.UnitY * 50f, 50);
-            //ItemStructures.MetroidRow(world, 5, new Vector2(50, 189), 135);
-            //ItemStructures.MetroidColumn(world, 5, new Vector2(windowSize.X / 2, 40), 80);
         }
 
         protected override void Update(GameTime gameTime)
@@ -84,71 +74,19 @@ namespace Bounce
             if (this.IsActive)
             {
                 Input.Update(Mouse.GetState(), Keyboard.GetState());
-                Input.MouseHoverPhysicalItem(world);
+                if (sceneStack.Count != 0)
+                    Input.MouseHoverPhysicalItem(sceneStack.Top.World);
             }
-
-            foreach (PhysicalItem item in physicalItems.Values)
-            {
-                if (item.IsAlive)
-                    item.Update(gameTime);
-                else
-                    itemsToKill.Add(item);
-            }
-
-            foreach (PhysicalItem item in itemsToKill)
-            {
-                item.Kill();
-                physicalItems.Remove(item.IndexKey);
-            }
-
-            itemsToKill.RemoveRange(0, itemsToKill.Count);
 
             camera.Update();
-            world.Gravity.X = (float)Math.Sin(camera.Rotation) * GravityCoEf;
-            world.Gravity.Y = (float)Math.Cos(camera.Rotation) * GravityCoEf;
-            world.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
-            debugFarseer.Update(gameTime);
             base.Update(gameTime);
-        }
-
-        void OnKeyHoldDown(KeyboardState keyboardState) //This should be refactored to a 'Scene' class.
-        {
-            if (keyboardState.IsKeyDown(Keys.D1) && Input.LeftClickRelease())
-                ItemFactory.CreateMetroid(world, Input.MousePosition);
-
-            if (keyboardState.IsKeyDown(Keys.D2) && Input.LeftClickRelease())
-                ItemFactory.CreateBrick(world, Input.MousePosition);
-
-            if (keyboardState.IsKeyDown(Keys.D3) && Input.LeftClickRelease())
-                ItemFactory.CreateObstacle(world, Input.MousePosition);
-
-            if (keyboardState.IsKeyDown(Keys.F10) && Input.LeftClickRelease())
-                ItemStructures.MetroidRow(world, 5, Input.MousePosition, 50);
-
-            if (keyboardState.IsKeyDown(Keys.F11) && Input.LeftClickRelease())
-                ItemStructures.MetroidColumn(world, 5, Input.MousePosition, 50);
-
-            if (keyboardState.IsKeyDown(Keys.F12) && Input.LeftClickRelease())
-                ItemStructures.BrickRow(world, 5, Input.MousePosition, 40);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.DarkSlateGray);
-            //GraphicsDevice.Clear(new Color(new Vector3((float)Math.Sin(world.Gravity.X), (float)Math.Cos(world.Gravity.Y), (float)Math.Tan(camera.Zoom))));
+            GraphicsDevice.Clear(Color.DarkBlue);
+            //GraphicsDevice.Clear(new Color(new Vector3((float)Math.Sin(World.Gravity.X), (float)Math.Cos(World.Gravity.Y), (float)Math.Tan(camera.Zoom))));
 
-            spriteBatch.Begin(
-                SpriteSortMode.Immediate, BlendState.AlphaBlend,
-                null, null, null, null,
-                camera.GetTransformation(this.GraphicsDevice));
-
-            //background.Draw(spriteBatch);
-
-            foreach (PhysicalItem sprite in physicalItems.Values)
-                sprite.Draw(spriteBatch);
-
-            spriteBatch.End();
-            debugFarseer.Draw(camera, GraphicsDevice);
             base.Draw(gameTime);
         }
     }

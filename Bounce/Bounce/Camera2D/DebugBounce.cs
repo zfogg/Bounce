@@ -11,16 +11,16 @@ namespace Bounce
 {
     public class DebugBounce
     {
-        DebugViewXNA DebugViewXNA;
+        private DebugViewXNA DebugViewXNA;
+        private Matrix projection, view;
+        private GraphicsDevice graphicsDevice;
+        private Camera2D camera;
+
         public DebugBounce(World world, Camera2D camera)
         {   
             DebugViewXNA = new DebugViewXNA(world);
             this.camera = camera;
         }
-
-        private Matrix projection, view;
-        private GraphicsDevice graphicsDevice;
-        private Camera2D camera;
 
         public void Initialize(GraphicsDevice graphicsDevice, ContentManager contentManager)
         {
@@ -106,9 +106,15 @@ namespace Bounce
                 DebugViewXNA.AppendFlags(flag);
         }
 
-        public void Draw(Camera2D camera, GraphicsDevice graphicsDevice)
+        public void Draw()
         {
             DebugViewXNA.RenderDebugData(ref projection, ref view);
+        }
+
+        public void Kill()
+        {
+            DebugViewXNA.Enabled = false;
+            DebugViewXNA.Dispose();
         }
     }
 }

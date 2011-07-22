@@ -30,6 +30,7 @@ namespace Bounce
             Body.Friction = .475f;
             Body.Restitution = 0.025f;
             Body.AngularDamping = 0.50f;
+            Body.LinearDamping = 0.5f;
 
             Input.OnKeyDown += OnKeyPressDown;
             Input.OnKeyHoldDown += OnKeyHoldDown;
@@ -47,7 +48,7 @@ namespace Bounce
         public void OnKeyPressDown(KeyboardState keyboardState)
         {
             if (Input.KeyPressUnique(Keys.W))
-                Body.ApplyLinearImpulse(-Vector2.UnitY * BounceGame.MovementCoEf);
+                Body.ApplyLinearImpulse(-Vector2.UnitY * BounceGame.MovementCoEf * 1.2f);
         }
 
         public void OnKeyHoldDown(KeyboardState keyboardState)
