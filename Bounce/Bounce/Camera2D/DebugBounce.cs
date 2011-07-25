@@ -67,35 +67,38 @@ namespace Bounce
 
         public void OnKeyDown(KeyboardState keyboardState)
         {
-            if (Input.KeyPressUnique(Keys.F1))
+            if (keyboardState.IsKeyDown(Keys.F1))
                 EnableOrDisableFlag(DebugViewFlags.Shape);
 
-            if (Input.KeyPressUnique(Keys.F2))
+            if (keyboardState.IsKeyDown(Keys.F2))
             {
                 EnableOrDisableFlag(DebugViewFlags.DebugPanel);
                 EnableOrDisableFlag(DebugViewFlags.PerformanceGraph);
             }
             
-            if (Input.KeyPressUnique(Keys.F3))
+            if (keyboardState.IsKeyDown(Keys.F3))
                 EnableOrDisableFlag(DebugViewFlags.Joint);
 
-            if (Input.KeyPressUnique(Keys.F4))
+            if (keyboardState.IsKeyDown(Keys.F4))
             {
                 EnableOrDisableFlag(DebugViewFlags.ContactPoints);
                 EnableOrDisableFlag(DebugViewFlags.ContactNormals);
             }
             
-            if (Input.KeyPressUnique(Keys.F5))
+            if (keyboardState.IsKeyDown(Keys.F5))
                 EnableOrDisableFlag(DebugViewFlags.PolygonPoints);
             
-            if (Input.KeyPressUnique(Keys.F6))
+            if (keyboardState.IsKeyDown(Keys.F6))
                 EnableOrDisableFlag(DebugViewFlags.Controllers);
             
-            if (Input.KeyPressUnique(Keys.F7))
+            if (keyboardState.IsKeyDown(Keys.F7))
                 EnableOrDisableFlag(DebugViewFlags.CenterOfMass);
-            
-            if (Input.KeyPressUnique(Keys.F8))
+
+            if (keyboardState.IsKeyDown(Keys.F8))
                 EnableOrDisableFlag(DebugViewFlags.AABB);
+
+            if (keyboardState.IsKeyDown(Keys.F9))
+                EnableOrDisableFlag(DebugViewFlags.Pair);
         }
 
         private void EnableOrDisableFlag(DebugViewFlags flag)

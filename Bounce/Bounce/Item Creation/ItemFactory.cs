@@ -12,8 +12,8 @@ namespace Bounce
 {
     public static class ItemFactory
     {
-        private static Dictionary<IndexKey, PhysicalItem> activeDict;
-        public static Dictionary<IndexKey, PhysicalItem> ActiveDict { set { activeDict = value; } }
+        public static Scene ActiveScene { private get; set; }
+        public static Dictionary<IndexKey, PhysicalItem> ActiveDict { private get; set; }
 
         public const int CreationLimit = 1000;
         public static Vector2 WindowSize { private get; set; }
@@ -25,10 +25,10 @@ namespace Bounce
             { return _newItem; }
             set
             {
-                if (activeDict.Count <= CreationLimit)
+                if (ActiveDict.Count <= CreationLimit)
                 {
                     value.IndexKey = new IndexKey(value.Body.BodyId);
-                    activeDict.Add(value.IndexKey, value);
+                    ActiveDict.Add(value.IndexKey, value);
                     _newItem = value;
                 }
                 else
@@ -39,9 +39,17 @@ namespace Bounce
             }
         }
 
+        public static PaddleBall CreatePaddleBall(World world, Paddle paddle)
+        {
+            Texture2D texture = BounceGame.ContentManager.Load<Texture2D>("dragonBall");
+            newItem = new PaddleBall(ActiveScene, world, paddle, texture);
+            newItem.Body.Position = paddle.Body.Position + ConvertUnits.ToSimUnits((-Vector2.UnitY * 50f));
+            return (PaddleBall)newItem;
+        }
+
         public static Samus CreateSamus(World world)
         {
-            newItem = new Samus(world);
+            newItem = new Samus(ActiveScene, world);
             newItem.Body.Position = new Vector2(
                 ConvertUnits.ToSimUnits(WindowSize.X * 0.20f),
                 ConvertUnits.ToSimUnits(WindowSize.Y - (newItem.Texture.Height)));
@@ -61,14 +69,14 @@ namespace Bounce
         public static Paddle CreatePaddle(World world, Vector2 spawnPosition)
         {
             Texture2D texture = BounceGame.ContentManager.Load<Texture2D>("obstacle");
-            newItem = new Paddle(world, texture, ConvertUnits.ToSimUnits(spawnPosition));
+            newItem = new Paddle(ActiveScene, world, texture, ConvertUnits.ToSimUnits(spawnPosition));
             return (Paddle)newItem;
         }
 
         public static Obstacle CreateObstacle(World world)
         {
             Texture2D obstacleTexture = BounceGame.ContentManager.Load<Texture2D>("obstacle");
-            newItem = new Obstacle(world, obstacleTexture);
+            newItem = new Obstacle(ActiveScene, world, obstacleTexture);
 
             return (Obstacle)newItem;
         }
@@ -85,7 +93,7 @@ namespace Bounce
         public static Metroid CreateMetroid(World world)
         {
             Texture2D texture = BounceGame.ContentManager.Load<Texture2D>("metroid");
-            newItem = new Metroid(world, texture);
+            newItem = new Metroid(ActiveScene, world, texture);
 
             return (Metroid)newItem;
         }
@@ -101,7 +109,7 @@ namespace Bounce
         public static Metroid CreateMetroid(World world, Vector2 spawnPosition, float sinRadius, float cosRadius)
         {
             Texture2D texture = BounceGame.ContentManager.Load<Texture2D>("metroid");
-            Metroid m = new Metroid(world, texture, sinRadius, cosRadius);
+            Metroid m = new Metroid(ActiveScene, world, texture, sinRadius, cosRadius);
             newItem = m;
             m.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
 
@@ -110,7 +118,7 @@ namespace Bounce
 
         public static RectangleItem CreateRectangleItem(World world, float width, float height)
         {
-            newItem = new RectangleItem(world, width, height);
+            newItem = new RectangleItem(ActiveScene, world, width, height);
             return (RectangleItem)newItem;
         }
 
@@ -122,7 +130,7 @@ namespace Bounce
         public static Brick CreateBrick(World world)
         {
             Texture2D texture = BounceGame.ContentManager.Load<Texture2D>("brick");
-            newItem = new Brick(world, texture);
+            newItem = new Brick(ActiveScene, world, texture);
             return (Brick)newItem;
         }
 
@@ -130,6 +138,7 @@ namespace Bounce
         {
             Brick b = CreateBrick(world);
             b.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
+            b.Initialize();
 
             return b;
         }
@@ -137,7 +146,7 @@ namespace Bounce
 
     public static class ItemStructures
     {
-        public static List<Metroid> MetroidsNearItems(World world, ICollection items, Vector2 offsetFromItem, int percentChance)
+        public static List<Metroid> MetroidsNearItems(World world, ICollection<PhysicalItem> items, Vector2 offsetFromItem, int percentChance)
         {
             var metroidList = new List<Metroid>();
 
@@ -155,9 +164,9 @@ namespace Bounce
             return metroidList;
         }
 
-        public static Dictionary<IndexKey, RectangleItem> CreateFraming(World world, Vector2 frameSize, int width)
+        public static List<RectangleItem> CreateFraming(World world, Vector2 frameSize, int width)
         {
-            var rectangles = new Dictionary<IndexKey, RectangleItem>();
+            var rectangles = new List<RectangleItem>();
 
             float x = frameSize.X;
             float y = frameSize.Y;
@@ -178,9 +187,18 @@ namespace Bounce
 
                     newItem.Body.Position = ConvertUnits.ToSimUnits(position);
                     newItem.Body.BodyType = BodyType.Static;
-                    rectangles.Add(new IndexKey(newItem.Body.BodyId), newItem);
+                    rectangles.Add(newItem);
                 }
             }
+
+            //Metroids Kill() on contact with floor.
+            rectangles[1].Body.OnCollision += (Fixture fixtureA, Fixture fixtureB, Contact contact) =>
+            {
+                if (fixtureB.Body.UserData is Metroid)
+                    (fixtureB.Body.UserData as Metroid).Kill();
+
+                return true;
+            };
 
             return rectangles;
         }
@@ -223,7 +241,7 @@ namespace Bounce
             return false;
         }
 
-        public static List<Metroid> MetroidRow(World world, uint numberOfMetroids, Vector2 startingPosition, int pixelsApart)
+        public static List<Metroid> MetroidRow(World world, int numberOfMetroids, Vector2 startingPosition, int pixelsApart)
         {
             var spawnPositions = VectorStructures.Row(numberOfMetroids, startingPosition, pixelsApart);
             var metroidList = new List<Metroid>();
@@ -241,7 +259,7 @@ namespace Bounce
             return metroidList;
         }
 
-        public static List<Metroid> MetroidColumn(World world, uint numberOfMetroids, Vector2 startingPosition, int pixelsApart)
+        public static List<Metroid> MetroidColumn(World world, int numberOfMetroids, Vector2 startingPosition, int pixelsApart)
         {
             var spawnPositions = VectorStructures.Column(numberOfMetroids, startingPosition, pixelsApart);
             var metroidList = new List<Metroid>((int)numberOfMetroids);
@@ -259,7 +277,7 @@ namespace Bounce
             return metroidList;
         }
 
-        public static List<Brick> BrickRow(World world, uint numberOfBricks, Vector2 startingPosition, int pixelsApart)
+        public static List<Brick> BrickRow(World world, int numberOfBricks, Vector2 startingPosition, int pixelsApart)
         {
             var spawnPositions = VectorStructures.Row(numberOfBricks, startingPosition, pixelsApart);
             var brickList = new List<Brick>((int)numberOfBricks);

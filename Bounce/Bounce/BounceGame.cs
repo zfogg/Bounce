@@ -1,5 +1,4 @@
 using System;
-using Bounce.Scenes;
 using System.Collections.Generic;
 using FarseerPhysics.Dynamics;
 using Microsoft.Xna.Framework;
@@ -38,7 +37,7 @@ namespace Bounce
         void OnKeyDown(KeyboardState keyboardState)
         {
             if (keyboardState.IsKeyDown(Keys.RightControl) && keyboardState.IsKeyDown(Keys.D1))
-                sceneStack.Push(new BrickBreaker(sceneStack, camera, GraphicsDevice));
+                sceneStack.Push(new BrickBreaker(sceneStack, camera));
             if (keyboardState.IsKeyDown(Keys.RightControl) && keyboardState.IsKeyDown(Keys.Delete))
                 sceneStack.Pop();
             if (keyboardState.IsKeyDown(Keys.RightShift) && keyboardState.IsKeyDown(Keys.Delete))
@@ -57,12 +56,16 @@ namespace Bounce
             ItemFactory.WindowSize = windowSize;
             camera = new Camera2D(GraphicsDevice);
 
+            Services.AddService(typeof(Camera2D), camera);
+            Services.AddService(typeof(GraphicsDevice), GraphicsDevice);
+
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            sceneStack.Push(new BrickBreaker(sceneStack, camera, GraphicsDevice));
+            sceneStack.Push(new BottomScene(sceneStack));
+            sceneStack.Push(new BrickBreaker(sceneStack, camera));
             base.LoadContent();
         }
 

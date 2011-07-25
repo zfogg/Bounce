@@ -11,11 +11,11 @@ namespace Bounce
 {
     public class RectangleItem : PhysicalItem
     {
-        public RectangleItem(World world, int width, int height)
-            : this(world, (float)width, (float)height) { }
+        public RectangleItem(Scene scene, World world, int width, int height)
+            : this(scene, world, (float)width, (float)height) { }
 
-        public RectangleItem(World world, float width, float height)
-            : base(world)
+        public RectangleItem(Scene scene, World world, float width, float height)
+            : base(scene, world)
         {
             Body = BodyFactory.CreateRectangle(world, width, height, 1f);
             Rectangle = new Rectangle(0, 0, (int)ConvertUnits.ToDisplayUnits(width), (int)ConvertUnits.ToDisplayUnits(height));
@@ -47,8 +47,8 @@ namespace Bounce
 
     public class CircleItem : PhysicalItem
     {
-        public CircleItem(World world, float radius)
-            : base(world)
+        public CircleItem(Scene scene, World world, float radius)
+            : base(scene, world)
         {
             Body = BodyFactory.CreateCircle(world, radius, 1f);
 

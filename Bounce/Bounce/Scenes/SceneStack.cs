@@ -4,44 +4,52 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Bounce.Scenes
+namespace Bounce
 {
     public class SceneStack : DrawableGameComponent
     {
         private LinkedList<Scene> scenes;
+        private Camera2D camera;
         public int Count { get { return scenes.Count; } }
+        public Scene Top { get { return scenes.First.Value; } }
 
         private SpriteBatch spriteBatch;
-        private Camera2D camera;
 
         public SceneStack(Game game)
             :base(game)
         {
             scenes = new LinkedList<Scene>();
-            Push(new BottomScene(this));
             game.Components.Add(this);
         }
 
         protected override void LoadContent()
         {
+            camera = Game.Services.GetService(typeof(Camera2D)) as Camera2D;
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            camera = new Camera2D(GraphicsDevice);
             base.LoadContent();
         }
 
         public void Push(Scene scene)
         {
+            if (Count > 0)
+                Top.WhenPushedOnto();
+
             scenes.AddFirst(scene);
+            scene.Initialize();
         }
 
         public void Pop()
         {
+            Top.WhenPopped();
             scenes.RemoveFirst();
+
+            if (Count > 0)
+                Top.WhenPoppedDownTo();
         }
 
         public void PopToHead()
         {
-            for (int i = Count; i > 1; i--)
+            while (Count > 1)
                 Pop();
         }
 
@@ -63,8 +71,16 @@ namespace Bounce.Scenes
         {
             GraphicsDevice.Clear(Color.Black);
 
+            spriteBatch.Begin(
+                SpriteSortMode.BackToFront, BlendState.AlphaBlend,
+                null, null, null, null,
+                camera.GetTransformation());
+
             _draw(scenes.First, spriteBatch);
 
+            spriteBatch.End();
+
+            _debugDraw(scenes.First);
             base.Draw(gameTime);
         }
 
@@ -74,6 +90,14 @@ namespace Bounce.Scenes
 
             if (!node.Value.BlockDraw)
                 _draw(node.Next, spriteBatch);
+        }
+
+        public void _debugDraw(LinkedListNode<Scene> node)
+        {
+            node.Value.DebugDraw();
+
+            if (!node.Value.BlockDraw)
+                _debugDraw(node.Next);
         }
     }
 }

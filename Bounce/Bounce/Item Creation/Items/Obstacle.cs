@@ -13,25 +13,24 @@ namespace Bounce
 {
     public class Obstacle : RectangleItem
     {
-        public Obstacle(World world, Texture2D texture)
-            : base(world, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height))
+        public Obstacle(Scene scene, World world, Texture2D texture)
+            : base(scene, world, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height))
         {
             this.Texture = texture;
             Body.BodyType = BodyType.Dynamic;
             Body.Mass = 1f;
             Body.Restitution = 0.1f * restitutionCoEf;
             Body.Friction = 0.1f * frictionCoEf;
-            Body.AngularDamping = 0f;
 
             drawColor = new Color(Vector4.UnitW);
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
 
-            Input.OnRightClickDown += OnRightClick;
-            Input.OnLeftClickDown += OnLeftClick;
-            Input.OnMouseWheel += OnMouseWheel;
-            Input.OnMouseHover += OnMouseHover;
-            Input.OnKeyDown += OnKeyDown;
-            Input.OnKeyUp += OnKeyUp;
+            base.OnRightClickDown += onRightClick;
+            base.OnLeftClickDown += onLeftClick;
+            base.OnMouseWheel += OnMouseWheel;
+            base.OnMouseHover += OnMouseHover;
+            base.OnKeyDown += OnKeyDown;
+            base.OnKeyUp += OnKeyUp;
             Body.UserData = this;
         }
         
@@ -42,7 +41,6 @@ namespace Bounce
 
         public void Initialize()
         {
-            JointFactory.CreateFixedFrictionJoint(world, Body, Body.LocalCenter);
             fRevoluteJoint = JointFactory.CreateFixedRevoluteJoint(world, Body, Body.LocalCenter, Body.Position);
             fRevoluteJoint.MaxMotorTorque = 20f;
             fRevoluteJoint.MotorSpeed = 0f;
@@ -52,8 +50,8 @@ namespace Bounce
             fAngleJoint = JointFactory.CreateFixedAngleJoint(world, Body);
             fAngleJoint.TargetAngle = 0f;
             fAngleJoint.MaxImpulse = 5f;
-            fAngleJoint.BiasFactor = 1f;
-            fAngleJoint.Softness = .96f;
+            fAngleJoint.BiasFactor = 2f;
+            fAngleJoint.Softness = .72f;
         }
 
         public override void Update(GameTime gametime)
@@ -82,14 +80,14 @@ namespace Bounce
             drawColor.R = (byte)((Body.Restitution / restitutionCoEf) * byte.MaxValue);
 
             if (Math.Abs(Body.Revolutions) % 2 < 1)
-                drawColor.G = (byte)((Math.Abs(Body.Revolutions) % 2f) * byte.MaxValue);
+                drawColor.G = (byte)((Math.Abs(Body.Revolutions) % 1f) * byte.MaxValue);
             else
                 drawColor.G = (byte)((1.00f - Math.Abs(Body.Revolutions) % 1f) * byte.MaxValue);
 
             drawColor.B = (byte)((Body.Friction / frictionCoEf) * byte.MaxValue);
         }
 
-        public void OnLeftClick(int ID, MouseState mouseState)
+        public void onLeftClick(int ID, MouseState mouseState)
         {
             if (this.IndexKey == ID)
             {
@@ -101,7 +99,7 @@ namespace Bounce
             }
         }
 
-        public void OnRightClick(int ID, MouseState mouseState)
+        public void onRightClick(int ID, MouseState mouseState)
         {
             if (this.IndexKey == ID)
             {
@@ -116,15 +114,15 @@ namespace Bounce
                 this.Kill();
         }
 
-        public void OnMouseWheel(int ID, MouseState mouseState)
+        public void onMouseWheel(int ID, MouseState mouseState)
         {
             if (this.IndexKey == ID)
             {
-                Body.ApplyTorque(Input.MouseWheelVelocity() * BounceGame.MovementCoEf * 20f); 
+                fAngleJoint.TargetAngle += (Input.MouseWheelVelocity() * 0.125f); 
             }
         }
 
-        public void OnMouseHover(int ID, MouseState mouseState)
+        public void onMouseHover(int ID, MouseState mouseState)
         {
             if (this.IndexKey == ID)
             {
@@ -133,17 +131,32 @@ namespace Bounce
         }
 
         float motorForce;
-        void OnKeyDown(KeyboardState keyboardState)
+        void onKeyDown(KeyboardState keyboardState)
         {
-            if (keyboardState.IsKeyDown(Keys.Up))
-                motorForce = 5f;
-            if (keyboardState.IsKeyDown(Keys.Down))
-                motorForce = -5f;
+            if (scene.IsTop)
+            {
+                if (keyboardState.IsKeyDown(Keys.Up))
+                    motorForce = 5f;
+                if (keyboardState.IsKeyDown(Keys.Down))
+                    motorForce = -5f;
+            }
         }
 
-        void OnKeyUp(KeyboardState keyboardState)
+        void onKeyUp(KeyboardState keyboardState)
         {
             motorForce = 0f;
+        }
+
+        public override void Kill()
+        {
+            Input.OnRightClickDown -= onRightClick;
+            Input.OnLeftClickDown -= onLeftClick;
+            Input.OnMouseWheel -= onMouseWheel;
+            Input.OnMouseHover -= onMouseHover;
+            Input.OnKeyDown -= onKeyDown;
+            Input.OnKeyUp -= onKeyUp;
+
+            base.Kill();
         }
     }
 }

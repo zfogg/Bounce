@@ -13,15 +13,15 @@ namespace Bounce
 {
     public class Metroid : CircleItem
     {
-        public Metroid(World world, Texture2D texture, float sinRadius, float cosRadius)
-            : this(world, texture)
+        public Metroid(Scene scene, World world, Texture2D texture, float sinRadius, float cosRadius)
+            : this(scene, world, texture)
         {
             this.cosRadius = cosRadius;
             this.sinRadius = sinRadius;
         }
 
-        public Metroid(World world, Texture2D texture)
-            : base(world, ConvertUnits.ToSimUnits(texture.Width / 2))
+        public Metroid(Scene scene, World world, Texture2D texture)
+            : base(scene, world, ConvertUnits.ToSimUnits(texture.Width / 2))
         {
             this.Texture = texture;
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
@@ -35,26 +35,29 @@ namespace Bounce
             Body.AngularDamping = 0.075f;
 
             Body.OnCollision += new OnCollisionEventHandler(OnCollision);
-            Input.OnKeyDown += OnKeyDown;
+            base.OnKeyDown += OnKeyDown;
             Body.UserData = this;
         }
 
-        void OnKeyDown(KeyboardState keyboardState)
+        void onKeyDown(KeyboardState keyboardState)
         {
-            if (keyboardState.IsKeyDown(Keys.Space)) //Caution: experimental, horribly messy, and convoluted.
+            if (scene.IsTop)
             {
-                //sinActive = !sinActive;
-
-                if (sinRadius == 0 && cosRadius == 0)
+                if (keyboardState.IsKeyDown(Keys.Space)) //Caution: experimental, horribly messy, and convoluted.
                 {
-                    sinRadius = (float)unitCircle.RandomSegment();
-                    cosRadius = (float)unitCircle.RandomSegment();
+                    //sinActive = !sinActive;
+
+                    if (sinRadius == 0 && cosRadius == 0)
+                    {
+                        sinRadius = (float)unitCircle.RandomSegment();
+                        cosRadius = (float)unitCircle.RandomSegment();
+                    }
+
+                    sinCenter = Body.Position;
+                    sinCenter.X -= (float)Math.Sin(cosRadius);
+
+                    Body.ApplyLinearImpulse(new Vector2((float)cosRadius / 2f, (float)sinRadius));
                 }
-
-                sinCenter = Body.Position;
-                sinCenter.X -= (float)Math.Sin(cosRadius);
-
-                Body.ApplyLinearImpulse(new Vector2((float)cosRadius / 2f, (float)sinRadius));
             }
         }
 

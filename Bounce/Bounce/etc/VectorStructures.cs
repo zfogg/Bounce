@@ -11,7 +11,7 @@ namespace Bounce
 {
     public static class VectorStructures
     {
-        public static List<Vector2> Row(uint numberOfPositions, Vector2 startingPosition, int pixelsApart)
+        public static List<Vector2> Row(int numberOfPositions, Vector2 startingPosition, int pixelsApart)
         {
             
             List<Vector2> positions = new List<Vector2>();
@@ -27,7 +27,7 @@ namespace Bounce
             return positions;
         }
 
-        public static List<Vector2> Column(uint numberOfPositions, Vector2 startingPosition, int pixelsApart)
+        public static List<Vector2> Column(int numberOfPositions, Vector2 startingPosition, int pixelsApart)
         {
             List<Vector2> positions = new List<Vector2>();
             positions.Add(startingPosition);

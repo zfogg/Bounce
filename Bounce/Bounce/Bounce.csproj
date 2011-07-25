@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="etc\IndexKey.cs" />
+    <Compile Include="Item Creation\Items\PaddleBall.cs" />
     <Compile Include="Item Creation\Items\Brick.cs" />
     <Compile Include="Item Creation\Items\Paddle.cs" />
     <Compile Include="Item Creation\Items\ItemShapes.cs" />
@@ -154,6 +155,7 @@
     <Compile Include="BounceGame.cs" />
     <Compile Include="Scenes\BottomScene.cs" />
     <Compile Include="Scenes\BrickBreaker.cs" />
+    <Compile Include="Scenes\PhysicalScene.cs" />
     <Compile Include="Scenes\SceneStack.cs" />
     <Compile Include="Scenes\Scene.cs" />
   </ItemGroup>

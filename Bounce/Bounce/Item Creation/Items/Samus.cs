@@ -15,8 +15,8 @@ namespace Bounce
 {
     public class Samus : PhysicalItem
     {
-        public Samus(World world)
-            : base(world)
+        public Samus(Scene scene, World world)
+            : base(scene, world)
         {
             Texture = BounceGame.ContentManager.Load<Texture2D>("samus");
 
@@ -26,15 +26,15 @@ namespace Bounce
 
             Body.BodyType = BodyType.Dynamic;
             Body.FixedRotation = true; //This causes Body.Mass to reset.
-            Body.Mass = 1.70f;
+            Body.Mass = 4.50f;
             Body.Friction = .475f;
-            Body.Restitution = 0.025f;
+            Body.Restitution = 0.55f;
             Body.AngularDamping = 0.50f;
-            Body.LinearDamping = 0.5f;
+            Body.LinearDamping = 0.25f;
 
-            Input.OnKeyDown += OnKeyPressDown;
-            Input.OnKeyHoldDown += OnKeyHoldDown;
-            Input.OnKeyUp += OnKeyUp;
+            base.OnKeyDown += onKeyPressDown;
+            base.OnKeyHoldDown += onKeyHoldDown;
+            base.OnKeyUp += OnKeyUp;
             Body.UserData = this;
         }
 
@@ -45,28 +45,32 @@ namespace Bounce
             base.Update(gameTime);
         }
 
-        public void OnKeyPressDown(KeyboardState keyboardState)
+        public void onKeyPressDown(KeyboardState keyboardState)
         {
-            if (Input.KeyPressUnique(Keys.W))
-                Body.ApplyLinearImpulse(-Vector2.UnitY * BounceGame.MovementCoEf * 1.2f);
+            if (scene.IsTop)
+                if (Input.KeyPressUnique(Keys.W))
+                    Body.ApplyLinearImpulse((-Vector2.UnitY * (Body.Mass / 2 + Body.LinearVelocity.Y) * BounceGame.MovementCoEf));
         }
 
-        public void OnKeyHoldDown(KeyboardState keyboardState)
+        public void onKeyHoldDown(KeyboardState keyboardState)
         {
-            if (keyboardState.IsKeyDown(Keys.W))
-                force = -Vector2.UnitY;
-            if (keyboardState.IsKeyDown(Keys.D))
-                force = Vector2.UnitX;
-            if (keyboardState.IsKeyDown(Keys.S))
-                force = Vector2.UnitY;
-            if (keyboardState.IsKeyDown(Keys.A))
-                force = -Vector2.UnitX;
+            if (scene.IsTop)
+            {
+                if (keyboardState.IsKeyDown(Keys.W))
+                    force = -Vector2.UnitY * Body.Mass;
+                if (keyboardState.IsKeyDown(Keys.D))
+                    force = Vector2.UnitX * Body.Mass;
+                if (keyboardState.IsKeyDown(Keys.S))
+                    force = Vector2.UnitY * Body.Mass;
+                if (keyboardState.IsKeyDown(Keys.A))
+                    force = -Vector2.UnitX * Body.Mass;
 
-            Vector2.Normalize(force);
-            Body.ApplyForce(force * BounceGame.MovementCoEf);
+                Vector2.Normalize(force);
+                Body.ApplyForce(force * BounceGame.MovementCoEf);
+            }
         }
 
-        void OnKeyUp(KeyboardState keyboardState)
+        void onKeyUp(KeyboardState keyboardState)
         {
             force = Vector2.Zero;
         }

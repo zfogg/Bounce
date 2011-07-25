@@ -1,121 +1,119 @@
 ﻿using System;
 using System.Collections.Generic;
 using FarseerPhysics.Dynamics;
+using FarseerPhysics.Dynamics.Contacts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 
-namespace Bounce.Scenes
+namespace Bounce
 {
-    class BrickBreaker : Scene
+    class BrickBreaker : PhysicalScene
     {
-        public World World { get; protected set; }
-        private const float gravityCoEf = 5f;
-        protected DebugBounce debugFarseer;
-
+        override public Vector2 SceneSize { get { return new Vector2(sceneStack.GraphicsDevice.Viewport.Width, sceneStack.GraphicsDevice.Viewport.Height); } }
         private Camera2D camera;
-        //override public bool BlockUpdate { get { return false; } }
         override public bool BlockDraw { get { return false; } }
-        public Dictionary<IndexKey, PhysicalItem> PhysicalItems { get; private set; }
-        protected List<PhysicalItem> itemsToKill;
 
-        public BrickBreaker(SceneStack sceneStack, Camera2D camera, GraphicsDevice graphicsDevice)
-            : base(sceneStack)
+        private List<RectangleItem> framing;
+        private List<Obstacle> obstacles;
+        private List<Metroid> metroids;
+        private Samus samus;
+        private Paddle paddle;
+        private PaddleBall ball;
+        public List<Brick> bricks;
+
+        public BrickBreaker(SceneStack sceneStack, Camera2D camera)
+            : base(sceneStack, camera)
         {
             this.camera = camera;
-            background = new Background(Vector2.Zero, "background2");
-            World = new World(BounceGame.GravityCoEf * Vector2.UnitY);
-            debugFarseer = new DebugBounce(World, camera);
-            debugFarseer.Initialize(graphicsDevice, BounceGame.ContentManager);
-
-            PhysicalItems = new Dictionary<IndexKey, PhysicalItem>();
-            ItemFactory.ActiveDict = PhysicalItems;
-            itemsToKill = new List<PhysicalItem>(ItemFactory.CreationLimit);
-
-            ItemStructures.CreateFraming(
-                World, new Vector2(graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height), 20);
-            ItemFactory.CreateSamus(World);
-            ItemFactory.CreatePaddleCenterFloor(World);
-
-            //List<Obstacle> obstacles = ItemStructures.CreateRandomlyPositionedObstacles(World, windowSize, r.Next(5));
-            //ItemStructures.MetroidsNearItems(World,
-            //    obstacles.ConvertAll<PhysicalItem>(x => (PhysicalItem)x),
-            //    Vector2.UnitY * 50f, 50);
-            //ItemStructures.MetroidRow(World, 5, new Vector2(50, 189), 135);
-            //ItemStructures.MetroidColumn(World, 5, new Vector2(windowSize.X / 2, 40), 80);
+            background = new Background(this, Vector2.Zero, "background2");
 
             Input.OnKeyHoldDown += new KeyboardEvent(OnKeyHoldDown);
         }
 
+        public override void Initialize()
+        {
+            base.Initialize();
+
+            framing = ItemStructures.CreateFraming(
+                World, new Vector2(sceneStack.GraphicsDevice.Viewport.Width, sceneStack.GraphicsDevice.Viewport.Height), 20);
+            samus = ItemFactory.CreateSamus(World);
+
+            paddle = ItemFactory.CreatePaddleCenterFloor(World);
+            ball = ItemFactory.CreatePaddleBall(World, paddle);
+
+            brickWall(10);
+            destroyAfterTouch<Brick>(ball);
+        }
+
+        private List<Brick> brickWall(int rows)
+        {
+            var sampleBrick = ItemFactory.CreateBrick(World);
+            var bricks = new List<Brick>();
+
+            var rowStartingPositions = VectorStructures.Column(rows,
+                new Vector2(sampleBrick.Texture.Width / 2, sampleBrick.Texture.Height / 2),
+                sampleBrick.Texture.Height);
+
+            foreach (Vector2 startingPosition in rowStartingPositions)
+            {
+                bricks.AddRange(ItemStructures.BrickRow(World,
+                    sceneStack.GraphicsDevice.Viewport.Width / sampleBrick.Texture.Width - 1,
+                    startingPosition,
+                    sampleBrick.Texture.Width));
+            }
+
+            sampleBrick.Kill();
+
+            return bricks;
+        }
+
+        private void destroyOnTouch<T>(PhysicalItem destroyOnTouching) where T:PhysicalItem
+        {
+            destroyOnTouching.Body.OnCollision += (Fixture fixtureA, Fixture fixtureB, Contact contact) =>
+            {
+                if (fixtureB.Body.UserData is T)
+                    (fixtureB.Body.UserData as T).Kill();
+
+                return true;
+            };
+        }
+
+        private void destroyAfterTouch<T>(PhysicalItem destroyAfterTouching) where T : PhysicalItem
+        {
+            destroyAfterTouching.Body.FixtureList[0].OnSeparation = (Fixture fixtureA, Fixture fixtureB) =>
+            {
+                if (fixtureB.Body.UserData is T)
+                    (fixtureB.Body.UserData as T).Kill();
+            };
+        }
+
         public override void Update(GameTime gameTime)
         {
-            Input.MouseHoverPhysicalItem(World);
-
-            foreach (PhysicalItem item in PhysicalItems.Values)
-            {
-                if (item.IsAlive)
-                    item.Update(gameTime);
-                else
-                    itemsToKill.Add(item);
-            }
-
-            foreach (PhysicalItem item in itemsToKill)
-            {
-                item.Kill();
-                PhysicalItems.Remove(item.IndexKey);
-            }
-
-            itemsToKill.RemoveRange(0, itemsToKill.Count);
-
             World.Gravity.X = (float)Math.Sin(camera.Rotation) * gravityCoEf;
             World.Gravity.Y = (float)Math.Cos(camera.Rotation) * gravityCoEf;
 
-            World.Step(Math.Min((float)gameTime.ElapsedGameTime.TotalSeconds, (1f / 30f)));
-            debugFarseer.Update(gameTime);
+            base.Update(gameTime);
         }
 
         void OnKeyHoldDown(KeyboardState keyboardState)
         {
-            if (keyboardState.IsKeyDown(Keys.D1) && Input.LeftClickRelease())
-                ItemFactory.CreateMetroid(World, Input.MousePosition);
+            if (IsTop)
+            {
+                if (keyboardState.IsKeyDown(Keys.D2) && Input.LeftClickRelease())
+                     ItemFactory.CreateBrick(World, Input.MousePosition);
 
-            if (keyboardState.IsKeyDown(Keys.D2) && Input.LeftClickRelease())
-                ItemFactory.CreateBrick(World, Input.MousePosition);
-
-            if (keyboardState.IsKeyDown(Keys.D3) && Input.LeftClickRelease())
-                ItemFactory.CreateObstacle(World, Input.MousePosition);
-
-            if (keyboardState.IsKeyDown(Keys.F10) && Input.LeftClickRelease())
-                ItemStructures.MetroidRow(World, 5, Input.MousePosition, 50);
-
-            if (keyboardState.IsKeyDown(Keys.F11) && Input.LeftClickRelease())
-                ItemStructures.MetroidColumn(World, 5, Input.MousePosition, 50);
-
-            if (keyboardState.IsKeyDown(Keys.F12) && Input.LeftClickRelease())
-                ItemStructures.BrickRow(World, 5, Input.MousePosition, 40);
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-
-            spriteBatch.Begin(
-                SpriteSortMode.Immediate, BlendState.AlphaBlend,
-                null, null, null, null,
-                camera.GetTransformation());
-
-            foreach (PhysicalItem sprite in PhysicalItems.Values)
-                sprite.Draw(spriteBatch);
-
-            spriteBatch.End();
-
-            debugFarseer.Draw();
+                if (keyboardState.IsKeyDown(Keys.F12) && Input.LeftClickRelease())
+                    ItemStructures.BrickRow(World, 5, Input.MousePosition, 40);
+            }
         }
 
         public override void Kill()
         {
-
+            Input.OnKeyDown -= OnKeyHoldDown;
+            base.Kill();
         }
     }
 }

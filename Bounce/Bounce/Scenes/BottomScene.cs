@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Bounce.Scenes
+namespace Bounce
 {
     class BottomScene : Scene
     {
@@ -15,20 +15,23 @@ namespace Bounce.Scenes
         public BottomScene(SceneStack sceneStack)
             : base(sceneStack)
         {
+            arial = BounceGame.ContentManager.Load<SpriteFont>(@"arial");
+        }
+
+        public override void Initialize()
+        {
             
         }
 
         public override void Update(GameTime gameTime)
         {
-            arial = BounceGame.ContentManager.Load<SpriteFont>(@"arial");
+
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Begin();
             spriteBatch.DrawString(
-                arial, "BottomScene: Don't pop() this.", Vector2.Zero, Color.White);
-            spriteBatch.End();
+                arial, sceneStack.ToString() + " : " + sceneStack.Count.ToString(), Vector2.Zero, Color.White);
         }
 
         public override void Kill()
