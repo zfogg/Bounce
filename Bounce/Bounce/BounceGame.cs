@@ -14,6 +14,7 @@ namespace Bounce
         //XNA Framework objects
         private GraphicsDeviceManager graphics;
         public static ContentManager ContentManager;
+        private Input input;
 
         //Regular objects
         private Camera2D camera;
@@ -31,17 +32,8 @@ namespace Bounce
             ContentManager = new ContentManager(this.Services);
             sceneStack = new SceneStack(this);
 
-            Input.OnKeyDown += new KeyboardEvent(OnKeyDown);
-        }
-
-        void OnKeyDown(KeyboardState keyboardState)
-        {
-            if (keyboardState.IsKeyDown(Keys.RightControl) && keyboardState.IsKeyDown(Keys.D1))
-                sceneStack.Push(new BrickBreaker(sceneStack, camera));
-            if (keyboardState.IsKeyDown(Keys.RightControl) && keyboardState.IsKeyDown(Keys.Delete))
-                sceneStack.Pop();
-            if (keyboardState.IsKeyDown(Keys.RightShift) && keyboardState.IsKeyDown(Keys.Delete))
-                sceneStack.PopToHead();
+            input = new Input();
+            input.OnKeyDown += new KeyboardEvent(onKeyDown);
         }
 
         protected override void Initialize()
@@ -49,15 +41,15 @@ namespace Bounce
             ContentManager.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = 800;
             graphics.PreferredBackBufferHeight = 480;
-            Window.Title = "Bounce";
+            Window.Title = "";
             IsMouseVisible = true;
             graphics.ApplyChanges();
 
-            ItemFactory.WindowSize = windowSize;
-            camera = new Camera2D(GraphicsDevice);
+            ItemFactory.WindowSize = windowSize; //This is bad code; needs to go.
 
-            Services.AddService(typeof(Camera2D), camera);
-            Services.AddService(typeof(GraphicsDevice), GraphicsDevice);
+            camera = new Camera2D(GraphicsDevice, input);
+            this.Services.AddService(camera.GetType(), camera); //Needs uncoupling from SceneStack.
+                                                                //Maybe each scene should have its own camera, or maybe just a "camera position".
 
             base.Initialize();
         }
@@ -66,24 +58,25 @@ namespace Bounce
         {
             sceneStack.Push(new BottomScene(sceneStack));
             sceneStack.Push(new BrickBreaker(sceneStack, camera));
+
             base.LoadContent();
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (this.IsActive)
-            {
-                Input.Update(Mouse.GetState(), Keyboard.GetState());
-            }
+            input.Update(); //This instance of Input only needs to be updated because it has Camera2D controls subscribed to its events.
 
-            camera.Update();
             base.Update(gameTime);
+        }
+
+        void onKeyDown(KeyboardState keyboardState)
+        {
+            if (keyboardState.IsKeyDown(Keys.Enter))
+                sceneStack.Push(new BrickBreaker(sceneStack, camera));
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            //GraphicsDevice.Clear(new Color(new Vector3((float)Math.Sin(World.Gravity.X), (float)Math.Cos(World.Gravity.Y), (float)Math.Tan(camera.Zoom))));
-
             base.Draw(gameTime);
         }
     }

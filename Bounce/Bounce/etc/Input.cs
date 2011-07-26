@@ -10,42 +10,41 @@ namespace Bounce
     public delegate void KeyboardEvent(KeyboardState keyboardState);
     public delegate void MouseEvent(int selectedItemID, MouseState mouseState);
 
-    public static class Input
+    public class Input
     {
-        public static KeyboardState KeyboardState { get { return keyboardState; } }
-        private static KeyboardState keyboardState, previousKeyboardState;
+        public KeyboardState KeyboardState { get { return keyboardState; } }
+        private KeyboardState keyboardState, previousKeyboardState;
 
-        public static Vector2 MousePosition { get { return new Vector2(mouseState.X, mouseState.Y); } }
-        private static Vector2 previousMousePosition;
-        public static Point MousePoint { get { return new Point(mouseState.X, mouseState.Y); } }
-        public static MouseState MouseState { get { return mouseState; } }
-        private static MouseState mouseState, previousMouseState;
+        public Vector2 MouseVector2 { get { return new Vector2(mouseState.X, mouseState.Y); } }
+        public Point MousePoint { get { return new Point(mouseState.X, mouseState.Y); } }
+        private Vector2 previousMousePosition;
+        public MouseState MouseState { get { return mouseState; } }
+        private MouseState mouseState, previousMouseState;
 
-        public static PhysicalItem SelectedItem { get { return selectedItem; } private set { selectedItem = value; } }
-        private static PhysicalItem selectedItem;
-        private static int selectedItemID;
+        private PhysicalItem selectedItem;
+        private int selectedItemID;
 
-        public static event KeyboardEvent OnKeyDown;
-        public static event KeyboardEvent OnKeyHoldDown;
-        public static event KeyboardEvent OnKeyUp;
+        public event KeyboardEvent OnKeyDown;
+        public event KeyboardEvent OnKeyHoldDown;
+        public event KeyboardEvent OnKeyUp;
 
-        public static event MouseEvent OnLeftClickDown;
-        public static event MouseEvent OnLeftClickUp;
-        public static event MouseEvent OnRightClickDown;
-        public static event MouseEvent OnRightClickUp;
-        public static event MouseEvent OnMiddleClickDown;
-        public static event MouseEvent OnMiddleClickUp;
-        public static event MouseEvent OnMouseHover;
-        public static event MouseEvent OnMouseWheel;
+        public event MouseEvent OnLeftClickDown;
+        public event MouseEvent OnLeftClickUp;
+        public event MouseEvent OnRightClickDown;
+        public event MouseEvent OnRightClickUp;
+        public event MouseEvent OnMiddleClickDown;
+        public event MouseEvent OnMiddleClickUp;
+        public event MouseEvent OnMouseHover;
+        public event MouseEvent OnMouseWheel;
 
-        public static void Update(MouseState newMouseState, KeyboardState newKeyboardState)
+        public void Update()
         {
             previousKeyboardState = keyboardState;
-            keyboardState = newKeyboardState;
+            keyboardState = Keyboard.GetState();
 
             previousMouseState = mouseState;
-            previousMousePosition = MousePosition;
-            mouseState = newMouseState;
+            previousMousePosition = MouseVector2;
+            mouseState = Mouse.GetState();
 
             //Keyboard events.
             if (keyboardState != previousKeyboardState)
@@ -53,7 +52,7 @@ namespace Bounce
                 if (keyboardState.GetPressedKeys().Length > previousKeyboardState.GetPressedKeys().Length)
                     if (OnKeyDown != null) OnKeyDown(keyboardState);
                 if (keyboardState.GetPressedKeys().Length < previousKeyboardState.GetPressedKeys().Length)
-                    if (OnKeyUp != null) OnKeyUp(keyboardState);
+                    if (OnKeyUp != null) OnKeyUp(previousKeyboardState);
             }
             if (keyboardState.GetPressedKeys().Length != 0)
                 if (OnKeyHoldDown != null) OnKeyHoldDown(keyboardState);
@@ -81,75 +80,78 @@ namespace Bounce
             }
         }
 
-        public static bool KeyPressUnique(Keys key)
+        public bool KeyPressUnique(Keys key)
         {
             return (keyboardState.IsKeyDown(key) &&
                     previousKeyboardState.IsKeyUp(key));
         }
 
-        public static bool KeyPressRelease(Keys key)
+        public bool KeyPressRelease(Keys key)
         {
             return (previousKeyboardState.IsKeyDown(key) &&
                     keyboardState.IsKeyUp(key));
         }
 
-        public static bool LeftClickUnique()
+        public bool LeftClickUnique()
         {
             return (mouseState.LeftButton == ButtonState.Pressed &&
                     previousMouseState.LeftButton == ButtonState.Released);
         }
 
-        public static bool LeftClickRelease()
+        public bool LeftClickRelease()
         {
             return (mouseState.LeftButton == ButtonState.Released &&
                     previousMouseState.LeftButton == ButtonState.Pressed);
         }
 
-        public static bool RightClickUnique()
+        public bool RightClickUnique()
         {
             return (mouseState.RightButton == ButtonState.Pressed &&
                     previousMouseState.RightButton == ButtonState.Released);
         }
 
-        public static bool RightClickRelease()
+        public bool RightClickRelease()
         {
             return (mouseState.RightButton == ButtonState.Released &&
                     previousMouseState.RightButton == ButtonState.Pressed);
         }
 
-        public static bool MiddleClickUnique()
+        public bool MiddleClickUnique()
         {
             return (mouseState.MiddleButton == ButtonState.Pressed &&
                     previousMouseState.MiddleButton == ButtonState.Released);
         }
 
-        public static bool MiddleClickRelease()
+        public bool MiddleClickRelease()
         {
             return (mouseState.MiddleButton == ButtonState.Released &&
                     previousMouseState.MiddleButton == ButtonState.Pressed);
         }
 
-        public static bool MouseWheelForwards()
+        public bool MouseWheelForwards()
         {
             return (mouseState.ScrollWheelValue > previousMouseState.ScrollWheelValue);
         }
 
-        public static bool MouseWheelReverse()
+        public bool MouseWheelReverse()
         {
             return (mouseState.ScrollWheelValue < previousMouseState.ScrollWheelValue);
         }
 
-        public static float MouseWheelVelocity()
+        public float MouseWheelVelocity()
         {
             return MathHelper.Clamp(
                 (mouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue) * 0.20f, -1, 1);
         }
 
-        public static PhysicalItem MouseHoverPhysicalItem(World world)
+        public PhysicalItem MouseHoverPhysicalItem(World world)
         {
             try
             {
-                selectedItem = (PhysicalItem)world.TestPoint(ConvertUnits.ToSimUnits(MousePosition)).Body.UserData;
+                selectedItem = (PhysicalItem)world.TestPoint(
+                    ConvertUnits.ToSimUnits(
+                        MouseVector2)).Body.UserData;
+
                 selectedItemID = selectedItem.Body.BodyId;
             }
             catch (NullReferenceException)

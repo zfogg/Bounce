@@ -29,7 +29,7 @@ namespace Bounce
                  Vector2.Zero,
                  2f,
                  SpriteEffects.None,
-                 01f + scene.SceneDepth);
+                 1f);
         }
     }
 }

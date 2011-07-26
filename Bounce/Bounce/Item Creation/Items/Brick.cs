@@ -12,19 +12,14 @@ namespace Bounce
 {
     public class Brick : RectangleItem
     {
-        public Brick(Scene scene, World world, Texture2D texture)
-            : base(scene, world, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height))
+        public Brick(PhysicalScene scene, Texture2D texture)
+            : base(scene, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height))
         {
-            Body.BodyType = BodyType.Dynamic;
+            Body.BodyType = BodyType.Static;
             drawColor = new Color(r.Next(256), r.Next(256), r.Next(256));
             this.Texture = texture;
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
             Body.UserData = this;
-        }
-
-        public void Initialize()
-        {
-            JointFactory.CreateFixedRevoluteJoint(world, Body, Vector2.Zero, Body.Position);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
@@ -34,7 +29,7 @@ namespace Bounce
 
         public override void Update(GameTime gametime)
         {
-            if (Input.KeyboardState.IsKeyDown(Keys.D2) && Input.RightClickRelease())
+            if (scene.Input.KeyboardState.IsKeyDown(Keys.D2) && scene.Input.RightClickRelease())
                 this.IsAlive = false;
 
             base.Update(gametime);

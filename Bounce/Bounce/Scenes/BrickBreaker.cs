@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using FarseerPhysics;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Dynamics.Contacts;
+using FarseerPhysics.Factories;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 
@@ -14,11 +14,9 @@ namespace Bounce
     {
         override public Vector2 SceneSize { get { return new Vector2(sceneStack.GraphicsDevice.Viewport.Width, sceneStack.GraphicsDevice.Viewport.Height); } }
         private Camera2D camera;
-        override public bool BlockDraw { get { return false; } }
+        override public bool BlockDraw { get { return true; } }
 
         private List<RectangleItem> framing;
-        private List<Obstacle> obstacles;
-        private List<Metroid> metroids;
         private Samus samus;
         private Paddle paddle;
         private PaddleBall ball;
@@ -30,7 +28,8 @@ namespace Bounce
             this.camera = camera;
             background = new Background(this, Vector2.Zero, "background2");
 
-            Input.OnKeyHoldDown += new KeyboardEvent(OnKeyHoldDown);
+            Input.OnKeyDown += new KeyboardEvent(onKeyDown);
+            Input.OnKeyUp += new KeyboardEvent(onKeyUp);
         }
 
         public override void Initialize()
@@ -38,19 +37,27 @@ namespace Bounce
             base.Initialize();
 
             framing = ItemStructures.CreateFraming(
-                World, new Vector2(sceneStack.GraphicsDevice.Viewport.Width, sceneStack.GraphicsDevice.Viewport.Height), 20);
-            samus = ItemFactory.CreateSamus(World);
+                this, new Vector2(sceneStack.GraphicsDevice.Viewport.Width, sceneStack.GraphicsDevice.Viewport.Height), 20);
 
-            paddle = ItemFactory.CreatePaddleCenterFloor(World);
-            ball = ItemFactory.CreatePaddleBall(World, paddle);
+            paddle = ItemFactory.CreatePaddleCenterFloor(this);
 
-            brickWall(10);
-            destroyAfterTouch<Brick>(ball);
+            ball = ItemFactory.CreatePaddleBall(this, paddle);
+            positionBall(ball, paddle);
+            destroyOnTouch<Brick>(ball);
+
+            bricks = brickWall(10);
+        }
+
+        private void positionBall(PaddleBall ball, Paddle paddle)
+        {
+            JointFactory.CreateWeldJoint(World, ball.Body, paddle.Body,
+                Vector2.UnitY * ConvertUnits.ToSimUnits(ball.Texture.Height * 2),
+                Vector2.Zero);
         }
 
         private List<Brick> brickWall(int rows)
         {
-            var sampleBrick = ItemFactory.CreateBrick(World);
+            var sampleBrick = ItemFactory.CreateBrick(this);
             var bricks = new List<Brick>();
 
             var rowStartingPositions = VectorStructures.Column(rows,
@@ -59,7 +66,7 @@ namespace Bounce
 
             foreach (Vector2 startingPosition in rowStartingPositions)
             {
-                bricks.AddRange(ItemStructures.BrickRow(World,
+                bricks.AddRange(ItemStructures.BrickRow(this,
                     sceneStack.GraphicsDevice.Viewport.Width / sampleBrick.Texture.Width - 1,
                     startingPosition,
                     sampleBrick.Texture.Width));
@@ -92,27 +99,53 @@ namespace Bounce
 
         public override void Update(GameTime gameTime)
         {
-            World.Gravity.X = (float)Math.Sin(camera.Rotation) * gravityCoEf;
-            World.Gravity.Y = (float)Math.Cos(camera.Rotation) * gravityCoEf;
+            if (IsTop)
+                Input.Update();
 
+            worldGravityRotation(camera.Rotation);
             base.Update(gameTime);
         }
 
-        void OnKeyHoldDown(KeyboardState keyboardState)
+        void worldGravityRotation(float rotation)
         {
-            if (IsTop)
-            {
-                if (keyboardState.IsKeyDown(Keys.D2) && Input.LeftClickRelease())
-                     ItemFactory.CreateBrick(World, Input.MousePosition);
+            World.Gravity.X = (float)Math.Sin(rotation) * gravityCoEf;
+            World.Gravity.Y = (float)Math.Cos(rotation) * gravityCoEf;
+        }
 
-                if (keyboardState.IsKeyDown(Keys.F12) && Input.LeftClickRelease())
-                    ItemStructures.BrickRow(World, 5, Input.MousePosition, 40);
+        void onKeyDown(KeyboardState keyboardState)
+        {
+            if (keyboardState.IsKeyDown(Keys.Space))
+            {
+                if (ball.Body.JointList != null)
+                {
+                    World.RemoveJoint(ball.Body.JointList.Joint);
+
+                    var force = new Vector2(BounceGame.r.Next(-100, 101) / 100f, -1);
+                    ball.Body.ApplyLinearImpulse(force * BounceGame.MovementCoEf);
+                }
+                else
+                {
+                    ball.Kill();
+
+                    ball = ItemFactory.CreatePaddleBall(this, paddle);
+                    positionBall(ball, paddle);
+                    destroyOnTouch<Brick>(ball);
+                }
             }
+        }
+
+        void onKeyUp(KeyboardState previousKeyboardState)
+        {
+            if (previousKeyboardState.IsKeyDown(Keys.RightControl) && previousKeyboardState.IsKeyDown(Keys.D1))
+                sceneStack.Push(new BrickBreaker(sceneStack, camera));
+            else if (previousKeyboardState.IsKeyDown(Keys.RightControl) && previousKeyboardState.IsKeyDown(Keys.Delete))
+                sceneStack.Pop();
+            else if (previousKeyboardState.IsKeyDown(Keys.RightShift) && previousKeyboardState.IsKeyDown(Keys.Delete))
+                sceneStack.PopToHead();
         }
 
         public override void Kill()
         {
-            Input.OnKeyDown -= OnKeyHoldDown;
             base.Kill();
         }
     }

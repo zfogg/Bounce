@@ -13,24 +13,29 @@ namespace Bounce
         public float Rotation;
         private Vector2 movement;
 
-        public Camera2D(GraphicsDevice graphicsDevice)
+        public Camera2D(GraphicsDevice graphicsDevice, Input input)
         {
             Zoom = 1.0f;
             Rotation = 0.0f;
             Position = new Vector2(graphicsDevice.Viewport.Width / 2f, graphicsDevice.Viewport.Height / 2f);
             this.graphicsDevice = graphicsDevice;
 
-            Input.OnKeyDown += new KeyboardEvent(OnKeyDown);
-            Input.OnKeyHoldDown += new KeyboardEvent(OnKeyHoldDown);
-            Input.OnKeyUp += new KeyboardEvent(OnKeyUp);
+            input.OnKeyDown += new KeyboardEvent(onKeyDown);
+            input.OnKeyHoldDown += new KeyboardEvent(onKeyHoldDown);
+            input.OnKeyUp += new KeyboardEvent(onKeyUp);
         }
 
-        public void Update()
+        void onKeyDown(KeyboardState keyboardState)
         {
-            
+            if (keyboardState.IsKeyDown(Keys.NumPad5)) //Reset fields
+            {
+                //Position = new Vector2(BounceGame.Graphics.GraphicsDevice.Viewport.Width * 0.5f, BounceGame.Graphics.GraphicsDevice.Viewport.Height * 0.5f);
+                Zoom = 1f;
+                Rotation = 0f;
+            }
         }
 
-        void OnKeyHoldDown(KeyboardState keyboardState)
+        void onKeyHoldDown(KeyboardState keyboardState)
         {
             //Move
             if (keyboardState.IsKeyDown(Keys.NumPad8))
@@ -58,17 +63,7 @@ namespace Bounce
                 Rotation += -0.025f;
         }
 
-        void OnKeyDown(KeyboardState keyboardState)
-        {
-            if (keyboardState.IsKeyDown(Keys.NumPad5)) //Reset fields
-            {
-                //Position = new Vector2(BounceGame.Graphics.GraphicsDevice.Viewport.Width * 0.5f, BounceGame.Graphics.GraphicsDevice.Viewport.Height * 0.5f);
-                Zoom = 1f;
-                Rotation = 0f;
-            }
-        }
-
-        void OnKeyUp(KeyboardState keyboardState)
+        void onKeyUp(KeyboardState previousKeyboardState)
         {
             movement = Vector2.Zero;
         }

@@ -132,6 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="etc\IndexKey.cs" />
+    <Compile Include="Item Creation\BodyJointer.cs" />
     <Compile Include="Item Creation\Items\PaddleBall.cs" />
     <Compile Include="Item Creation\Items\Brick.cs" />
     <Compile Include="Item Creation\Items\Paddle.cs" />

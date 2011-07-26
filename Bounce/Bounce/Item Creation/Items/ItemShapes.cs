@@ -11,15 +11,14 @@ namespace Bounce
 {
     public class RectangleItem : PhysicalItem
     {
-        public RectangleItem(Scene scene, World world, int width, int height)
-            : this(scene, world, (float)width, (float)height) { }
+        public RectangleItem(PhysicalScene scene, int width, int height)
+            : this(scene, (float)width, (float)height) { }
 
-        public RectangleItem(Scene scene, World world, float width, float height)
-            : base(scene, world)
+        public RectangleItem(PhysicalScene scene, float width, float height)
+            : base(scene)
         {
-            Body = BodyFactory.CreateRectangle(world, width, height, 1f);
+            Body = BodyFactory.CreateRectangle(scene.World, width, height, 1f);
             Rectangle = new Rectangle(0, 0, (int)ConvertUnits.ToDisplayUnits(width), (int)ConvertUnits.ToDisplayUnits(height));
-            UpdatePosition();
 
             Body.UserData = this;
         }
@@ -47,10 +46,10 @@ namespace Bounce
 
     public class CircleItem : PhysicalItem
     {
-        public CircleItem(Scene scene, World world, float radius)
-            : base(scene, world)
+        public CircleItem(PhysicalScene scene, float radius)
+            : base(scene)
         {
-            Body = BodyFactory.CreateCircle(world, radius, 1f);
+            Body = BodyFactory.CreateCircle(scene.World, radius, 1f);
 
             Body.UserData = this;
         }

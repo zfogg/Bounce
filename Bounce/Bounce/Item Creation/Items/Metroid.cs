@@ -13,15 +13,15 @@ namespace Bounce
 {
     public class Metroid : CircleItem
     {
-        public Metroid(Scene scene, World world, Texture2D texture, float sinRadius, float cosRadius)
-            : this(scene, world, texture)
+        public Metroid(PhysicalScene scene, Texture2D texture, float sinRadius, float cosRadius)
+            : this(scene, texture)
         {
             this.cosRadius = cosRadius;
             this.sinRadius = sinRadius;
         }
 
-        public Metroid(Scene scene, World world, Texture2D texture)
-            : base(scene, world, ConvertUnits.ToSimUnits(texture.Width / 2))
+        public Metroid(PhysicalScene scene, Texture2D texture)
+            : base(scene, ConvertUnits.ToSimUnits(texture.Width / 2))
         {
             this.Texture = texture;
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
@@ -34,31 +34,9 @@ namespace Bounce
             Body.Restitution = 0.75f;
             Body.AngularDamping = 0.075f;
 
-            Body.OnCollision += new OnCollisionEventHandler(OnCollision);
-            base.OnKeyDown += OnKeyDown;
+            scene.Input.OnKeyDown += onKeyDown;
+            scene.Input.OnMiddleClickDown += onMiddleClickDown;
             Body.UserData = this;
-        }
-
-        void onKeyDown(KeyboardState keyboardState)
-        {
-            if (scene.IsTop)
-            {
-                if (keyboardState.IsKeyDown(Keys.Space)) //Caution: experimental, horribly messy, and convoluted.
-                {
-                    //sinActive = !sinActive;
-
-                    if (sinRadius == 0 && cosRadius == 0)
-                    {
-                        sinRadius = (float)unitCircle.RandomSegment();
-                        cosRadius = (float)unitCircle.RandomSegment();
-                    }
-
-                    sinCenter = Body.Position;
-                    sinCenter.X -= (float)Math.Sin(cosRadius);
-
-                    Body.ApplyLinearImpulse(new Vector2((float)cosRadius / 2f, (float)sinRadius));
-                }
-            }
         }
 
         private UnitCircle unitCircle;
@@ -66,15 +44,6 @@ namespace Bounce
 
         public override void Update(GameTime gameTime) // Idea: make metroids hover when they near the ground.
         {
-            if (Input.MiddleClickUnique())
-            {
-                Body.Awake = true;
-                Body.IgnoreGravity ^= true;
-            }
-
-            if (Input.KeyboardState.IsKeyDown(Keys.D1) && Input.RightClickRelease())
-                IsAlive = false;
-
             if (sinActive)
             {
                 SinMotion();
@@ -107,10 +76,32 @@ namespace Bounce
             Body.ApplyForce((-sinForce) * cosRadius);
         }
 
-        public bool OnCollision(Fixture fixtureA, Fixture fixtureB, Contact contact)
+        void onKeyDown(KeyboardState keyboardState)
         {
+            if (keyboardState.IsKeyDown(Keys.D1) && scene.Input.RightClickRelease())
+                IsAlive = false;
 
-            return true;
+            if (keyboardState.IsKeyDown(Keys.Space)) //Caution: experimental, horribly messy, and convoluted.
+            {
+                //sinActive = !sinActive;
+
+                if (sinRadius == 0 && cosRadius == 0)
+                {
+                    sinRadius = (float)unitCircle.RandomSegment();
+                    cosRadius = (float)unitCircle.RandomSegment();
+                }
+
+                sinCenter = Body.Position;
+                sinCenter.X -= (float)Math.Sin(cosRadius);
+
+                Body.ApplyLinearImpulse(new Vector2((float)cosRadius / 2f, (float)sinRadius));
+            }
+        }
+
+        void onMiddleClickDown(int selectedItemID, MouseState mouseState)
+        {
+            Body.Awake = true;
+            Body.IgnoreGravity ^= true;
         }
     }
 }

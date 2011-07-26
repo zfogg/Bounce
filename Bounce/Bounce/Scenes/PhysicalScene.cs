@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Bounce
 {
-    class PhysicalScene : Scene
+    public class PhysicalScene : Scene
     {
         public World World { get; protected set; }
         protected const float gravityCoEf = 5f;
@@ -27,16 +27,13 @@ namespace Bounce
 
             World = new World(BounceGame.GravityCoEf * Vector2.UnitY);
             debugFarseer = new DebugBounce(World, camera);
-            debugFarseer.Initialize(sceneStack.GraphicsDevice, BounceGame.ContentManager);
+            debugFarseer.Initialize(sceneStack.GraphicsDevice, BounceGame.ContentManager, Input);
         }
 
         public override void Initialize()
         {
             ItemFactory.ActiveDict = PhysicalItems;
             ItemFactory.ActiveScene = this;
-
-
-
         }
 
         public override void Update(GameTime gameTime)
@@ -65,7 +62,7 @@ namespace Bounce
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            //background.Draw(spriteBatch);
+            background.Draw(spriteBatch);
 
             foreach (PhysicalItem sprite in PhysicalItems.Values)
                 sprite.Draw(spriteBatch);

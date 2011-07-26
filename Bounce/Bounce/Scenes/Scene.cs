@@ -13,15 +13,16 @@ namespace Bounce
     {
         protected Background background;
         protected SceneStack sceneStack;
+        public Input Input;
         public virtual Vector2 SceneSize { get; private set; }
         public bool IsTop { get { return sceneStack.Top == this; } }
-        public int SceneDepth { get { return sceneDepthIndex; } }
-        private int sceneDepthIndex;
         public virtual bool BlockUpdate { get { return true; } }
         public virtual bool BlockDraw { get { return true; } }
+        public virtual bool BlockInput { get { return true; } }
 
         protected Scene(SceneStack sceneStack)
         {
+            Input = new Input();
             this.sceneStack = sceneStack;
         }
 
@@ -30,8 +31,8 @@ namespace Bounce
         public abstract void Draw(SpriteBatch spriteBatch);
         public abstract void Kill();
 
-        public virtual void WhenPushedOnto() { sceneDepthIndex++; }
-        public virtual void WhenPoppedDownTo() { sceneDepthIndex--; }
+        public virtual void WhenPushedOnto() { }
+        public virtual void WhenPoppedDownTo() {  }
         public virtual void WhenPopped() { }
         public virtual void DebugDraw() { }
     }

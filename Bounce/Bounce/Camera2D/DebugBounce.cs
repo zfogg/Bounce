@@ -22,7 +22,7 @@ namespace Bounce
             this.camera = camera;
         }
 
-        public void Initialize(GraphicsDevice graphicsDevice, ContentManager contentManager)
+        public void Initialize(GraphicsDevice graphicsDevice, ContentManager contentManager, Input input)
         {
             this.graphicsDevice = graphicsDevice;
 
@@ -41,7 +41,7 @@ namespace Bounce
             tran.Translation = campos;
             view = tran;
 
-            Input.OnKeyDown += OnKeyDown;
+            input.OnKeyDown += OnKeyDown;
         }
 
         public void Update(GameTime gameTime)

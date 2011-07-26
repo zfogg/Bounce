@@ -13,8 +13,8 @@ namespace Bounce
 {
     public class Obstacle : RectangleItem
     {
-        public Obstacle(Scene scene, World world, Texture2D texture)
-            : base(scene, world, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height))
+        public Obstacle(PhysicalScene scene, Texture2D texture)
+            : base(scene, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height))
         {
             this.Texture = texture;
             Body.BodyType = BodyType.Dynamic;
@@ -25,12 +25,12 @@ namespace Bounce
             drawColor = new Color(Vector4.UnitW);
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
 
-            base.OnRightClickDown += onRightClick;
-            base.OnLeftClickDown += onLeftClick;
-            base.OnMouseWheel += OnMouseWheel;
-            base.OnMouseHover += OnMouseHover;
-            base.OnKeyDown += OnKeyDown;
-            base.OnKeyUp += OnKeyUp;
+            scene.Input.OnRightClickDown += onRightClick;
+            scene.Input.OnLeftClickDown += onLeftClick;
+            scene.Input.OnMouseWheel += onMouseWheel;
+            scene.Input.OnMouseHover += onMouseHover;
+            scene.Input.OnKeyDown += onKeyDown;
+            scene.Input.OnKeyUp += onKeyUp;
             Body.UserData = this;
         }
         
@@ -91,10 +91,10 @@ namespace Bounce
         {
             if (this.IndexKey == ID)
             {
-                if (Input.KeyboardState.IsKeyDown(Keys.R))
+                if (scene.Input.KeyboardState.IsKeyDown(Keys.R))
                     change3 += Vector3.UnitX;
 
-                if (Input.KeyboardState.IsKeyDown(Keys.B))
+                if (scene.Input.KeyboardState.IsKeyDown(Keys.B))
                     change3 += Vector3.UnitZ;
             }
         }
@@ -103,14 +103,14 @@ namespace Bounce
         {
             if (this.IndexKey == ID)
             {
-                if (Input.KeyboardState.IsKeyDown(Keys.R))
+                if (scene.Input.KeyboardState.IsKeyDown(Keys.R))
                     change3 += -Vector3.UnitX;
 
-                if (Input.KeyboardState.IsKeyDown(Keys.B))
+                if (scene.Input.KeyboardState.IsKeyDown(Keys.B))
                     change3 += -Vector3.UnitZ;
             }
 
-            if (Input.KeyboardState.IsKeyDown(Keys.D3))
+            if (scene.Input.KeyboardState.IsKeyDown(Keys.D3))
                 this.Kill();
         }
 
@@ -118,7 +118,7 @@ namespace Bounce
         {
             if (this.IndexKey == ID)
             {
-                fAngleJoint.TargetAngle += (Input.MouseWheelVelocity() * 0.125f); 
+                fAngleJoint.TargetAngle += (scene.Input.MouseWheelVelocity() * 0.125f); 
             }
         }
 
@@ -142,20 +142,13 @@ namespace Bounce
             }
         }
 
-        void onKeyUp(KeyboardState keyboardState)
+        void onKeyUp(KeyboardState previousKeyboardState)
         {
             motorForce = 0f;
         }
 
         public override void Kill()
         {
-            Input.OnRightClickDown -= onRightClick;
-            Input.OnLeftClickDown -= onLeftClick;
-            Input.OnMouseWheel -= onMouseWheel;
-            Input.OnMouseHover -= onMouseHover;
-            Input.OnKeyDown -= onKeyDown;
-            Input.OnKeyUp -= onKeyUp;
-
             base.Kill();
         }
     }

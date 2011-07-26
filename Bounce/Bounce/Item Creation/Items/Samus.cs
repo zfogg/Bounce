@@ -15,13 +15,13 @@ namespace Bounce
 {
     public class Samus : PhysicalItem
     {
-        public Samus(Scene scene, World world)
-            : base(scene, world)
+        public Samus(PhysicalScene scene)
+            : base(scene)
         {
             Texture = BounceGame.ContentManager.Load<Texture2D>("samus");
 
             Body = BodyFactory.CreateCompoundPolygon(
-                world, VectorStructures.TextureToBayazitList(Texture), 1f, true);
+                scene.World, VectorStructures.TextureToBayazitList(Texture), 1f, true);
             origin = VectorStructures.TextureToVertices(Texture).GetCentroid(); //Need the centroid, not center, for a polygon body shape.
 
             Body.BodyType = BodyType.Dynamic;
@@ -32,9 +32,9 @@ namespace Bounce
             Body.AngularDamping = 0.50f;
             Body.LinearDamping = 0.25f;
 
-            base.OnKeyDown += onKeyPressDown;
-            base.OnKeyHoldDown += onKeyHoldDown;
-            base.OnKeyUp += OnKeyUp;
+            scene.Input.OnKeyDown += onKeyPressDown;
+            scene.Input.OnKeyHoldDown += onKeyHoldDown;
+            scene.Input.OnKeyUp += onKeyUp;
             Body.UserData = this;
         }
 
@@ -48,7 +48,7 @@ namespace Bounce
         public void onKeyPressDown(KeyboardState keyboardState)
         {
             if (scene.IsTop)
-                if (Input.KeyPressUnique(Keys.W))
+                if (scene.Input.KeyPressUnique(Keys.W))
                     Body.ApplyLinearImpulse((-Vector2.UnitY * (Body.Mass / 2 + Body.LinearVelocity.Y) * BounceGame.MovementCoEf));
         }
 
@@ -70,7 +70,7 @@ namespace Bounce
             }
         }
 
-        void onKeyUp(KeyboardState keyboardState)
+        void onKeyUp(KeyboardState previousKeyboardState)
         {
             force = Vector2.Zero;
         }

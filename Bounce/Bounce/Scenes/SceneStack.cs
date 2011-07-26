@@ -12,6 +12,7 @@ namespace Bounce
         private Camera2D camera;
         public int Count { get { return scenes.Count; } }
         public Scene Top { get { return scenes.First.Value; } }
+        public LinkedListNode<Scene> TopNode { get { return scenes.First; } }
 
         private SpriteBatch spriteBatch;
 
