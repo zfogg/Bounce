@@ -32,9 +32,9 @@ namespace Bounce
             Body.AngularDamping = 0.50f;
             Body.LinearDamping = 0.25f;
 
-            scene.Input.OnKeyDown += onKeyPressDown;
-            scene.Input.OnKeyHoldDown += onKeyHoldDown;
-            scene.Input.OnKeyUp += onKeyUp;
+            scene.Input.OnKeyDown += new KeyboardEvent(onKeyPressDown);
+            scene.Input.OnKeyHoldDown += new KeyboardEvent(onKeyHoldDown);
+            scene.Input.OnKeyUp += new KeyboardEvent(onKeyUp);
             Body.UserData = this;
         }
 

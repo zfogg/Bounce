@@ -34,8 +34,8 @@ namespace Bounce
         public event MouseEvent OnRightClickUp;
         public event MouseEvent OnMiddleClickDown;
         public event MouseEvent OnMiddleClickUp;
-        public event MouseEvent OnMouseHover;
         public event MouseEvent OnMouseWheel;
+        public event MouseEvent OnMouseHover;
 
         public void Update()
         {

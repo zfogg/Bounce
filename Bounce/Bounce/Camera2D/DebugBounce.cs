@@ -41,7 +41,7 @@ namespace Bounce
             tran.Translation = campos;
             view = tran;
 
-            input.OnKeyDown += OnKeyDown;
+            input.OnKeyDown += new KeyboardEvent(OnKeyDown);
         }
 
         public void Update(GameTime gameTime)

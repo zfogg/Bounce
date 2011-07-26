@@ -47,8 +47,8 @@ namespace Bounce
             fixedPrismJoint.LimitEnabled = true;
             fixedPrismJoint.MotorEnabled = true;
 
-            scene.Input.OnKeyHoldDown += onKeyHoldDown;
-            scene.Input.OnKeyUp += onKeyUp;
+            scene.Input.OnKeyHoldDown += new KeyboardEvent(onKeyHoldDown);
+            scene.Input.OnKeyUp += new KeyboardEvent(onKeyUp);
 
             Body.UserData = this;
         }

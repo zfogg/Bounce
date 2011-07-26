@@ -34,8 +34,8 @@ namespace Bounce
             Body.Restitution = 0.75f;
             Body.AngularDamping = 0.075f;
 
-            scene.Input.OnKeyDown += onKeyDown;
-            scene.Input.OnMiddleClickDown += onMiddleClickDown;
+            scene.Input.OnKeyDown += new KeyboardEvent(onKeyDown);
+            scene.Input.OnMiddleClickDown += new MouseEvent(onMiddleClickDown);
             Body.UserData = this;
         }
 

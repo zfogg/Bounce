@@ -24,7 +24,7 @@ namespace Bounce
             Body.BodyType = BodyType.Dynamic;
             Body.IgnoreGravity = true;
             Body.Mass = 2f;
-            Body.Restitution = 1.0125f;
+            Body.Restitution = 1f;
             Body.Friction = 0.25f;
 
             Body.FixtureList[0].OnSeparation += OnCollision;
@@ -33,8 +33,7 @@ namespace Bounce
         void OnCollision(Fixture fixtureA, Fixture fixtureB)
         {
             if (fixtureB.Body.UserData == paddle)
-                Body.ApplyLinearImpulse(new Vector2(
-                    (Body.Position.X - paddle.Body.Position.X), Body.LinearVelocity.Y) * Math.Abs(Body.Position.X - paddle.Body.Position.X));
+            { }
         }
 
         public override void Update(GameTime gametime)

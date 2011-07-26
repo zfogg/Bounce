@@ -25,12 +25,12 @@ namespace Bounce
             drawColor = new Color(Vector4.UnitW);
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
 
-            scene.Input.OnRightClickDown += onRightClick;
-            scene.Input.OnLeftClickDown += onLeftClick;
-            scene.Input.OnMouseWheel += onMouseWheel;
-            scene.Input.OnMouseHover += onMouseHover;
-            scene.Input.OnKeyDown += onKeyDown;
-            scene.Input.OnKeyUp += onKeyUp;
+            scene.Input.OnKeyDown += new KeyboardEvent(onKeyDown);
+            scene.Input.OnKeyUp += new KeyboardEvent(onKeyUp);
+            scene.Input.OnLeftClickDown += new MouseEvent(onLeftClick);
+            scene.Input.OnRightClickDown += new MouseEvent(onRightClick);
+            scene.Input.OnMouseWheel += new MouseEvent(onMouseWheel);
+            scene.Input.OnMouseHover += new MouseEvent(onMouseHover);
             Body.UserData = this;
         }
         
