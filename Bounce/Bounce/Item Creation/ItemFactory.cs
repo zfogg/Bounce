@@ -12,78 +12,40 @@ namespace Bounce
 {
     public static class ItemFactory
     {
-        public static Scene ActiveScene { private get; set; } //This is bad code; needs to go.
-        public static Dictionary<IndexKey, PhysicalItem> ActiveDict { private get; set; } //This is bad code; needs to go.
-
-        public const int CreationLimit = 1000;
-        public static Vector2 WindowSize { private get; set; }
-
-        private static PhysicalItem _newItem;
-        private static PhysicalItem newItem
-        {
-            get
-            { return _newItem; }
-            set
-            {
-                if (ActiveDict.Count <= CreationLimit)
-                {
-                    value.IndexKey = new IndexKey(value.Body.BodyId);
-                    ActiveDict.Add(value.IndexKey, value);
-                    _newItem = value;
-                }
-                else
-                {
-                    _newItem = null;
-                    throw new Exception("Creation limit reached!");
-                }
-            }
-        }
-
         public static PaddleBall CreatePaddleBall(PhysicalScene scene, Paddle paddle)
         {
-            Texture2D texture = BounceGame.ContentManager.Load<Texture2D>("dragonBall");
-            newItem = new PaddleBall(scene, paddle, texture);
-            newItem.Body.Position = paddle.Body.Position + ConvertUnits.ToSimUnits((-Vector2.UnitY * 50f));
-            return (PaddleBall)newItem;
+            var texture = BounceGame.ContentManager.Load<Texture2D>("dragonBall");
+            var pb = new PaddleBall(scene, paddle, texture);
+            pb.Body.Position = paddle.Body.Position + ConvertUnits.ToSimUnits((-Vector2.UnitY * 50f));
+            return pb;
         }
 
-        public static Samus CreateSamus(PhysicalScene scene)
+        public static Samus CreateSamus(PhysicalScene scene, Vector2 spawnPosition)
         {
-            newItem = new Samus(scene);
-            newItem.Body.Position = new Vector2(
-                ConvertUnits.ToSimUnits(WindowSize.X * 0.20f),
-                ConvertUnits.ToSimUnits(WindowSize.Y - (newItem.Texture.Height)));
+            var s = new Samus(scene);
+            s.Body.Position = spawnPosition;
 
-            return (Samus)newItem;
-        }
-
-        /// <summary>
-        /// Creates and returns a paddle placed 95% above the bottom of the window, in the middle.
-        /// </summary>
-        public static Paddle CreatePaddleCenterFloor(PhysicalScene scene)
-        {
-            Vector2 spawnPosition = new Vector2(WindowSize.X / 2, (WindowSize.Y * 0.95f));
-            return CreatePaddle(scene, spawnPosition);
+            return s;
         }
 
         public static Paddle CreatePaddle(PhysicalScene scene, Vector2 spawnPosition)
         {
-            Texture2D texture = BounceGame.ContentManager.Load<Texture2D>("obstacle");
-            newItem = new Paddle(scene, texture, ConvertUnits.ToSimUnits(spawnPosition));
-            return (Paddle)newItem;
+            var texture = BounceGame.ContentManager.Load<Texture2D>("obstacle");
+            var p = new Paddle(scene, texture, ConvertUnits.ToSimUnits(spawnPosition));
+            return p;
         }
 
         public static Obstacle CreateObstacle(PhysicalScene scene)
         {
-            Texture2D obstacleTexture = BounceGame.ContentManager.Load<Texture2D>("obstacle");
-            newItem = new Obstacle(scene, obstacleTexture);
+            var obstacleTexture = BounceGame.ContentManager.Load<Texture2D>("obstacle");
+            var o = new Obstacle(scene, obstacleTexture);
 
-            return (Obstacle)newItem;
+            return o;
         }
 
         public static Obstacle CreateObstacle(PhysicalScene scene, Vector2 spawnPosition)
         {
-            Obstacle o = CreateObstacle(scene);
+            var o = CreateObstacle(scene);
             o.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
             o.Initialize();
 
@@ -92,15 +54,15 @@ namespace Bounce
 
         public static Metroid CreateMetroid(PhysicalScene scene)
         {
-            Texture2D texture = BounceGame.ContentManager.Load<Texture2D>("metroid");
-            newItem = new Metroid(scene, texture);
+            var texture = BounceGame.ContentManager.Load<Texture2D>("metroid");
+            var m = new Metroid(scene, texture);
 
-            return (Metroid)newItem;
+            return m;
         }
 
         public static Metroid CreateMetroid(PhysicalScene scene, Vector2 spawnPosition)
         {
-            Metroid m = CreateMetroid(scene);
+            var m = CreateMetroid(scene);
             m.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
 
             return m;
@@ -108,9 +70,8 @@ namespace Bounce
 
         public static Metroid CreateMetroid(PhysicalScene scene, Vector2 spawnPosition, float sinRadius, float cosRadius)
         {
-            Texture2D texture = BounceGame.ContentManager.Load<Texture2D>("metroid");
-            Metroid m = new Metroid(scene, texture, sinRadius, cosRadius);
-            newItem = m;
+            var texture = BounceGame.ContentManager.Load<Texture2D>("metroid");
+            var m = new Metroid(scene, texture, sinRadius, cosRadius);
             m.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
 
             return m;
@@ -118,8 +79,8 @@ namespace Bounce
 
         public static RectangleItem CreateRectangleItem(PhysicalScene scene, float width, float height)
         {
-            newItem = new RectangleItem(scene, width, height);
-            return (RectangleItem)newItem;
+            var r = new RectangleItem(scene, width, height);
+            return r;
         }
 
         public static RectangleItem CreateRectangleItem(PhysicalScene scene, int width, int height)
@@ -129,14 +90,14 @@ namespace Bounce
 
         public static Brick CreateBrick(PhysicalScene scene)
         {
-            Texture2D texture = BounceGame.ContentManager.Load<Texture2D>("brick");
-            newItem = new Brick(scene, texture);
-            return (Brick)newItem;
+            var texture = BounceGame.ContentManager.Load<Texture2D>("brick");
+            var b = new Brick(scene, texture);
+            return b;
         }
 
         public static Brick CreateBrick(PhysicalScene scene, Vector2 spawnPosition)
         {
-            Brick b = CreateBrick(scene);
+            var b = CreateBrick(scene);
             b.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
 
             return b;

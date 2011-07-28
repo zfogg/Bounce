@@ -16,43 +16,36 @@ namespace Bounce
 
         override public bool BlockDraw { get { return false; } }
 
-        public Dictionary<IndexKey, PhysicalItem> PhysicalItems { get; private set; }
+        public List<PhysicalItem> PhysicalItems { get; private set; }
         protected List<PhysicalItem> itemsToKill;
 
         public PhysicalScene(SceneStack sceneStack, Camera2D camera)
             : base(sceneStack)
         {
-            PhysicalItems = new Dictionary<IndexKey, PhysicalItem>();
-            itemsToKill = new List<PhysicalItem>(ItemFactory.CreationLimit);
+            PhysicalItems = new List<PhysicalItem>();
+            itemsToKill = new List<PhysicalItem>();
 
             World = new World(BounceGame.GravityCoEf * Vector2.UnitY);
             debugFarseer = new DebugBounce(World, camera);
             debugFarseer.Initialize(sceneStack.GraphicsDevice, BounceGame.ContentManager, Input);
         }
 
-        public override void Initialize()
-        {
-            ItemFactory.ActiveDict = PhysicalItems;
-            ItemFactory.ActiveScene = this;
-        }
+        public override void Initialize() { }
 
         public override void Update(GameTime gameTime)
         {
             Input.MouseHoverPhysicalItem(World);
 
-            foreach (PhysicalItem item in PhysicalItems.Values)
+            foreach (PhysicalItem item in PhysicalItems)
             {
                 if (item.IsAlive)
                     item.Update(gameTime);
                 else
                     itemsToKill.Add(item);
             }
-
+            
             foreach (PhysicalItem item in itemsToKill)
-            {
-                item.Kill();
-                PhysicalItems.Remove(item.IndexKey);
-            }
+                PhysicalItems.Remove(item);
 
             itemsToKill.RemoveRange(0, itemsToKill.Count);
 
@@ -64,8 +57,14 @@ namespace Bounce
         {
             background.Draw(spriteBatch);
 
-            foreach (PhysicalItem sprite in PhysicalItems.Values)
+            foreach (PhysicalItem sprite in PhysicalItems)
                 sprite.Draw(spriteBatch);
+        }
+
+        protected void worldGravityRotation(float piRadians)
+        {
+            World.Gravity.X = (float)Math.Sin(piRadians) * gravityCoEf;
+            World.Gravity.Y = (float)Math.Cos(piRadians) * gravityCoEf;
         }
 
         public override void WhenPushedOnto()
@@ -76,7 +75,6 @@ namespace Bounce
 
         public override void WhenPoppedDownTo()
         {
-            ItemFactory.ActiveDict = this.PhysicalItems;
             World.Enabled = true;
             World.ClearForces();
 

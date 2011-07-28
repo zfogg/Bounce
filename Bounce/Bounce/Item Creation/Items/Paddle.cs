@@ -12,32 +12,26 @@ using FarseerPhysics.Dynamics.Joints;
 
 namespace Bounce
 {
-    public class Paddle : RectangleItem
+    public class Paddle : PhysicalItem
     {
         FixedPrismaticJoint fixedPrismJoint;
 
         public Paddle(PhysicalScene scene, Texture2D texture, Vector2 spawnPosition)
-            : base(scene, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height))
+            : base(scene) //, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height)
         {
             this.Texture = texture;
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
             drawColor = Color.MidnightBlue;
 
             var unitCircle = new UnitCircle();
-            //Body = BodyFactory.CreateSolidArc(world,
-            //    1f, //density
-            //    (float)unitCircle.RadiansList[UnitCircle.CircleRadians.Sixth], //radians
-            //    20, //sides
-            //    ConvertUnits.ToSimUnits(texture.Width + (texture.Height)), //radius
-            //    ConvertUnits.ToSimUnits(spawnPosition) + (Vector2.UnitY * 2f), // position
-            //    (float)Math.PI); //angle
+
+            Body = BodyFactory.CreateCompoundPolygon(scene.World, VectorStructures.TextureToBayazitList(Texture), 1f);
 
             Body.Position = spawnPosition;
             Body.BodyType = BodyType.Dynamic;
             Body.IgnoreGravity = true;
             Body.Mass = 5f;
             Body.Restitution = 1.125f;
-            Body.Friction = 1f;
 
             fixedPrismJoint = JointFactory.CreateFixedPrismaticJoint(
                 scene.World, Body, Body.Position, Vector2.UnitX);

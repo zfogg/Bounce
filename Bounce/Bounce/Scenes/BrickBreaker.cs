@@ -17,7 +17,6 @@ namespace Bounce
         override public bool BlockDraw { get { return true; } }
 
         private List<RectangleItem> framing;
-        private Samus samus;
         private Paddle paddle;
         private PaddleBall ball;
         public List<Brick> bricks;
@@ -34,18 +33,20 @@ namespace Bounce
 
         public override void Initialize()
         {
-            base.Initialize();
-
-            framing = ItemStructures.CreateFraming(
-                this, new Vector2(sceneStack.GraphicsDevice.Viewport.Width, sceneStack.GraphicsDevice.Viewport.Height), 20);
-
-            paddle = ItemFactory.CreatePaddleCenterFloor(this);
-
-            ball = ItemFactory.CreatePaddleBall(this, paddle);
-            positionBall(ball, paddle);
-            destroyOnTouch<Brick>(ball);
+            framing = ItemStructures.CreateFraming(this, SceneSize, 20);
+            PhysicalItems.AddRange(framing);
 
             bricks = brickWall(10);
+            PhysicalItems.AddRange(bricks);
+
+            paddle = ItemFactory.CreatePaddle(this, new Vector2(SceneSize.X / 2, SceneSize.Y * 0.95f));
+            PhysicalItems.Add(paddle);
+
+            ball = ItemFactory.CreatePaddleBall(this, paddle);
+            PhysicalItems.Add(ball);
+
+            positionBall(ball, paddle);
+            killOnTouch<Brick>(ball);
         }
 
         private void positionBall(PaddleBall ball, Paddle paddle)
@@ -77,9 +78,9 @@ namespace Bounce
             return bricks;
         }
 
-        private void destroyOnTouch<T>(PhysicalItem destroyOnTouching) where T:PhysicalItem
+        private void killOnTouch<T>(PhysicalItem killAfterTouching) where T : PhysicalItem
         {
-            destroyOnTouching.Body.OnCollision += (Fixture fixtureA, Fixture fixtureB, Contact contact) =>
+            killAfterTouching.Body.OnCollision += (Fixture fixtureA, Fixture fixtureB, Contact contact) =>
             {
                 if (fixtureB.Body.UserData is T)
                     (fixtureB.Body.UserData as T).Kill();
@@ -88,9 +89,9 @@ namespace Bounce
             };
         }
 
-        private void destroyAfterTouch<T>(PhysicalItem destroyAfterTouching) where T : PhysicalItem
+        private void killAfterTouch<T>(PhysicalItem killAfterTouching) where T : PhysicalItem
         {
-            destroyAfterTouching.Body.FixtureList[0].OnSeparation = (Fixture fixtureA, Fixture fixtureB) =>
+            killAfterTouching.Body.FixtureList[0].OnSeparation = (Fixture fixtureA, Fixture fixtureB) =>
             {
                 if (fixtureB.Body.UserData is T)
                     (fixtureB.Body.UserData as T).Kill();
@@ -104,12 +105,6 @@ namespace Bounce
 
             worldGravityRotation(camera.Rotation);
             base.Update(gameTime);
-        }
-
-        void worldGravityRotation(float rotation)
-        {
-            World.Gravity.X = (float)Math.Sin(rotation) * gravityCoEf;
-            World.Gravity.Y = (float)Math.Cos(rotation) * gravityCoEf;
         }
 
         void onKeyDown(KeyboardState keyboardState)
@@ -128,8 +123,9 @@ namespace Bounce
                     ball.Kill();
 
                     ball = ItemFactory.CreatePaddleBall(this, paddle);
+                    PhysicalItems.Add(ball);
                     positionBall(ball, paddle);
-                    destroyOnTouch<Brick>(ball);
+                    killOnTouch<Brick>(ball);
                 }
             }
         }
@@ -142,11 +138,6 @@ namespace Bounce
                 sceneStack.Pop();
             else if (previousKeyboardState.IsKeyDown(Keys.RightShift) && previousKeyboardState.IsKeyDown(Keys.Delete))
                 sceneStack.PopToHead();
-        }
-
-        public override void Kill()
-        {
-            base.Kill();
         }
     }
 }

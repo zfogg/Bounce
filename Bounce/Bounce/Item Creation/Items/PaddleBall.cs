@@ -24,8 +24,8 @@ namespace Bounce
             Body.BodyType = BodyType.Dynamic;
             Body.IgnoreGravity = true;
             Body.Mass = 2f;
-            Body.Restitution = 1f;
-            Body.Friction = 0.25f;
+            Body.Restitution = 1.125f;
+            Body.Friction = 0f;
 
             Body.FixtureList[0].OnSeparation += OnCollision;
         }
@@ -38,10 +38,23 @@ namespace Bounce
 
         public override void Update(GameTime gametime)
         {
-            if (Body.LinearVelocity != Vector2.Zero)
-                Body.ApplyForce(new Vector2(
-                    (float)(Math.Sign(Body.LinearVelocity.X) / gametime.ElapsedGameTime.Milliseconds * Math.E),
-                    (float)(Math.Sign(Body.LinearVelocity.Y) / gametime.ElapsedGameTime.Milliseconds * Math.E)));
+            Vector2 velocity = new Vector2(Body.LinearVelocity.X, Body.LinearVelocity.Y);
+            if (Body.FixtureList.Count != 0)
+            {
+                if (Math.Abs(Body.LinearVelocity.X) < 0.125f || Body.LinearVelocity.X == 0f)
+                {
+                    velocity.X = Body.LinearVelocity.X * (float)r.NextDouble();
+                    Body.ApplyLinearImpulse(Vector2.UnitX * (float)r.NextDouble() );
+                }
+
+                if (Math.Abs(Body.LinearVelocity.Y) < 0.125f || Body.LinearVelocity.Y == 0f)
+                {
+                    velocity.Y = Body.LinearVelocity.Y * (float)r.NextDouble();
+                    Body.ApplyLinearImpulse(Vector2.UnitY * (float)r.NextDouble());
+                }
+            }
+
+            Body.LinearVelocity = velocity;
 
             base.Update(gametime);
         }

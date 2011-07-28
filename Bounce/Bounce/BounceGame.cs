@@ -45,8 +45,6 @@ namespace Bounce
             IsMouseVisible = true;
             graphics.ApplyChanges();
 
-            ItemFactory.WindowSize = windowSize; //This is bad code; needs to go.
-
             camera = new Camera2D(GraphicsDevice, input);
             this.Services.AddService(camera.GetType(), camera); //Needs uncoupling from SceneStack.
                                                                 //Maybe each scene should have its own camera, or maybe just a "camera position".

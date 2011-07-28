@@ -41,13 +41,13 @@ namespace Bounce
 
         public void Initialize()
         {
-            fRevoluteJoint = JointFactory.CreateFixedRevoluteJoint(world, Body, Body.LocalCenter, Body.Position);
+            fRevoluteJoint = JointFactory.CreateFixedRevoluteJoint(scene.World, Body, Body.LocalCenter, Body.Position);
             fRevoluteJoint.MaxMotorTorque = 20f;
             fRevoluteJoint.MotorSpeed = 0f;
             fRevoluteJoint.MotorTorque = 10f;
             fRevoluteJoint.MotorEnabled = false;
 
-            fAngleJoint = JointFactory.CreateFixedAngleJoint(world, Body);
+            fAngleJoint = JointFactory.CreateFixedAngleJoint(scene.World, Body);
             fAngleJoint.TargetAngle = 0f;
             fAngleJoint.MaxImpulse = 5f;
             fAngleJoint.BiasFactor = 2f;

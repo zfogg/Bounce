@@ -19,7 +19,7 @@ namespace Bounce
         {
             Body = BodyFactory.CreateRectangle(scene.World, width, height, 1f);
             Rectangle = new Rectangle(0, 0, (int)ConvertUnits.ToDisplayUnits(width), (int)ConvertUnits.ToDisplayUnits(height));
-
+            Body.Restitution = 1f;
             Body.UserData = this;
         }
 

@@ -16,6 +16,7 @@ namespace Bounce
             : base(scene, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height))
         {
             Body.BodyType = BodyType.Static;
+            Body.Restitution = 1f;
             drawColor = new Color(r.Next(256), r.Next(256), r.Next(256));
             this.Texture = texture;
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);

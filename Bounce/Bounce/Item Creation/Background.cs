@@ -20,16 +20,16 @@ namespace Bounce
 
         public void Draw(SpriteBatch spriteBatch)
         {
-             spriteBatch.Draw(
-                 backgroundTexture,
-                 position,
-                 null,
-                 Color.White,
-                 0f,
-                 Vector2.Zero,
-                 2f,
-                 SpriteEffects.None,
-                 1f);
+            spriteBatch.Draw(
+                backgroundTexture,
+                position,
+                null,
+                Color.White,
+                0f,
+                Vector2.Zero,
+                2f,
+                SpriteEffects.None,
+                1f);
         }
     }
 }

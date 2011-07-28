@@ -11,7 +11,6 @@ namespace Bounce
 {
     public abstract class PhysicalItem
     {
-        protected World world;
         protected PhysicalScene scene;
         protected static Random r = new Random();
         public Body Body { get; protected set; }
@@ -61,7 +60,7 @@ namespace Bounce
                     origin,
                     1f,
                     spriteEffects,
-                    0.1f);
+                    0f);
         }
     }
 }
