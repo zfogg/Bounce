@@ -1,0 +1,16 @@
+# Excludes #
+*.exe
+*.dll
+
+*.psd
+
+*.log
+*.sql
+*.sqlite
+*.rar
+*.zip
+*.7z
+*.gz
+*.tar
+*.dmg
+*.jar
