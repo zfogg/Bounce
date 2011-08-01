@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,48 +24,64 @@ namespace Bounce
 
             Body.BodyType = BodyType.Dynamic;
             Body.IgnoreGravity = true;
-            Body.Mass = 2f;
+            Body.Mass = 3f;
             Body.Restitution = 1.125f;
-            Body.Friction = 0f;
+            Body.Friction = 1f;
 
-            Body.FixtureList[0].OnSeparation += OnCollision;
+            scene.Input.OnKeyDown += new KeyboardEvent(onKeyDown);
         }
 
-        void OnCollision(Fixture fixtureA, Fixture fixtureB)
+        void onKeyDown(KeyboardState keyboardState)
         {
-            if (fixtureB.Body.UserData == paddle)
-            { }
+            if (keyboardState.IsKeyDown(Keys.Space))
+                LaunchFromPaddle(3f);
         }
 
         public override void Update(GameTime gametime)
         {
-            Vector2 velocity = new Vector2(Body.LinearVelocity.X, Body.LinearVelocity.Y);
-            if (Body.FixtureList.Count != 0)
-            {
-                if (Math.Abs(Body.LinearVelocity.X) < 0.125f || Body.LinearVelocity.X == 0f)
-                {
-                    velocity.X = Body.LinearVelocity.X * (float)r.NextDouble();
-                    Body.ApplyLinearImpulse(Vector2.UnitX * (float)r.NextDouble() );
-                }
 
-                if (Math.Abs(Body.LinearVelocity.Y) < 0.125f || Body.LinearVelocity.Y == 0f)
-                {
-                    velocity.Y = Body.LinearVelocity.Y * (float)r.NextDouble();
-                    Body.ApplyLinearImpulse(Vector2.UnitY * (float)r.NextDouble());
-                }
-            }
-
-            Body.LinearVelocity = velocity;
+            Body.LinearVelocity = Vector2.Clamp(
+                Body.LinearVelocity, -Vector2.One * BounceGame.MovementCoEf, Vector2.One * BounceGame.MovementCoEf);
 
             base.Update(gametime);
         }
 
         public void FixToPaddle(Vector2 offsetFromPaddle)
         {
-            this.Body.Position = paddle.Body.Position - offsetFromPaddle;
-            JointFactory.CreateWeldJoint(scene.World, this.Body, paddle.Body,
-                offsetFromPaddle,
-                Vector2.Zero);
+            Body.Position = paddle.Body.Position - offsetFromPaddle;
+
+            var distanceJoint = JointFactory.CreateDistanceJoint(scene.World,
+                this.Body, paddle.Body, Vector2.Zero, Vector2.Zero);
+            distanceJoint.Frequency = 5f;
+            distanceJoint.DampingRatio = 1.25f;
+
+            var fPrismJoint = JointFactory.CreateFixedPrismaticJoint(scene.World,
+                this.Body, Body.Position, Vector2.UnitX);
+            fPrismJoint.LowerLimit = ConvertUnits.ToSimUnits(-scene.SceneSize.X);
+            fPrismJoint.UpperLimit = ConvertUnits.ToSimUnits(scene.SceneSize.X);
+            fPrismJoint.LimitEnabled = true;
+        }
+
+        public void LaunchFromPaddle(float forceCoEf)
+        {
+            if (Body.JointList != null)
+            {
+                removeJoints(Body.JointList);
+
+                var force = new Vector2(BounceGame.r.Next(-100, 101) / 100f, -1);
+                this.Body.ApplyLinearImpulse(force * BounceGame.MovementCoEf * forceCoEf);
+            }
+            else
+                FixToPaddle(ConvertUnits.ToSimUnits(
+                    Vector2.UnitY * this.Texture.Height));
+        }
+
+        void removeJoints(JointEdge jointEdge)
+        {
+            scene.World.RemoveJoint(jointEdge.Joint);
+
+            if (jointEdge.Next != null)
+                removeJoints(jointEdge.Next);
         }
     }
 }

@@ -38,8 +38,6 @@ namespace Bounce
         {
             var p = createPaddle(scene);
             p.Body.Position = ConvertUnits.ToSimUnits(spawnPosition);
-            p.FixedPrismJoint = JointFactory.CreateFixedPrismaticJoint(
-                    scene.World, p.Body, p.Body.Position, Vector2.UnitX);
 
             return p;
         }

@@ -10,24 +10,27 @@ namespace Bounce
 {
     public class PhysicalScene : Scene2D
     {
+        protected Camera2D camera;
+        override public bool BlockDraw { get { return false; } }
+
         public World World { get; protected set; }
         protected const float gravityCoEf = 5f;
         protected DebugBounce debugFarseer;
 
-        override public bool BlockDraw { get { return false; } }
-
         public List<PhysicalItem> PhysicalItems { get; private set; }
         protected List<PhysicalItem> itemsToKill;
 
-        public PhysicalScene(SceneStack sceneStack, Camera2D camera)
+        public PhysicalScene(SceneStack sceneStack)
             : base(sceneStack)
         {
-            PhysicalItems = new List<PhysicalItem>();
-            itemsToKill = new List<PhysicalItem>();
+            camera = (Camera2D)sceneStack.Game.Services.GetService(typeof(Camera2D));
 
             World = new World(BounceGame.GravityCoEf * Vector2.UnitY);
             debugFarseer = new DebugBounce(World, camera);
             debugFarseer.Initialize(sceneStack.GraphicsDevice, BounceGame.ContentManager, Input);
+
+            PhysicalItems = new List<PhysicalItem>();
+            itemsToKill = new List<PhysicalItem>();
         }
 
         public override void Initialize() { }

@@ -14,21 +14,6 @@ namespace Bounce
 {
     public class Paddle : RectangleItem
     {
-        private FixedPrismaticJoint fPrismJoint;
-        public FixedPrismaticJoint FixedPrismJoint
-        {
-            set
-            {
-                value.MaxMotorForce = 25f; //maximum force in Newtons
-                value.UpperLimit = 3f;
-                value.LowerLimit = -3f;
-                value.LimitEnabled = true;
-                value.MotorEnabled = true;
-
-                fPrismJoint = value;
-            }
-        }
-
         public Paddle(PhysicalScene scene, Texture2D texture)
             : base(scene, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height))
         {
@@ -38,38 +23,35 @@ namespace Bounce
 
             var unitCircle = new UnitCircle();
 
-            Body.BodyType = BodyType.Dynamic;
+            Body.BodyType = BodyType.Kinematic;
             Body.IgnoreGravity = true;
-            Body.Mass = 5f;
             Body.Restitution = 1.125f;
 
             scene.Input.OnKeyHoldDown += new KeyboardEvent(onKeyHoldDown);
-            scene.Input.OnKeyUp += new KeyboardEvent(onKeyUp);
-
             Body.UserData = this;
         }
 
         public override void Update(GameTime gameTime)
         {
-            Body.ApplyForce(Vector2.UnitX * -Body.LinearVelocity.X * (float)Math.Sqrt(Body.Mass));
+            Body.LinearVelocity = new Vector2(
+                MathHelper.SmoothStep(Body.LinearVelocity.X, 0f, 0.25f),
+                MathHelper.SmoothStep(Body.LinearVelocity.Y, 0f, 0.25f));
 
             base.Update(gameTime);
         }
 
+        Vector2 movementVelocity;
         void onKeyHoldDown(KeyboardState keyboardState)
         {
             Vector2 orientation = Vector2.Normalize(scene.World.Gravity);
+            movementVelocity = Vector2.Zero;
 
             if (keyboardState.IsKeyDown(Keys.Right))
-                fPrismJoint.MotorSpeed = (orientation.Y * BounceGame.MovementCoEf) * 10f;
+                movementVelocity.X = orientation.Y * BounceGame.MovementCoEf;
             else if (keyboardState.IsKeyDown(Keys.Left))
-                fPrismJoint.MotorSpeed = (-orientation.Y * BounceGame.MovementCoEf) * 10f;
-        }
+                movementVelocity.X = -orientation.Y * BounceGame.MovementCoEf;
 
-        void onKeyUp(KeyboardState previousKeyboardState)
-        {
-            if (previousKeyboardState.IsKeyDown(Keys.Right) || previousKeyboardState.IsKeyDown(Keys.Left))
-                fPrismJoint.MotorSpeed = 0f;
+            Body.LinearVelocity += movementVelocity;
         }
     }
 }

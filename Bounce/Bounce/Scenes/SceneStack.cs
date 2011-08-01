@@ -67,14 +67,18 @@ namespace Bounce
             if (!node.Value.BlockUpdate)
                 _update(node.Next, gameTime);
         }
-
+         
         public override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin(
-                SpriteSortMode.BackToFront, BlendState.AlphaBlend,
-                null, null, null, null,
+                SpriteSortMode.BackToFront,
+                BlendState.AlphaBlend,
+                SamplerState.PointWrap,
+                DepthStencilState.DepthRead,
+                RasterizerState.CullNone,
+                null,
                 camera.GetTransformation());
 
             _draw(scenes.First, spriteBatch);
