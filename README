@@ -5,8 +5,11 @@ The goal of this project is to create a physics playground in which I can simula
 
 Controls:
 
-Movement: WASD
-Click to spawn a Metroid, right-click to delete them all.
-F# keys toggle physics engine debugdraw flags.
-Numpad arrow keys control the camera, + and - for zoom.
-Spacebar will activate the motion of all metroids, which have seperate and random X and Y radius values by which force is applied.
+BrickBreaker Movement: Arrow keys.
+Spacebar will launch or reset the ball.
+Enter will push a new game onto the stack.
+Delete will pop a game off the stack.
+
+Camera Movement: Numpad arrow keys.
+Numpad 5 to reset zoom and rotation.
+Page up / page down to rotate the camera
