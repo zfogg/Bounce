@@ -32,6 +32,8 @@ namespace Bounce
             scene.Input.OnMouseWheel += new MouseEvent(onMouseWheel);
             scene.Input.OnMouseHover += new MouseEvent(onMouseHover);
             Body.UserData = this;
+
+            initializeJoints();
         }
         
         FixedRevoluteJoint fRevoluteJoint;
@@ -39,7 +41,7 @@ namespace Bounce
         private float restitutionCoEf = 1.5f;
         private float frictionCoEf = 2f;
 
-        public void Initialize()
+        private void initializeJoints()
         {
             fRevoluteJoint = JointFactory.CreateFixedRevoluteJoint(scene.World, Body, Body.LocalCenter, Body.Position);
             fRevoluteJoint.MaxMotorTorque = 20f;

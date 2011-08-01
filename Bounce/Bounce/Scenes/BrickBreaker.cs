@@ -28,6 +28,7 @@ namespace Bounce
             background = new Background(this, Vector2.Zero, "background2");
 
             Input.OnKeyDown += new KeyboardEvent(onKeyDown);
+            Input.OnKeyHoldDown += new KeyboardEvent(onKeyHoldDown);
             Input.OnKeyUp += new KeyboardEvent(onKeyUp);
         }
 
@@ -39,21 +40,13 @@ namespace Bounce
             bricks = brickWall(10);
             PhysicalItems.AddRange(bricks);
 
-            paddle = ItemFactory.CreatePaddle(this, new Vector2(SceneSize.X / 2, SceneSize.Y * 0.95f));
+            paddle = ItemFactory.CreatePaddle(this, SceneSize * (Vector2.UnitX / 2 + Vector2.UnitY * 0.95f));
             PhysicalItems.Add(paddle);
 
             ball = ItemFactory.CreatePaddleBall(this, paddle);
             PhysicalItems.Add(ball);
 
-            positionBall(ball, paddle);
             killOnTouch<Brick>(ball);
-        }
-
-        private void positionBall(PaddleBall ball, Paddle paddle)
-        {
-            JointFactory.CreateWeldJoint(World, ball.Body, paddle.Body,
-                Vector2.UnitY * ConvertUnits.ToSimUnits(ball.Texture.Height * 2),
-                Vector2.Zero);
         }
 
         private List<Brick> brickWall(int rows)
@@ -124,10 +117,17 @@ namespace Bounce
 
                     ball = ItemFactory.CreatePaddleBall(this, paddle);
                     PhysicalItems.Add(ball);
-                    positionBall(ball, paddle);
+
                     killOnTouch<Brick>(ball);
                 }
             }
+        }
+
+        void onKeyHoldDown(KeyboardState keyboardState)
+        {
+            if (keyboardState.IsKeyDown(Keys.D1) && Input.LeftClickRelease())
+                PhysicalItems.Add(
+                    ItemFactory.CreateMetroid(this, Input.MouseVector2));
         }
 
         void onKeyUp(KeyboardState previousKeyboardState)

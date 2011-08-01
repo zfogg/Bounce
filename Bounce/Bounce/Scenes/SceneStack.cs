@@ -8,18 +8,18 @@ namespace Bounce
 {
     public class SceneStack : DrawableGameComponent
     {
-        private LinkedList<Scene> scenes;
+        private LinkedList<Scene2D> scenes;
         private Camera2D camera;
         public int Count { get { return scenes.Count; } }
-        public Scene Top { get { return scenes.First.Value; } }
-        public LinkedListNode<Scene> TopNode { get { return scenes.First; } }
+        public Scene2D Top { get { return scenes.First.Value; } }
+        public LinkedListNode<Scene2D> TopNode { get { return scenes.First; } }
 
         private SpriteBatch spriteBatch;
 
         public SceneStack(Game game)
             :base(game)
         {
-            scenes = new LinkedList<Scene>();
+            scenes = new LinkedList<Scene2D>();
             game.Components.Add(this);
         }
 
@@ -30,7 +30,7 @@ namespace Bounce
             base.LoadContent();
         }
 
-        public void Push(Scene scene)
+        public void Push(Scene2D scene)
         {
             if (Count > 0)
                 Top.WhenPushedOnto();
@@ -60,7 +60,7 @@ namespace Bounce
             base.Update(gameTime);
         }
 
-        public void _update(LinkedListNode<Scene> node, GameTime gameTime)
+        public void _update(LinkedListNode<Scene2D> node, GameTime gameTime)
         {
             node.Value.Update(gameTime);
 
@@ -85,7 +85,7 @@ namespace Bounce
             base.Draw(gameTime);
         }
 
-        public void _draw(LinkedListNode<Scene> node, SpriteBatch spriteBatch)
+        public void _draw(LinkedListNode<Scene2D> node, SpriteBatch spriteBatch)
         {
             node.Value.Draw(spriteBatch);
 
@@ -93,7 +93,7 @@ namespace Bounce
                 _draw(node.Next, spriteBatch);
         }
 
-        public void _debugDraw(LinkedListNode<Scene> node)
+        public void _debugDraw(LinkedListNode<Scene2D> node)
         {
             node.Value.DebugDraw();
 

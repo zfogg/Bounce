@@ -31,7 +31,7 @@ namespace Bounce
         public override void Update(GameTime gametime)
         {
             if (scene.Input.KeyboardState.IsKeyDown(Keys.D2) && scene.Input.RightClickRelease())
-                this.IsAlive = false;
+                this.Kill();
 
             base.Update(gametime);
         }

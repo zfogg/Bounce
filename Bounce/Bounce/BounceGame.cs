@@ -64,6 +64,8 @@ namespace Bounce
         {
             input.Update(); //This instance of Input only needs to be updated because it has Camera2D controls subscribed to its events.
 
+            Window.Title = camera.Position.ToString() + " | Rotation: " + camera.Rotation.ToString() + " | Zoom: " + camera.Zoom.ToString();
+
             base.Update(gameTime);
         }
 

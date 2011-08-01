@@ -15,10 +15,10 @@ namespace Bounce
 {
     public class Samus : PhysicalItem
     {
-        public Samus(PhysicalScene scene)
+        public Samus(PhysicalScene scene, Texture2D texture)
             : base(scene)
         {
-            Texture = BounceGame.ContentManager.Load<Texture2D>("samus");
+            this.Texture = texture;
 
             Body = BodyFactory.CreateCompoundPolygon(
                 scene.World, VectorStructures.TextureToBayazitList(Texture), 1f, true);

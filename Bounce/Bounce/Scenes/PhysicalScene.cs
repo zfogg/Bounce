@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Bounce
 {
-    public class PhysicalScene : Scene
+    public class PhysicalScene : Scene2D
     {
         public World World { get; protected set; }
         protected const float gravityCoEf = 5f;

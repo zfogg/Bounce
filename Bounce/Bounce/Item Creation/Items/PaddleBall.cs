@@ -58,5 +58,13 @@ namespace Bounce
 
             base.Update(gametime);
         }
+
+        public void FixToPaddle(Vector2 offsetFromPaddle)
+        {
+            this.Body.Position = paddle.Body.Position - offsetFromPaddle;
+            JointFactory.CreateWeldJoint(scene.World, this.Body, paddle.Body,
+                offsetFromPaddle,
+                Vector2.Zero);
+        }
     }
 }

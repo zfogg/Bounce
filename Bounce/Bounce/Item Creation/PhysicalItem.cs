@@ -14,7 +14,7 @@ namespace Bounce
         protected PhysicalScene scene;
         protected static Random r = new Random();
         public Body Body { get; protected set; }
-        public bool IsAlive { get; protected set; }
+        public bool IsAlive { get; private set; }
         public Texture2D Texture;
         protected SpriteEffects spriteEffects;
         protected Color drawColor = Color.White;
@@ -27,9 +27,9 @@ namespace Bounce
             this.IsAlive = true;
 
             scene.World.ContactManager.OnBroadphaseCollision += OnBroadphaseCollision;
-            scene.Input.OnRightClickDown += delegate(int ID, MouseState mouseState)
+            scene.Input.OnRightClickDown += (int ID, MouseState mouseState) =>
             {
-                if (this.IndexKey == ID)
+                if (this.Body.BodyId == ID)
                     if (scene.Input.KeyboardState.IsKeyDown(Keys.Delete)) Kill();
             };
         }

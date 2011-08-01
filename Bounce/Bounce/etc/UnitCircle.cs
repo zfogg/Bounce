@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 
 namespace Bounce
@@ -7,12 +8,11 @@ namespace Bounce
     {
         public UnitCircle()
         {
-            tau = Math.PI * 2;
             RadiansList = new SortedList<CircleRadians, double>();
             Initialize();
         }
 
-        private double tau;
+        private const double tau = Math.PI * 2;
         private static Random r = new Random();
         public SortedList<CircleRadians, double> RadiansList;
 
@@ -39,9 +39,11 @@ namespace Bounce
             One // 360°
         }
 
-        public double RandomSegment()
+        public Vector2 RandomSegment(Vector2 axis)
         {
-            return RadiansList.Values[r.Next(RadiansList.Count)];
+            return new Vector2(
+                (float)(RadiansList.Values[r.Next(RadiansList.Count)] * axis.X),
+                (float)(RadiansList.Values[r.Next(RadiansList.Count)] * axis.Y));
         }
 
         public double RandomSign(double segment)

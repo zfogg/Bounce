@@ -132,8 +132,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="etc\IndexKey.cs" />
-    <Compile Include="Item Creation\BodyJointer.cs" />
-    <Compile Include="Item Creation\Items\ItemStructures.cs" />
+    <Compile Include="Item Creation\ItemStructures.cs" />
     <Compile Include="Item Creation\Items\PaddleBall.cs" />
     <Compile Include="Item Creation\Items\Brick.cs" />
     <Compile Include="Item Creation\Items\Paddle.cs" />
@@ -159,7 +158,7 @@
     <Compile Include="Scenes\BrickBreaker.cs" />
     <Compile Include="Scenes\PhysicalScene.cs" />
     <Compile Include="Scenes\SceneStack.cs" />
-    <Compile Include="Scenes\Scene.cs" />
+    <Compile Include="Scenes\Scene2D.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />
