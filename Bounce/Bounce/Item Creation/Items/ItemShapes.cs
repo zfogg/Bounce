@@ -54,4 +54,15 @@ namespace Bounce
             Body.UserData = this;
         }
     }
+
+    public class LineItem : PhysicalItem
+    {
+        public LineItem(PhysicalScene scene, Vector2 start, float rotation, float length)
+            :base(scene)
+        {
+            var end = start * length;
+            end = Vector2.Transform(end, Matrix.CreateRotationZ(rotation));
+            Body = BodyFactory.CreateEdge(scene.World, start, end);
+        }
+    }
 }

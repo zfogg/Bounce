@@ -61,7 +61,8 @@ namespace Bounce
 
         protected override void Update(GameTime gameTime)
         {
-            input.Update(); //This instance of Input only needs to be updated because it has Camera2D controls subscribed to its events.
+            if (this.IsActive)
+                input.Update(); //This instance of Input only needs to be updated because it has Camera2D controls subscribed to its events.
 
             Window.Title = camera.Position.ToString()
                             + " | Rotation: " + camera.Rotation.ToString()

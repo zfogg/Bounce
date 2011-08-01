@@ -31,15 +31,8 @@ namespace Bounce
             scene.Input.OnKeyDown += new KeyboardEvent(onKeyDown);
         }
 
-        void onKeyDown(KeyboardState keyboardState)
-        {
-            if (keyboardState.IsKeyDown(Keys.Space))
-                LaunchFromPaddle(3f);
-        }
-
         public override void Update(GameTime gametime)
         {
-
             Body.LinearVelocity = Vector2.Clamp(
                 Body.LinearVelocity, -Vector2.One * BounceGame.MovementCoEf, Vector2.One * BounceGame.MovementCoEf);
 
@@ -64,16 +57,10 @@ namespace Bounce
 
         public void LaunchFromPaddle(float forceCoEf)
         {
-            if (Body.JointList != null)
-            {
                 removeJoints(Body.JointList);
 
                 var force = new Vector2(BounceGame.r.Next(-100, 101) / 100f, -1);
                 this.Body.ApplyLinearImpulse(force * BounceGame.MovementCoEf * forceCoEf);
-            }
-            else
-                FixToPaddle(ConvertUnits.ToSimUnits(
-                    Vector2.UnitY * this.Texture.Height));
         }
 
         void removeJoints(JointEdge jointEdge)
@@ -82,6 +69,15 @@ namespace Bounce
 
             if (jointEdge.Next != null)
                 removeJoints(jointEdge.Next);
+        }
+
+        void onKeyDown(KeyboardState keyboardState)
+        {
+            if (keyboardState.IsKeyDown(Keys.Space) && Body.JointList != null)
+                LaunchFromPaddle(3f);
+            else if (keyboardState.IsKeyDown(Keys.Space))
+                FixToPaddle(ConvertUnits.ToSimUnits(
+                    Vector2.UnitY * this.Texture.Height));
         }
     }
 }

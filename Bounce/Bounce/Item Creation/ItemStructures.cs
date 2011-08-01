@@ -37,15 +37,6 @@ namespace Bounce
                 }
             }
 
-            //Metroids Kill() on contact with floor.
-            rectangles[1].Body.OnCollision += (Fixture fixtureA, Fixture fixtureB, Contact contact) =>
-            {
-                if (fixtureB.Body.UserData is Metroid)
-                    (fixtureB.Body.UserData as Metroid).Kill();
-
-                return true;
-            };
-
             return rectangles;
         }
 

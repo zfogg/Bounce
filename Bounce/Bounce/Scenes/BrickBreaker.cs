@@ -46,6 +46,8 @@ namespace Bounce
             PhysicalItems.Add(ball);
 
             killOnTouch<Brick>(ball);
+
+            framing[1].Body.OnCollision += new OnCollisionEventHandler(ResetBallOnFloor);
         }
 
         private List<Brick> brickWall(int rows)
@@ -104,6 +106,18 @@ namespace Bounce
             if (keyboardState.IsKeyDown(Keys.D1) && Input.LeftClickRelease())
                 PhysicalItems.Add(ItemFactory.CreateMetroid(
                     this, Input.MouseVector2));
+            else if (keyboardState.IsKeyDown(Keys.D2) && Input.LeftClickRelease())
+                PhysicalItems.Add(new LineItem(this,
+                    ConvertUnits.ToSimUnits(Input.MouseVector2), 0.25f, 0.001f));
+        }
+
+        bool ResetBallOnFloor(Fixture fixtureA, Fixture fixtureB, Contact contact)
+        {
+            if (fixtureB.Body == ball.Body)
+                ball.FixToPaddle(ConvertUnits.ToSimUnits(
+                    Vector2.UnitY * ball.Texture.Height));
+
+            return true;
         }
     }
 }
