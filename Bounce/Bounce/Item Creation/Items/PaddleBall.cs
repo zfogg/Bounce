@@ -24,8 +24,8 @@ namespace Bounce
 
             Body.BodyType = BodyType.Dynamic;
             Body.IgnoreGravity = true;
-            Body.Mass = 3f;
-            Body.Restitution = 1.125f;
+            Body.Mass = 5f;
+            Body.Restitution = 1.0725f;
             Body.Friction = 1f;
 
             scene.Input.OnKeyDown += new KeyboardEvent(onKeyDown);
@@ -34,7 +34,7 @@ namespace Bounce
         public override void Update(GameTime gametime)
         {
             Body.LinearVelocity = Vector2.Clamp(
-                Body.LinearVelocity, -Vector2.One * BounceGame.MovementCoEf, Vector2.One * BounceGame.MovementCoEf);
+                Body.LinearVelocity, -Vector2.One * BounceGame.MovementCoEf * 2f, Vector2.One * BounceGame.MovementCoEf * 2f);
 
             base.Update(gametime);
         }
@@ -45,7 +45,7 @@ namespace Bounce
 
             var distanceJoint = JointFactory.CreateDistanceJoint(scene.World,
                 this.Body, paddle.Body, Vector2.Zero, Vector2.Zero);
-            distanceJoint.Frequency = 5f;
+            distanceJoint.Frequency = 7f;
             distanceJoint.DampingRatio = 1.25f;
 
             var fPrismJoint = JointFactory.CreateFixedPrismaticJoint(scene.World,

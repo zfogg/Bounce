@@ -14,19 +14,16 @@ namespace Bounce
     {
         override public Vector2 SceneSize
             { get { return new Vector2(sceneStack.GraphicsDevice.Viewport.Width, sceneStack.GraphicsDevice.Viewport.Height); } }
-        private Camera2D camera;
         override public bool BlockDraw { get { return true; } }
 
         private List<RectangleItem> framing;
         private Paddle paddle;
         private PaddleBall ball;
-        public List<Brick> bricks;
 
         public BrickBreaker(SceneStack sceneStack)
             : base(sceneStack)
         {
-            this.camera = (Camera2D)sceneStack.Game.Services.GetService(typeof(Camera2D));
-            background = new Background(this, Vector2.Zero, "background2");
+            background = new Background(this, Vector2.Zero, "background");
             ConvertUnits.SetDisplayUnitToSimUnitRatio(90f);
             Input.OnKeyHoldDown += new KeyboardEvent(onKeyHoldDown);
         }
@@ -36,7 +33,7 @@ namespace Bounce
             framing = ItemStructures.CreateFraming(this, SceneSize, 20);
             PhysicalItems.AddRange(framing);
 
-            bricks = brickWall(10);
+            var bricks = brickWall(10);
             PhysicalItems.AddRange(bricks);
 
             paddle = ItemFactory.CreatePaddle(this, SceneSize * (Vector2.UnitX / 2 + Vector2.UnitY * 0.95f));
@@ -50,15 +47,32 @@ namespace Bounce
             framing[1].Body.OnCollision += new OnCollisionEventHandler(ResetBallOnFloor);
         }
 
+        public override void Update(GameTime gameTime)
+        {
+            if (IsTop)
+                Input.Update();
+
+            for (int i = 0; i < PhysicalItems.Count; i++)
+            {
+                if (PhysicalItems[i] is Brick)
+                    break;
+                else if (i - 1 == PhysicalItems.Count)
+                    sceneStack.Pop();
+            }
+
+            worldGravityRotation(camera.Rotation);
+            base.Update(gameTime);
+        }
+
         private List<Brick> brickWall(int rows)
         {
             var sampleBrick = ItemFactory.CreateBrick(this);
-            var bricks = new List<Brick>();
 
             var rowStartingPositions = VectorStructures.Column(rows,
                 new Vector2(sampleBrick.Texture.Width / 2, sampleBrick.Texture.Height / 2),
                 sampleBrick.Texture.Height);
 
+            var bricks = new List<Brick>();
             foreach (Vector2 startingPosition in rowStartingPositions)
             {
                 bricks.AddRange(ItemStructures.BrickRow(this,
@@ -90,15 +104,6 @@ namespace Bounce
                 if (fixtureB.Body.UserData is T)
                     (fixtureB.Body.UserData as T).Kill();
             };
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            if (IsTop)
-                Input.Update();
-
-            worldGravityRotation(camera.Rotation);
-            base.Update(gameTime);
         }
 
         void onKeyHoldDown(KeyboardState keyboardState)

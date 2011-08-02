@@ -24,8 +24,8 @@ namespace Bounce
             var unitCircle = new UnitCircle();
 
             Body.BodyType = BodyType.Kinematic;
-            Body.IgnoreGravity = true;
-            Body.Restitution = 1.125f;
+            Body.Restitution = 1.0125f;
+            Body.Friction = 0f;
 
             scene.Input.OnKeyHoldDown += new KeyboardEvent(onKeyHoldDown);
             Body.UserData = this;
@@ -33,9 +33,22 @@ namespace Bounce
 
         public override void Update(GameTime gameTime)
         {
-            Body.LinearVelocity = new Vector2(
-                MathHelper.SmoothStep(Body.LinearVelocity.X, 0f, 0.25f),
-                MathHelper.SmoothStep(Body.LinearVelocity.Y, 0f, 0.25f));
+            if (Body.Position.X > ConvertUnits.ToSimUnits(scene.SceneSize.X - (this.Texture.Width / 2)))
+            {
+                drawColor = Color.Red;
+                Body.LinearVelocity = -Vector2.UnitX * 1.5f;
+            }
+            else if ((Body.Position.X < 0f + ConvertUnits.ToSimUnits((this.Texture.Width / 2))))
+            {
+                drawColor = Color.Red;
+                Body.LinearVelocity = Vector2.UnitX * 1.5f;
+            }
+            else
+            {
+                drawColor = Color.MidnightBlue;
+                Body.LinearVelocity = new Vector2(
+                    MathHelper.SmoothStep(Body.LinearVelocity.X, 0f, 0.33f), 0f);
+            }
 
             base.Update(gameTime);
         }
@@ -46,9 +59,9 @@ namespace Bounce
             Vector2 orientation = Vector2.Normalize(scene.World.Gravity);
             movementVelocity = Vector2.Zero;
 
-            if (keyboardState.IsKeyDown(Keys.Right))
+            if (keyboardState.IsKeyDown(Keys.Right) && Body.Position.X < ConvertUnits.ToSimUnits(scene.SceneSize.X))
                 movementVelocity.X = orientation.Y * BounceGame.MovementCoEf;
-            else if (keyboardState.IsKeyDown(Keys.Left))
+            else if (keyboardState.IsKeyDown(Keys.Left) && Body.Position.X > 0f)
                 movementVelocity.X = -orientation.Y * BounceGame.MovementCoEf;
 
             Body.LinearVelocity += movementVelocity;
