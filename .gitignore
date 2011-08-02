@@ -18,3 +18,5 @@ obj/
 *.tar
 *.dmg
 *.jar
+*.pdb
+*.cache
