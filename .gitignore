@@ -1,6 +1,10 @@
-# Excludes #
+# Directory Excludes #
+obj/
+
+# File Excludes #
 *.exe
 *.dll
+*.xnb
 
 *.psd
 
