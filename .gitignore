@@ -2,9 +2,10 @@
 obj/
 
 # File Excludes #
-*.exe
+*.exe*
 *.dll
 *.xnb
+*.application
 
 *.psd
 
