@@ -27,8 +27,8 @@ namespace Bounce
                 Color.White,
                 0f,
                 Vector2.Zero,
-                2.5f,
-                SpriteEffects.FlipVertically,
+                0.5f,
+                SpriteEffects.None,
                 1f);
         }
     }

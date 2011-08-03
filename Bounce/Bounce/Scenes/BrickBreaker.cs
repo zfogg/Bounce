@@ -23,7 +23,7 @@ namespace Bounce
         public BrickBreaker(SceneStack sceneStack)
             : base(sceneStack)
         {
-            background = new Background(this, Vector2.Zero, "background");
+            background = new Background(this, Vector2.Zero, "space3");
             ConvertUnits.SetDisplayUnitToSimUnitRatio(90f);
             Input.OnKeyHoldDown += new KeyboardEvent(onKeyHoldDown);
         }
@@ -33,8 +33,18 @@ namespace Bounce
             framing = ItemStructures.CreateFraming(this, SceneSize, 20);
             PhysicalItems.AddRange(framing);
 
-            var bricks = brickWall(10);
+            var bricks = brickWall(2);
             PhysicalItems.AddRange(bricks);
+
+            var killBrick = bricks[BounceGame.r.Next(bricks.Count)];
+            killBrick.DrawColor = Color.Black;
+            killBrick.Body.OnCollision += (Fixture fixtureA, Fixture fixtureB, Contact contact) =>
+                {
+                    if (fixtureB.Body.UserData == ball)
+                        sceneStack.Push(new BrickBreaker(sceneStack));
+
+                    return true;
+                };
 
             paddle = ItemFactory.CreatePaddle(this, SceneSize * (Vector2.UnitX / 2 + Vector2.UnitY * 0.95f));
             PhysicalItems.Add(paddle);
@@ -44,7 +54,8 @@ namespace Bounce
 
             killOnTouch<Brick>(ball);
 
-            framing[1].Body.OnCollision += new OnCollisionEventHandler(ResetBallOnFloor);
+            // [1] is the RectangleItem under the paddle.
+            framing[1].Body.OnCollision += new OnCollisionEventHandler(resetBallOnFloor);
         }
 
         public override void Update(GameTime gameTime)
@@ -56,8 +67,8 @@ namespace Bounce
             {
                 if (PhysicalItems[i] is Brick)
                     break;
-                else if (i - 1 == PhysicalItems.Count)
-                    sceneStack.Pop();
+                else if (i + 1 == PhysicalItems.Count)
+                    sceneStack.Push(new BrickBreaker(sceneStack)); // "We need to go deeper."
             }
 
             worldGravityRotation(camera.Rotation);
@@ -112,11 +123,11 @@ namespace Bounce
                 PhysicalItems.Add(ItemFactory.CreateMetroid(
                     this, Input.MouseVector2));
             else if (keyboardState.IsKeyDown(Keys.D2) && Input.LeftClickRelease())
-                PhysicalItems.Add(new LineItem(this,
-                    ConvertUnits.ToSimUnits(Input.MouseVector2), 0.25f, 0.001f));
+                PhysicalItems.Add(new LineItem(
+                    this, ConvertUnits.ToSimUnits(Input.MouseVector2), 0.25f, 0.001f));
         }
 
-        bool ResetBallOnFloor(Fixture fixtureA, Fixture fixtureB, Contact contact)
+        bool resetBallOnFloor(Fixture fixtureA, Fixture fixtureB, Contact contact)
         {
             if (fixtureB.Body == ball.Body)
                 ball.FixToPaddle(ConvertUnits.ToSimUnits(

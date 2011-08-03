@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using FarseerPhysics;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
+using FarseerPhysics.Dynamics.Contacts;
 using FarseerPhysics.Dynamics.Joints;
 
 
@@ -14,6 +15,7 @@ namespace Bounce
     public class PaddleBall : CircleItem
     {
         private Paddle paddle;
+        private Vector2 speedLimit;
 
         public PaddleBall(PhysicalScene scene, Paddle paddle, Texture2D texture)
             : base(scene, ConvertUnits.ToSimUnits(texture.Width / 2f))
@@ -29,12 +31,16 @@ namespace Bounce
             Body.Friction = 1f;
 
             scene.Input.OnKeyDown += new KeyboardEvent(onKeyDown);
+
+            Body.OnCollision += new OnCollisionEventHandler(onCollision);
         }
 
         public override void Update(GameTime gametime)
         {
             Body.LinearVelocity = Vector2.Clamp(
-                Body.LinearVelocity, -Vector2.One * BounceGame.MovementCoEf * 2f, Vector2.One * BounceGame.MovementCoEf * 2f);
+                Body.LinearVelocity, -Vector2.One * speedLimit, Vector2.One * speedLimit);
+
+            speedLimit = Vector2.SmoothStep(speedLimit, Vector2.One * 0.5f, 0.00125f / MathHelper.Distance(Body.Position.Y, paddle.Body.Position.Y));
 
             base.Update(gametime);
         }
@@ -57,10 +63,11 @@ namespace Bounce
 
         public void LaunchFromPaddle(float forceCoEf)
         {
-                removeJoints(Body.JointList);
+            removeJoints(Body.JointList);
 
-                var force = new Vector2(BounceGame.r.Next(-100, 101) / 100f, -1);
-                this.Body.ApplyLinearImpulse(force * BounceGame.MovementCoEf * forceCoEf);
+            var force = new Vector2(BounceGame.r.Next(-100, 101) / 100f, -1);
+            this.Body.ApplyLinearImpulse(force * BounceGame.MovementCoEf * forceCoEf);
+            speedLimit = Vector2.One * 5f;
         }
 
         void removeJoints(JointEdge jointEdge)
@@ -78,6 +85,13 @@ namespace Bounce
             else if (keyboardState.IsKeyDown(Keys.Space))
                 FixToPaddle(ConvertUnits.ToSimUnits(
                     Vector2.UnitY * this.Texture.Height));
+        }
+
+        bool onCollision(Fixture fixtureA, Fixture fixtureB, Contact contact)
+        {
+            speedLimit = Vector2.SmoothStep(speedLimit, Vector2.One * 5f, 0.25f);
+
+            return true;
         }
     }
 }

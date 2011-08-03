@@ -75,7 +75,7 @@ namespace Bounce
             spriteBatch.Begin(
                 SpriteSortMode.BackToFront,
                 BlendState.AlphaBlend,
-                SamplerState.PointWrap,
+                SamplerState.AnisotropicWrap,
                 DepthStencilState.DepthRead,
                 RasterizerState.CullNone,
                 null,
