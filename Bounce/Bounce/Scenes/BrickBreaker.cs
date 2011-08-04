@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using FarseerPhysics;
 using FarseerPhysics.Dynamics;
@@ -12,8 +13,7 @@ namespace Bounce
 {
     class BrickBreaker : PhysicalScene
     {
-        override public Vector2 SceneSize
-            { get { return new Vector2(sceneStack.GraphicsDevice.Viewport.Width, sceneStack.GraphicsDevice.Viewport.Height); } }
+        override public Vector2 SceneSize{ get { return new Vector2(sceneStack.GraphicsDevice.Viewport.Width, sceneStack.GraphicsDevice.Viewport.Height); } }
         override public bool BlockDraw { get { return true; } }
 
         private List<RectangleItem> framing;
@@ -26,17 +26,25 @@ namespace Bounce
             background = new Background(this, Vector2.Zero, "space3");
             ConvertUnits.SetDisplayUnitToSimUnitRatio(90f);
             Input.OnKeyHoldDown += new KeyboardEvent(onKeyHoldDown);
+            Input.OnKeyDown += new KeyboardEvent(Input_OnKeyDown);
+        }
+
+        void Input_OnKeyDown(KeyboardState keyboardState)
+        {
+            if (keyboardState.IsKeyDown(Keys.Q))
+                orderByColor(PhysicalItems.FindAll(b => b.GetType() == typeof(Brick)));
         }
 
         public override void Initialize()
         {
-            framing = ItemStructures.CreateFraming(this, SceneSize, 20);
+            framing = ItemStructures.CreateFraming(this, SceneSize, width: 20);
             PhysicalItems.AddRange(framing);
 
-            var bricks = brickWall(2);
+            var bricks = brickWall(8);
+            //bricks = orderByColor<Brick>(bricks).ToList();
             PhysicalItems.AddRange(bricks);
 
-            var killBrick = bricks[BounceGame.r.Next(bricks.Count)];
+            var killBrick = bricks.ToList<Brick>()[BounceGame.r.Next(bricks.Count<Brick>())];
             killBrick.DrawColor = Color.Black;
             killBrick.Body.OnCollision += (Fixture fixtureA, Fixture fixtureB, Contact contact) =>
                 {
@@ -95,6 +103,22 @@ namespace Bounce
             sampleBrick.Kill();
 
             return bricks;
+        }
+
+        private IEnumerable<T> orderByColor<T>(IEnumerable<T> unorderedItems) where T : PhysicalItem
+        {
+            var itemsByPosition = (from item in unorderedItems
+                                   orderby item.Body.Position.Y, item.Body.Position.X
+                                   select item).ToArray();
+
+            var itemsByColor = (from item in itemsByPosition // Currently broken.
+                                orderby item.DrawColor.R, item.DrawColor.G, item.DrawColor.B
+                                select item).ToArray();
+
+            for (int i = 0; i < unorderedItems.Count(); i++)
+                itemsByPosition[i].Body.Position = itemsByColor[i].Body.Position;
+
+            return unorderedItems;
         }
 
         private void killOnTouch<T>(PhysicalItem killAfterTouching) where T : PhysicalItem

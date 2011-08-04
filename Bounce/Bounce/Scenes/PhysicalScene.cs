@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using FarseerPhysics;
 using FarseerPhysics.Dynamics;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace Bounce
 {
-    public class PhysicalScene : Scene2D
+    public class PhysicalScene : Scene
     {
         protected Camera2D camera;
         override public bool BlockDraw { get { return false; } }
@@ -24,7 +23,7 @@ namespace Bounce
             : base(sceneStack)
         {
             camera = (Camera2D)sceneStack.Game.Services.GetService(typeof(Camera2D));
-
+            
             World = new World(BounceGame.GravityCoEf * Vector2.UnitY);
             debugFarseer = new DebugBounce(World, camera);
             debugFarseer.Initialize(sceneStack.GraphicsDevice, BounceGame.ContentManager, Input);

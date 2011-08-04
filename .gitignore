@@ -2,8 +2,9 @@
 obj/
 
 # File Excludes #
-*.exe
+*.exe*
 *.dll
+
 *.xnb
 
 *.psd
@@ -20,3 +21,6 @@ obj/
 *.jar
 *.pdb
 *.cache
+*.manifest*
+*.Debug*
+*.application*

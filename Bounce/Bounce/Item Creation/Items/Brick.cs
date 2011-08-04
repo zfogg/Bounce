@@ -12,18 +12,12 @@ namespace Bounce
 {
     public class Brick : RectangleItem
     {
-        public Color DrawColor
-        {
-            get { return drawColor; }
-            set { drawColor = value; }
-        }
-
         public Brick(PhysicalScene scene, Texture2D texture)
             : base(scene, ConvertUnits.ToSimUnits(texture.Width), ConvertUnits.ToSimUnits(texture.Height))
         {
             Body.BodyType = BodyType.Static;
             Body.Restitution = 1f;
-            drawColor = new Color(r.Next(256), r.Next(256), r.Next(256));
+            DrawColor = new Color(r.Next(byte.MaxValue), r.Next(byte.MaxValue), r.Next(byte.MaxValue));
             this.Texture = texture;
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
             Body.UserData = this;

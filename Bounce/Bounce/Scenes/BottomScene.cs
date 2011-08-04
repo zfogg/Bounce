@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Bounce
 {
-    class BottomScene : Scene2D
+    class BottomScene : Scene
     {
         private SpriteFont arial;
         private string drawString;

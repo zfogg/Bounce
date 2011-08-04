@@ -7,9 +7,9 @@ namespace Bounce
 {
     public class Background
     {
-        private Scene2D scene;
+        private Scene scene;
         private Vector2 position;
-        public Background(Scene2D scene, Vector2 position, string textureName)
+        public Background(Scene scene, Vector2 position, string textureName)
         {
             this.position = position;
             this.scene = scene;

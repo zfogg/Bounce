@@ -22,7 +22,7 @@ namespace Bounce
             Body.Restitution = 0.1f * restitutionCoEf;
             Body.Friction = 0.1f * frictionCoEf;
 
-            drawColor = new Color(Vector4.UnitW);
+            DrawColor = new Color(Vector4.UnitW);
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
 
             scene.Input.OnKeyDown += new KeyboardEvent(onKeyDown);
@@ -79,14 +79,14 @@ namespace Bounce
 
         private void updateColor()
         {
-            drawColor.R = (byte)((Body.Restitution / restitutionCoEf) * byte.MaxValue);
+            DrawColor.R = (byte)((Body.Restitution / restitutionCoEf) * byte.MaxValue);
 
             if (Math.Abs(Body.Revolutions) % 2 < 1)
-                drawColor.G = (byte)((Math.Abs(Body.Revolutions) % 1f) * byte.MaxValue);
+                DrawColor.G = (byte)((Math.Abs(Body.Revolutions) % 1f) * byte.MaxValue);
             else
-                drawColor.G = (byte)((1.00f - Math.Abs(Body.Revolutions) % 1f) * byte.MaxValue);
+                DrawColor.G = (byte)((1.00f - Math.Abs(Body.Revolutions) % 1f) * byte.MaxValue);
 
-            drawColor.B = (byte)((Body.Friction / frictionCoEf) * byte.MaxValue);
+            DrawColor.B = (byte)((Body.Friction / frictionCoEf) * byte.MaxValue);
         }
 
         public void onLeftClick(int ID, MouseState mouseState)
