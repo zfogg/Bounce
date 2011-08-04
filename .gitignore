@@ -6,6 +6,7 @@ obj/
 *.dll
 
 *.xnb
+*.application
 
 *.psd
 
