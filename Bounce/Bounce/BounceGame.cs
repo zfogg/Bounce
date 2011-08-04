@@ -74,12 +74,11 @@ namespace Bounce
 
         void onKeyDown(KeyboardState keyboardState)
         {
-            if (keyboardState.IsKeyDown(Keys.Enter))
-                sceneStack.Push(new BrickBreaker(sceneStack));
-            else if (keyboardState.IsKeyDown(Keys.Delete)
-                    && !(sceneStack.Top is BottomScene))
+            if (input.KeyPressUnique(Keys.OemMinus) && !(sceneStack.Top is BottomScene))
                 sceneStack.Pop();
-            else if (keyboardState.IsKeyDown(Keys.RightShift) && keyboardState.IsKeyDown(Keys.Delete))
+            else if (input.KeyPressUnique(Keys.OemPlus) && (sceneStack.Top is BottomScene))
+                sceneStack.Push(new BrickBreaker(sceneStack));
+            else if (input.KeyPressUnique(Keys.RightShift) && keyboardState.IsKeyDown(Keys.Delete))
                 sceneStack.PopToHead();
         }
 

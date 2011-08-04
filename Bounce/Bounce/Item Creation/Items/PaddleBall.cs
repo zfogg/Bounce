@@ -40,7 +40,11 @@ namespace Bounce
             Body.LinearVelocity = Vector2.Clamp(
                 Body.LinearVelocity, -Vector2.One * speedLimit, Vector2.One * speedLimit);
 
-            speedLimit = Vector2.SmoothStep(speedLimit, Vector2.One * 0.5f, 0.00125f / MathHelper.Distance(Body.Position.Y, paddle.Body.Position.Y));
+            speedLimit = Vector2.SmoothStep(
+                speedLimit,
+                Vector2.One * 0.5f,
+                0.00125f / MathHelper.Distance(Body.Position.Y, paddle.Body.Position.Y)
+                );
 
             base.Update(gametime);
         }

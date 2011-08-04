@@ -17,7 +17,7 @@ namespace Bounce
         public bool IsAlive { get; private set; }
         public Texture2D Texture;
         protected SpriteEffects spriteEffects;
-        protected Color drawColor = Color.White;
+        public Color DrawColor = Color.White;
         protected Vector2 origin;
         public IndexKey IndexKey;
 
@@ -30,7 +30,8 @@ namespace Bounce
             scene.Input.OnRightClickDown += (int ID, MouseState mouseState) =>
             {
                 if (this.Body.BodyId == ID)
-                    if (scene.Input.KeyboardState.IsKeyDown(Keys.Delete)) Kill();
+                    if (scene.Input.KeyboardState.IsKeyDown(Keys.Delete))
+                        Kill();
             };
         }
 
@@ -55,7 +56,7 @@ namespace Bounce
                     Texture,
                     ConvertUnits.ToDisplayUnits(Body.Position),
                     null,
-                    drawColor,
+                    DrawColor,
                     Body.Rotation,
                     origin,
                     1f,

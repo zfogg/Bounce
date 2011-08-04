@@ -23,7 +23,7 @@ namespace Bounce
             this.Texture = texture;
 
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
-            drawColor = Color.MidnightBlue;
+            DrawColor = Color.MidnightBlue;
 
             var unitCircle = new UnitCircle();
 
@@ -41,13 +41,13 @@ namespace Bounce
             if (Body.Position.X > ConvertUnits.ToSimUnits(scene.SceneSize.X - (this.Texture.Width * physicalScale.X / 2))
                 || (Body.Position.X < 0f + ConvertUnits.ToSimUnits(this.Texture.Width * physicalScale.X / 2)))
             {
-                drawColor = Color.Red;
+                DrawColor = Color.Red;
                 Body.LinearVelocity =
                     Vector2.UnitX * BounceGame.MovementCoEf / 2 *
                     -Math.Sign(Body.Position.X - ConvertUnits.ToSimUnits(this.Texture.Width * physicalScale.X / 2));
             }
             else
-                drawColor = Color.MidnightBlue;
+                DrawColor = Color.MidnightBlue;
 
             Body.LinearVelocity = new Vector2(
                 MathHelper.SmoothStep(Body.LinearVelocity.X, 0f, 0.25f), 0f);
@@ -76,7 +76,7 @@ namespace Bounce
                 Texture,
                 ConvertUnits.ToDisplayUnits(Body.Position),
                 null,
-                drawColor,
+                DrawColor,
                 Body.Rotation,
                 origin,
                 physicalScale,

@@ -158,7 +158,7 @@
     <Compile Include="Scenes\BrickBreaker.cs" />
     <Compile Include="Scenes\PhysicalScene.cs" />
     <Compile Include="Scenes\SceneStack.cs" />
-    <Compile Include="Scenes\Scene2D.cs" />
+    <Compile Include="Scenes\Scene.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

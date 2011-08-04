@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Input;
 
 namespace Bounce
 {
-    public abstract class Scene2D
+    public abstract class Scene
     {
         protected Background background;
         protected SceneStack sceneStack;
@@ -20,7 +20,7 @@ namespace Bounce
         public virtual bool BlockDraw { get { return true; } }
         public virtual bool BlockInput { get { return true; } }
 
-        protected Scene2D(SceneStack sceneStack)
+        protected Scene(SceneStack sceneStack)
         {
             Input = new Input();
             this.sceneStack = sceneStack;
