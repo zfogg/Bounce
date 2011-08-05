@@ -159,6 +159,7 @@
     <Compile Include="Scenes\PhysicalScene.cs" />
     <Compile Include="Scenes\SceneStack.cs" />
     <Compile Include="Scenes\Scene.cs" />
+    <Compile Include="Scenes\TransitionScene.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

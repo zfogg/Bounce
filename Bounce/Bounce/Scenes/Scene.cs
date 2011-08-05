@@ -29,7 +29,6 @@ namespace Bounce
         public abstract void Initialize();
         public abstract void Update(GameTime gameTime);
         public abstract void Draw(SpriteBatch spriteBatch);
-        public abstract void Kill();
 
         public virtual void WhenPushedOnto() { }
         public virtual void WhenPoppedDownTo() {  }

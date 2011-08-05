@@ -49,7 +49,8 @@ namespace Bounce
             killBrick.Body.OnCollision += (Fixture fixtureA, Fixture fixtureB, Contact contact) =>
                 {
                     if (fixtureB.Body.UserData == ball)
-                        sceneStack.Push(new BrickBreaker(sceneStack));
+                        sceneStack.Push(new TransitionScene(
+                            sceneStack, new BrickBreaker(sceneStack), 10f, "Transitioning: "));
 
                     return true;
                 };
@@ -87,7 +88,8 @@ namespace Bounce
         {
             var sampleBrick = ItemFactory.CreateBrick(this);
 
-            var rowStartingPositions = VectorStructures.Column(rows,
+            var rowStartingPositions = VectorStructures.Column(
+                rows,
                 new Vector2(sampleBrick.Texture.Width / 2, sampleBrick.Texture.Height / 2),
                 sampleBrick.Texture.Height);
 

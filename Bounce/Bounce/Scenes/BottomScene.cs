@@ -41,10 +41,5 @@ namespace Bounce
                 arial, drawString, SceneSize / 2f, Color.White, 0f,
                 Vector2.UnitX * (drawString.Length / 2), 1f, SpriteEffects.None, 0f);
         }
-
-        public override void Kill()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

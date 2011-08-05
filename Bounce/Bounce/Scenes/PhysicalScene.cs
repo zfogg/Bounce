@@ -85,7 +85,8 @@ namespace Bounce
 
         public override void WhenPopped()
         {
-            Kill();
+            World.Clear();
+            World.Enabled = false;
             base.WhenPopped();
         }
 
@@ -93,12 +94,6 @@ namespace Bounce
         {
             debugFarseer.Draw();
             base.DebugDraw();
-        }
-
-        public override void Kill()
-        {
-            World.Enabled = false;
-            World.Clear();
         }
     }
 }

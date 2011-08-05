@@ -78,6 +78,11 @@ namespace Bounce
                 sceneStack.Pop();
             else if (input.KeyPressUnique(Keys.OemPlus) && (sceneStack.Top is BottomScene))
                 sceneStack.Push(new BrickBreaker(sceneStack));
+            else if (input.KeyPressUnique(Keys.RightControl))
+            {
+                var brickBreaker = new BrickBreaker(sceneStack);
+                sceneStack.Push(new TransitionScene(sceneStack, brickBreaker, 5f, "Refreshing: "));
+            }
             else if (input.KeyPressUnique(Keys.RightShift) && keyboardState.IsKeyDown(Keys.Delete))
                 sceneStack.PopToHead();
         }
