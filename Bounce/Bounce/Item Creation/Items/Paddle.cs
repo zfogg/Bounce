@@ -81,7 +81,7 @@ namespace Bounce
                 origin,
                 physicalScale,
                 spriteEffects,
-                0f);
+                1f);
         }
     }
 }

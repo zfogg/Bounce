@@ -45,8 +45,7 @@ namespace Bounce
             IsMouseVisible = true;
 
             camera = new Camera2D(GraphicsDevice, input);
-            this.Services.AddService(camera.GetType(), camera); //Needs uncoupling from SceneStack.
-                                                                //Maybe each scene should have its own camera, or maybe just a "camera position".
+            this.Services.AddService(camera.GetType(), camera);
             
             base.Initialize();
         }
@@ -54,7 +53,7 @@ namespace Bounce
         protected override void LoadContent()
         {
             sceneStack.Push(new BottomScene(sceneStack));
-            sceneStack.Push(new BrickBreaker(sceneStack));
+            sceneStack.Push(new BrickBreakerScene(sceneStack));
 
             base.LoadContent();
         }
@@ -64,10 +63,12 @@ namespace Bounce
             if (this.IsActive)
                 input.Update(); //This instance of Input only needs to be updated because it has Camera2D controls subscribed to its events.
 
-            Window.Title = camera.Position.ToString()
-                            + " | Rotation: " + camera.Rotation.ToString()
-                            + " | Zoom: " + camera.Zoom.ToString()
-                            + " | SceneStack Depth: " + (sceneStack.Count - 1).ToString();
+            Window.Title = string.Format("FPS: {0:f} | Camera2D.Position: {1:s} | Camera2D.Rotation: {2:f} | Camera2D.Zoom: {3:f} | SceneStack Depth: {4:d}",
+                                Math.Round(1f / gameTime.ElapsedGameTime.TotalSeconds),
+                                (camera.Position - (sceneStack.Top.SceneSize / 2f)).ToString(),
+                                Math.Round(camera.Rotation, 2),
+                                Math.Round(camera.Zoom, 2),
+                                (sceneStack.Count - 1));
 
             base.Update(gameTime);
         }
@@ -77,14 +78,9 @@ namespace Bounce
             if (input.KeyPressUnique(Keys.OemMinus) && !(sceneStack.Top is BottomScene))
                 sceneStack.Pop();
             else if (input.KeyPressUnique(Keys.OemPlus) && (sceneStack.Top is BottomScene))
-                sceneStack.Push(new BrickBreaker(sceneStack));
-            else if (input.KeyPressUnique(Keys.RightControl))
-            {
-                var brickBreaker = new BrickBreaker(sceneStack);
-                sceneStack.Push(new TransitionScene(sceneStack, brickBreaker, 5f, "Refreshing: "));
-            }
+                sceneStack.Push(new BrickBreakerScene(sceneStack));
             else if (input.KeyPressUnique(Keys.RightShift) && keyboardState.IsKeyDown(Keys.Delete))
-                sceneStack.PopToHead();
+                sceneStack.PopToBottom();
         }
 
         protected override void Draw(GameTime gameTime)

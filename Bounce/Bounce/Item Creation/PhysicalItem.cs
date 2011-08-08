@@ -1,10 +1,10 @@
 using System;
-using System.Collections.Generic;
+using FarseerPhysics;
+using FarseerPhysics.Dynamics;
+using FarseerPhysics.Dynamics.Contacts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using FarseerPhysics;
-using FarseerPhysics.Dynamics;
 
 
 namespace Bounce
@@ -27,10 +27,10 @@ namespace Bounce
             this.IsAlive = true;
 
             scene.World.ContactManager.OnBroadphaseCollision += OnBroadphaseCollision;
-            scene.Input.OnRightClickDown += (int ID, MouseState mouseState) =>
+            scene.Input.OnMouseHover += (int ID, MouseState mouseState) =>
             {
                 if (this.Body.BodyId == ID)
-                    if (scene.Input.KeyboardState.IsKeyDown(Keys.Delete))
+                    if (scene.Input.KeyboardState.IsKeyDown(Keys.Delete) && scene.Input.RightClickUnique())
                         Kill();
             };
         }
@@ -61,7 +61,40 @@ namespace Bounce
                     origin,
                     1f,
                     spriteEffects,
-                    0f);
+                    1f);
+        }
+
+        public void KillOnTouch<T>() where T : PhysicalItem
+        {
+            this.Body.OnCollision += (Fixture fixtureA, Fixture fixtureB, Contact contact) =>
+            {
+                var otherItem = fixtureB.Body.UserData as T;
+                if (otherItem != null)
+                    otherItem.Kill();
+
+                return true;
+            };
+        }
+
+        public void KillOnTouch(PhysicalItem itemToKill)
+        {
+            this.Body.OnCollision += (Fixture fixtureA, Fixture fixtureB, Contact contact) =>
+            {
+                if (fixtureB.Body.UserData == itemToKill)
+                    itemToKill.Kill();
+
+                return true;
+            };
+        }
+
+        public void KillAfterTouch<T>() where T : PhysicalItem
+        {
+            this.Body.FixtureList[0].OnSeparation = (Fixture fixtureA, Fixture fixtureB) =>
+            {
+                var otherItem = fixtureB.Body.UserData as T;
+                if (otherItem != null)
+                    otherItem.Kill();
+            };
         }
     }
 }

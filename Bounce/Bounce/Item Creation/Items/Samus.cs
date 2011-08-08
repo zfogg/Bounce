@@ -47,27 +47,23 @@ namespace Bounce
 
         public void onKeyPressDown(KeyboardState keyboardState)
         {
-            if (scene.IsTop)
-                if (scene.Input.KeyPressUnique(Keys.W))
-                    Body.ApplyLinearImpulse((-Vector2.UnitY * (Body.Mass / 2 + Body.LinearVelocity.Y) * BounceGame.MovementCoEf));
+            if (scene.Input.KeyPressUnique(Keys.W))
+                Body.ApplyLinearImpulse((-Vector2.UnitY * (Body.Mass / 2 + Body.LinearVelocity.Y) * BounceGame.MovementCoEf));
         }
 
         public void onKeyHoldDown(KeyboardState keyboardState)
         {
-            if (scene.IsTop)
-            {
-                if (keyboardState.IsKeyDown(Keys.W))
-                    force = -Vector2.UnitY * Body.Mass;
-                if (keyboardState.IsKeyDown(Keys.D))
-                    force = Vector2.UnitX * Body.Mass;
-                if (keyboardState.IsKeyDown(Keys.S))
-                    force = Vector2.UnitY * Body.Mass;
-                if (keyboardState.IsKeyDown(Keys.A))
-                    force = -Vector2.UnitX * Body.Mass;
+            if (keyboardState.IsKeyDown(Keys.W))
+                force = -Vector2.UnitY * Body.Mass;
+            if (keyboardState.IsKeyDown(Keys.D))
+                force = Vector2.UnitX * Body.Mass;
+            if (keyboardState.IsKeyDown(Keys.S))
+                force = Vector2.UnitY * Body.Mass;
+            if (keyboardState.IsKeyDown(Keys.A))
+                force = -Vector2.UnitX * Body.Mass;
 
-                Vector2.Normalize(force);
-                Body.ApplyForce(force * BounceGame.MovementCoEf);
-            }
+            Vector2.Normalize(force);
+            Body.ApplyForce(force * BounceGame.MovementCoEf);
         }
 
         void onKeyUp(KeyboardState previousKeyboardState)

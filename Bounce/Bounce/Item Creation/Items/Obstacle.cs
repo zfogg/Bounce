@@ -135,13 +135,10 @@ namespace Bounce
         float motorForce;
         void onKeyDown(KeyboardState keyboardState)
         {
-            if (scene.IsTop)
-            {
-                if (keyboardState.IsKeyDown(Keys.Up))
-                    motorForce = 5f;
-                if (keyboardState.IsKeyDown(Keys.Down))
-                    motorForce = -5f;
-            }
+            if (keyboardState.IsKeyDown(Keys.Up))
+                motorForce = 5f;
+            if (keyboardState.IsKeyDown(Keys.Down))
+                motorForce = -5f;
         }
 
         void onKeyUp(KeyboardState previousKeyboardState)

@@ -17,15 +17,12 @@ namespace Bounce
         {
             Body.BodyType = BodyType.Static;
             Body.Restitution = 1f;
-            DrawColor = new Color(r.Next(byte.MaxValue), r.Next(byte.MaxValue), r.Next(byte.MaxValue));
+            DrawColor = randomColor();
             this.Texture = texture;
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
-            Body.UserData = this;
-        }
 
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            base.Draw(spriteBatch);
+            scene.Input.OnMouseHover += new MouseEvent(onMouseHover);
+            Body.UserData = this;
         }
 
         public override void Update(GameTime gametime)
@@ -34,6 +31,22 @@ namespace Bounce
                 this.Kill();
 
             base.Update(gametime);
+        }
+
+        void onMouseHover(int selectedBodyID, MouseState mouseState)
+        {
+            if (selectedBodyID == Body.BodyId)
+            {
+                if (mouseState.LeftButton == ButtonState.Pressed)
+                    DrawColor = Color.Black;
+                else if (mouseState.RightButton == ButtonState.Pressed)
+                    DrawColor = randomColor();
+            }
+        }
+
+        Color randomColor()
+        {
+            return new Color(r.Next(byte.MaxValue), r.Next(byte.MaxValue), r.Next(byte.MaxValue));
         }
     }
 }

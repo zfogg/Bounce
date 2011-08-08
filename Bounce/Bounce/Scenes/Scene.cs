@@ -15,10 +15,8 @@ namespace Bounce
         protected SceneStack sceneStack;
         public Input Input;
         public virtual Vector2 SceneSize { get; private set; }
-        public bool IsTop { get { return sceneStack.Top == this; } }
         public virtual bool BlockUpdate { get { return true; } }
         public virtual bool BlockDraw { get { return true; } }
-        public virtual bool BlockInput { get { return true; } }
 
         protected Scene(SceneStack sceneStack)
         {

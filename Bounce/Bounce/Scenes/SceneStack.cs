@@ -25,7 +25,7 @@ namespace Bounce
 
         protected override void LoadContent()
         {
-            camera = Game.Services.GetService(typeof(Camera2D)) as Camera2D;
+            camera = (Camera2D)Game.Services.GetService(typeof(Camera2D));
             spriteBatch = new SpriteBatch(GraphicsDevice);
             base.LoadContent();
         }
@@ -35,8 +35,8 @@ namespace Bounce
             if (Count > 0)
                 Top.WhenPushedOnto();
 
-            scenes.AddFirst(scene);
             scene.Initialize();
+            scenes.AddFirst(scene);
         }
 
         public void Pop()
@@ -48,7 +48,7 @@ namespace Bounce
                 Top.WhenPoppedDownTo();
         }
 
-        public void PopToHead()
+        public void PopToBottom()
         {
             while (Count > 1)
                 Pop();
@@ -71,18 +71,17 @@ namespace Bounce
         public override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
-
+            
             spriteBatch.Begin(
-                SpriteSortMode.BackToFront,
-                BlendState.AlphaBlend,
-                SamplerState.AnisotropicWrap,
-                DepthStencilState.DepthRead,
-                RasterizerState.CullNone,
-                null,
-                camera.GetTransformation());
+                sortMode: SpriteSortMode.FrontToBack,
+                blendState: BlendState.AlphaBlend,
+                samplerState: SamplerState.AnisotropicClamp,
+                depthStencilState: DepthStencilState.None,
+                rasterizerState: RasterizerState.CullNone,
+                effect: null,
+                transformMatrix: camera.GetTransformation());
 
             _draw(scenes.First, spriteBatch);
-
             spriteBatch.End();
 
             _debugDraw(scenes.First);

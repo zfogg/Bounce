@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Input;
 namespace Bounce
 {
     public delegate void KeyboardEvent(KeyboardState keyboardState);
-    public delegate void MouseEvent(int selectedItemID, MouseState mouseState);
+    public delegate void MouseEvent(int selectedBodyID, MouseState mouseState);
 
     public class Input
     {
@@ -21,7 +21,6 @@ namespace Bounce
         public MouseState MouseState { get { return mouseState; } }
         private MouseState mouseState, previousMouseState;
 
-        private PhysicalItem selectedItem;
         private int selectedItemID;
 
         public event KeyboardEvent OnKeyDown;
@@ -144,27 +143,18 @@ namespace Bounce
                 (mouseState.ScrollWheelValue - previousMouseState.ScrollWheelValue) * 0.20f, -1, 1);
         }
 
-        public PhysicalItem MouseHoverPhysicalItem(World world)
+        public void MouseHoverEventProcessing(World world)
         {
-            try
-            {
-                selectedItem = (PhysicalItem)world.TestPoint(
-                    ConvertUnits.ToSimUnits(
-                        MouseVector2)).Body.UserData;
+            var selectedFixture = world.TestPoint(ConvertUnits.ToSimUnits(MouseVector2)) as Fixture;
 
-                selectedItemID = selectedItem.Body.BodyId;
-            }
-            catch (NullReferenceException)
-            {
-                selectedItemID = -1;
-                selectedItem = null;
-            }
-            finally
-            {
-                if (OnMouseHover != null) OnMouseHover(selectedItemID, mouseState);
-            }
-
-            return selectedItem;
+            if (selectedFixture != null)
+                if (OnMouseHover != null)
+                {
+                    selectedItemID = selectedFixture.Body.BodyId;
+                    OnMouseHover(selectedItemID, mouseState);
+                }
+                else
+                    selectedItemID = -1;
         }
     }
 }
