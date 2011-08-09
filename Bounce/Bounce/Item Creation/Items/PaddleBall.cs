@@ -40,11 +40,10 @@ namespace Bounce
             Body.LinearVelocity = Vector2.Clamp(
                 Body.LinearVelocity, -Vector2.One * speedLimit, Vector2.One * speedLimit);
 
-            speedLimit = Vector2.SmoothStep(
+            speedLimit = Vector2.Lerp(
                 speedLimit,
                 Vector2.One * 0.5f,
-                0.00125f / MathHelper.Distance(Body.Position.Y, paddle.Body.Position.Y)
-                );
+                0.0025f / MathHelper.Distance(Body.Position.Y, paddle.Body.Position.Y));
 
             base.Update(gametime);
         }
@@ -55,8 +54,8 @@ namespace Bounce
 
             var distanceJoint = JointFactory.CreateDistanceJoint(scene.World,
                 this.Body, paddle.Body, Vector2.Zero, Vector2.Zero);
-            distanceJoint.Frequency = 7f;
-            distanceJoint.DampingRatio = 1.25f;
+            distanceJoint.Frequency = 10.14159f;
+            distanceJoint.DampingRatio = 1f;
 
             var fPrismJoint = JointFactory.CreateFixedPrismaticJoint(scene.World,
                 this.Body, Body.Position, Vector2.UnitX);
@@ -93,7 +92,7 @@ namespace Bounce
 
         bool onCollision(Fixture fixtureA, Fixture fixtureB, Contact contact)
         {
-            speedLimit = Vector2.SmoothStep(speedLimit, Vector2.One * 5f, 0.25f);
+            speedLimit = Vector2.Hermite(speedLimit, Vector2.One + (Vector2.UnitX * 1.35f), Vector2.One * 7f, Vector2.Zero, 0.15f);
 
             return true;
         }

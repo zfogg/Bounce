@@ -33,20 +33,25 @@ namespace Bounce
             base.Update(gametime);
         }
 
+        Color randomColor()
+        {
+            return new Color(r.Next(byte.MaxValue), r.Next(byte.MaxValue), r.Next(byte.MaxValue));
+        }
+
+        bool isClicked;
         void onMouseHover(int selectedBodyID, MouseState mouseState)
         {
-            if (selectedBodyID == Body.BodyId)
+            if (selectedBodyID == Body.BodyId && !isClicked)
             {
+                isClicked = true;
+
                 if (mouseState.LeftButton == ButtonState.Pressed)
                     DrawColor = Color.Black;
                 else if (mouseState.RightButton == ButtonState.Pressed)
                     DrawColor = randomColor();
             }
-        }
-
-        Color randomColor()
-        {
-            return new Color(r.Next(byte.MaxValue), r.Next(byte.MaxValue), r.Next(byte.MaxValue));
+            else if (selectedBodyID != Body.BodyId)
+                isClicked = false;
         }
     }
 }

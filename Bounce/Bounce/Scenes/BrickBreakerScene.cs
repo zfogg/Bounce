@@ -28,6 +28,8 @@ namespace Bounce
         public BrickBreakerScene(SceneStack sceneStack)
             : base(sceneStack)
         {
+            ConvertUnits.SetDisplayUnitToSimUnitRatio(80f);
+
             background = new Background(Vector2.Zero, "space3");
             Input.OnKeyDown += new KeyboardEvent(onKeyDown);
             Input.OnKeyHoldDown += new KeyboardEvent(onKeyHoldDown);

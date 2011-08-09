@@ -12,13 +12,13 @@ using FarseerPhysics.Dynamics.Joints;
 
 namespace Bounce
 {
-    public class Paddle : RectangleItem
+    public class Paddle : PhysicalItem
     {
 
         private static Vector2 physicalScale = (Vector2.UnitX * 0.64f) + (Vector2.UnitY * .8f);
 
         public Paddle(PhysicalScene scene, Texture2D texture)
-            : base(scene, ConvertUnits.ToSimUnits(texture.Width * physicalScale.X), ConvertUnits.ToSimUnits(texture.Height * physicalScale.Y))
+            : base(scene)
         {
             this.Texture = texture;
 
@@ -26,6 +26,9 @@ namespace Bounce
             DrawColor = Color.MidnightBlue;
 
             var unitCircle = new UnitCircle();
+
+            Body = BodyFactory.CreateRoundedRectangle(scene.World, 1.7f, 0.33f, 0.72f, 0.14f, 10, 1f);
+            //Body = BodyFactory.CreateSolidArc(scene.World, 1f, (float)Math.PI * 2f / 4f, 15, 1f, Vector2.UnitY * 0.9f, (float)Math.PI);
 
             Body.BodyType = BodyType.Kinematic;
             Body.Restitution = 1.0125f;
