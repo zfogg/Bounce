@@ -9,7 +9,7 @@ using FarseerPhysics.Dynamics.Contacts;
 using FarseerPhysics.Factories;
 
 
-namespace Bounce
+namespace Bounce.Items
 {
     public class Obstacle : RectangleItem
     {
@@ -91,7 +91,7 @@ namespace Bounce
 
         public void onLeftClick(int ID, MouseState mouseState)
         {
-            if (this.IndexKey == ID)
+            if (Body.BodyId == ID)
             {
                 if (scene.Input.KeyboardState.IsKeyDown(Keys.R))
                     change3 += Vector3.UnitX;
@@ -103,7 +103,7 @@ namespace Bounce
 
         public void onRightClick(int ID, MouseState mouseState)
         {
-            if (this.IndexKey == ID)
+            if (Body.BodyId == ID)
             {
                 if (scene.Input.KeyboardState.IsKeyDown(Keys.R))
                     change3 += -Vector3.UnitX;
@@ -118,7 +118,7 @@ namespace Bounce
 
         public void onMouseWheel(int ID, MouseState mouseState)
         {
-            if (this.IndexKey == ID)
+            if (Body.BodyId == ID)
             {
                 fAngleJoint.TargetAngle += (scene.Input.MouseWheelVelocity() * 0.125f); 
             }
@@ -126,7 +126,7 @@ namespace Bounce
 
         public void onMouseHover(int ID, MouseState mouseState)
         {
-            if (this.IndexKey == ID)
+            if (Body.BodyId == ID)
             {
                 //fRevoluteJoint.MotorSpeed = Body.AngularVelocity * BounceGame.MovementCoEf;
             }
@@ -144,11 +144,6 @@ namespace Bounce
         void onKeyUp(KeyboardState previousKeyboardState)
         {
             motorForce = 0f;
-        }
-
-        public override void Kill()
-        {
-            base.Kill();
         }
     }
 }

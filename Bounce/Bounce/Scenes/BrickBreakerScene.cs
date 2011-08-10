@@ -6,9 +6,10 @@ using FarseerPhysics.Dynamics.Contacts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Bounce.Items;
 
 
-namespace Bounce
+namespace Bounce.Scenes
 {
     class BrickBreakerScene : PhysicalScene
     {
@@ -30,7 +31,7 @@ namespace Bounce
         {
             ConvertUnits.SetDisplayUnitToSimUnitRatio(80f);
 
-            background = new Background(Vector2.Zero, "space3");
+            background = new Background(this, Vector2.Zero, "space3");
             Input.OnKeyDown += new KeyboardEvent(onKeyDown);
             Input.OnKeyHoldDown += new KeyboardEvent(onKeyHoldDown);
 
@@ -68,6 +69,14 @@ namespace Bounce
             if (sceneStack.Top == this)
                 Input.Update();
 
+            ball.Body.Restitution = MathHelper.Clamp(
+                    // Value to clamp
+                    (score.Multiplier / 4f) *
+                    (score.TotalScore / 3f) *
+                    (MathHelper.Distance(ball.Body.Position.Y, paddle.Body.Position.Y) / 4f),
+                    // Min, Max
+                    1f, 1.125f);
+
             if (PhysicalItems.Find(x => x is Brick) == null)
             {
                 var nextLevel = new BrickBreakerScene(sceneStack);
@@ -91,7 +100,7 @@ namespace Bounce
                 Vector2.Zero,
                 1f,
                 SpriteEffects.None,
-                1f);
+                stackDepth * 0.8f);
 
             background.Draw(spriteBatch);
             base.Draw(spriteBatch);

@@ -7,23 +7,19 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 
-namespace Bounce
+namespace Bounce.Items
 {
-    public abstract class PhysicalItem
+    public abstract class PhysicalItem : Item
     {
-        protected PhysicalScene scene;
-        protected static Random r = new Random();
+        new protected PhysicalScene scene { get { return (PhysicalScene)base.scene; } }
         public Body Body { get; protected set; }
         public bool IsAlive { get; private set; }
         public Texture2D Texture;
-        protected SpriteEffects spriteEffects;
-        public Color DrawColor = Color.White;
         protected Vector2 origin;
-        public IndexKey IndexKey;
 
         public PhysicalItem(PhysicalScene scene)
+            : base(scene)
         {
-            this.scene = scene;
             this.IsAlive = true;
 
             scene.World.ContactManager.OnBroadphaseCollision += OnBroadphaseCollision;
@@ -35,21 +31,13 @@ namespace Bounce
             };
         }
 
-        public virtual void OnBroadphaseCollision(ref FixtureProxy fp1, ref FixtureProxy fp2) { }
-
-        public virtual void Kill()
-        {
-            this.IsAlive = false;
-            Body.Dispose();
-        }
-
-        public virtual void Update(GameTime gametime)
+        public override void Update(GameTime gametime)
         {
             if (Body.IsDisposed)
                 this.IsAlive = false;
         }
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public override void Draw(SpriteBatch spriteBatch)
         {
             if (Texture != null)
                 spriteBatch.Draw(
@@ -61,7 +49,7 @@ namespace Bounce
                     origin,
                     1f,
                     spriteEffects,
-                    1f);
+                    scene.stackDepth * 0.9f);
         }
 
         public void KillOnTouch<T>() where T : PhysicalItem
@@ -95,6 +83,14 @@ namespace Bounce
                 if (otherItem != null)
                     otherItem.Kill();
             };
+        }
+
+        public virtual void OnBroadphaseCollision(ref FixtureProxy fp1, ref FixtureProxy fp2) { }
+
+        public virtual void Kill()
+        {
+            this.IsAlive = false;
+            Body.Dispose();
         }
     }
 }

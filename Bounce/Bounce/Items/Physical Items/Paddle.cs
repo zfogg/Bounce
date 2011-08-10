@@ -10,7 +10,7 @@ using FarseerPhysics.Factories;
 using FarseerPhysics.Dynamics.Joints;
 
 
-namespace Bounce
+namespace Bounce.Items
 {
     public class Paddle : PhysicalItem
     {
@@ -27,8 +27,10 @@ namespace Bounce
 
             var unitCircle = new UnitCircle();
 
-            Body = BodyFactory.CreateRoundedRectangle(scene.World, 1.7f, 0.33f, 0.72f, 0.14f, 10, 1f);
-            //Body = BodyFactory.CreateSolidArc(scene.World, 1f, (float)Math.PI * 2f / 4f, 15, 1f, Vector2.UnitY * 0.9f, (float)Math.PI);
+            Body = BodyFactory.CreateRoundedRectangle(scene.World,
+                ConvertUnits.ToSimUnits(texture.Width) * physicalScale.X, 0.35f,
+                ConvertUnits.ToSimUnits(texture.Height) * physicalScale.Y, 0.15f,
+                10, 1f);
 
             Body.BodyType = BodyType.Kinematic;
             Body.Restitution = 1.0125f;
@@ -84,7 +86,7 @@ namespace Bounce
                 origin,
                 physicalScale,
                 spriteEffects,
-                1f);
+                scene.stackDepth * 0.9f);
         }
     }
 }

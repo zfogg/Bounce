@@ -60,19 +60,19 @@ namespace Bounce
             if (mouseState != previousMouseState)
             {
                 if (LeftClickUnique())
-                    if (OnLeftClickDown != null) OnLeftClickDown(selectedItemID, mouseState);
+                { if (OnLeftClickDown != null) OnLeftClickDown(selectedItemID, mouseState); }
                 else if (LeftClickRelease())
-                    if (OnLeftClickUp != null) OnLeftClickUp(selectedItemID, mouseState);
+                { if (OnLeftClickUp != null) OnLeftClickUp(selectedItemID, mouseState); }
 
                 if (RightClickUnique())
-                    if (OnRightClickDown != null) OnRightClickDown(selectedItemID, mouseState);
+                { if (OnRightClickDown != null) OnRightClickDown(selectedItemID, mouseState); }
                 else if (RightClickRelease())
-                    if (OnRightClickUp != null) OnRightClickUp(selectedItemID, mouseState);
+                { if (OnRightClickUp != null) OnRightClickUp(selectedItemID, mouseState); }
 
                 if (MiddleClickUnique())
-                    if (OnMiddleClickDown != null) OnMiddleClickDown(selectedItemID, mouseState);
+                { if (OnMiddleClickDown != null) OnMiddleClickDown(selectedItemID, mouseState); }
                 else if (MiddleClickRelease())
-                    if (OnMiddleClickUp != null) OnMiddleClickUp(selectedItemID, mouseState);
+                { if (OnMiddleClickUp != null) OnMiddleClickUp(selectedItemID, mouseState); }
 
                 if (MouseWheelForwards() || MouseWheelReverse())
                     if (OnMouseWheel != null) OnMouseWheel(selectedItemID, mouseState);

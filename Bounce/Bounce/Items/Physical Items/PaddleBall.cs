@@ -10,7 +10,7 @@ using FarseerPhysics.Dynamics.Contacts;
 using FarseerPhysics.Dynamics.Joints;
 
 
-namespace Bounce
+namespace Bounce.Items
 {
     public class PaddleBall : CircleItem
     {

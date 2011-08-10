@@ -7,10 +7,12 @@ using FarseerPhysics;
 using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
 
-namespace Bounce
+namespace Bounce.Items
 {
     public class RectangleItem : PhysicalItem
     {
+        public Rectangle Rectangle;
+
         public RectangleItem(PhysicalScene scene, int width, int height)
             : this(scene, (float)width, (float)height) { }
 
@@ -23,14 +25,6 @@ namespace Bounce
             Body.UserData = this;
         }
 
-        public Rectangle Rectangle;
-
-        public void UpdatePosition()
-        {
-            Rectangle.X = (int)ConvertUnits.ToDisplayUnits(Body.Position.X) - (this.Rectangle.Width / 2);
-            Rectangle.Y = (int)ConvertUnits.ToDisplayUnits(Body.Position.Y) - (this.Rectangle.Height / 2);
-        }
-
         public override void Update(GameTime gametime)
         {
             UpdatePosition();
@@ -41,6 +35,12 @@ namespace Bounce
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
+        }
+
+        public void UpdatePosition()
+        {
+            Rectangle.X = (int)ConvertUnits.ToDisplayUnits(Body.Position.X) - (this.Rectangle.Width / 2);
+            Rectangle.Y = (int)ConvertUnits.ToDisplayUnits(Body.Position.Y) - (this.Rectangle.Height / 2);
         }
     }
 

@@ -8,7 +8,7 @@ using FarseerPhysics.Dynamics.Contacts;
 using FarseerPhysics.Factories;
 
 
-namespace Bounce
+namespace Bounce.Items
 {
     public class Brick : RectangleItem
     {
@@ -22,14 +22,12 @@ namespace Bounce
             origin = new Vector2(Texture.Width / 2, Texture.Height / 2);
 
             scene.Input.OnMouseHover += new MouseEvent(onMouseHover);
+            scene.Input.OnRightClickUp += new MouseEvent(onRightClickUp);
             Body.UserData = this;
         }
 
         public override void Update(GameTime gametime)
         {
-            if (scene.Input.KeyboardState.IsKeyDown(Keys.D2) && scene.Input.RightClickRelease())
-                this.Kill();
-
             base.Update(gametime);
         }
 
@@ -43,15 +41,25 @@ namespace Bounce
         {
             if (selectedBodyID == Body.BodyId && !isClicked)
             {
-                isClicked = true;
-
                 if (mouseState.LeftButton == ButtonState.Pressed)
+                {
                     DrawColor = Color.Black;
+                    isClicked = true;
+                }
                 else if (mouseState.RightButton == ButtonState.Pressed)
+                {
                     DrawColor = randomColor();
+                    isClicked = true;
+                }
             }
             else if (selectedBodyID != Body.BodyId)
                 isClicked = false;
+        }
+
+        void onRightClickUp(int selectedBodyID, MouseState mouseState)
+        {
+            if (scene.Input.KeyboardState.IsKeyDown(Keys.D2))
+                this.Kill();
         }
     }
 }

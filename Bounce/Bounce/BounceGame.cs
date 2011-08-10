@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Bounce.Scenes;
 
 
 namespace Bounce
@@ -18,7 +19,6 @@ namespace Bounce
 
         //Regular objects
         private Camera2D camera;
-        private Vector2 windowSize;
         private SceneStack sceneStack;
 
         public static Random r = new Random();
@@ -28,7 +28,6 @@ namespace Bounce
         public BounceGame()
         {
             graphics = new GraphicsDeviceManager(this);
-            windowSize = new Vector2(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
             ContentManager = new ContentManager(this.Services);
             sceneStack = new SceneStack(this);
 
@@ -68,7 +67,7 @@ namespace Bounce
                                 (camera.Position - (sceneStack.Top.SceneSize / 2f)).ToString(),
                                 Math.Round(camera.Rotation, 2),
                                 Math.Round(camera.Zoom, 2),
-                                (sceneStack.Count - 1));
+                                (sceneStack.Count));
 
             base.Update(gameTime);
         }
@@ -79,13 +78,8 @@ namespace Bounce
                 sceneStack.Pop();
             else if (input.KeyPressUnique(Keys.OemPlus) && (sceneStack.Top is BottomScene))
                 sceneStack.Push(new BrickBreakerScene(sceneStack));
-            else if (input.KeyPressUnique(Keys.RightShift) && keyboardState.IsKeyDown(Keys.Delete))
+            else if (keyboardState.IsKeyDown(Keys.RightShift) && keyboardState.IsKeyDown(Keys.Delete))
                 sceneStack.PopToBottom();
-        }
-
-        protected override void Draw(GameTime gameTime)
-        {
-            base.Draw(gameTime);
         }
     }
 }

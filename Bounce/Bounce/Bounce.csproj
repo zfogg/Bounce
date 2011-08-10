@@ -133,11 +133,12 @@
   <ItemGroup>
     <Compile Include="etc\IndexKey.cs" />
     <Compile Include="etc\Score.cs" />
-    <Compile Include="Item Creation\ItemStructures.cs" />
-    <Compile Include="Item Creation\Items\PaddleBall.cs" />
-    <Compile Include="Item Creation\Items\Brick.cs" />
-    <Compile Include="Item Creation\Items\Paddle.cs" />
-    <Compile Include="Item Creation\Items\ItemShapes.cs" />
+    <Compile Include="Items\ItemStructures.cs" />
+    <Compile Include="Items\Item.cs" />
+    <Compile Include="Items\Physical Items\PaddleBall.cs" />
+    <Compile Include="Items\Physical Items\Brick.cs" />
+    <Compile Include="Items\Physical Items\Paddle.cs" />
+    <Compile Include="Items\Physical Items\ItemShapes.cs" />
     <Compile Include="etc\VectorStructures.cs" />
     <Compile Include="etc\UnitCircle.cs" />
     <Compile Include="Camera2D\Camera2D.cs" />
@@ -145,13 +146,14 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Camera2D\DebugBounce.cs" />
-    <Compile Include="Item Creation\PhysicalItem.cs" />
+    <Compile Include="Items\Physical Items\PhysicalItem.cs" />
     <Compile Include="etc\Background.cs" />
     <Compile Include="etc\Input.cs" />
-    <Compile Include="Item Creation\ItemFactory.cs" />
-    <Compile Include="Item Creation\Items\Obstacle.cs" />
-    <Compile Include="Item Creation\Items\Metroid.cs" />
-    <Compile Include="Item Creation\Items\Samus.cs" />
+    <Compile Include="Items\ItemFactory.cs" />
+    <Compile Include="Items\Physical Items\Obstacle.cs" />
+    <Compile Include="Items\Physical Items\Metroid.cs" />
+    <Compile Include="Items\Physical Items\Samus.cs" />
+    <Compile Include="Items\Virtual Items\TextItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="BounceGame.cs" />
@@ -161,6 +163,7 @@
     <Compile Include="Scenes\PhysicalScene.cs" />
     <Compile Include="Scenes\SceneStack.cs" />
     <Compile Include="Scenes\Scene.cs" />
+    <Compile Include="Scenes\TextOverlayScene.cs" />
     <Compile Include="Scenes\TimedTransitionScene.cs" />
   </ItemGroup>
   <ItemGroup>

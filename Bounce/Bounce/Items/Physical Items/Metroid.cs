@@ -9,7 +9,7 @@ using FarseerPhysics.Dynamics.Contacts;
 using FarseerPhysics.Factories;
 
 
-namespace Bounce
+namespace Bounce.Items
 {
     public class Metroid : CircleItem
     {

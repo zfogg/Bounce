@@ -9,6 +9,7 @@ namespace Bounce
     public class SceneStack : DrawableGameComponent
     {
         private LinkedList<Scene> scenes;
+        public Dictionary<Scene, int> SceneDepths;
         private Camera2D camera;
         public int Count { get { return scenes.Count; } }
         public Scene Top { get { return scenes.First.Value; } }
@@ -20,6 +21,7 @@ namespace Bounce
             :base(game)
         {
             scenes = new LinkedList<Scene>();
+            SceneDepths = new Dictionary<Scene, int>();
             game.Components.Add(this);
         }
 
@@ -37,6 +39,8 @@ namespace Bounce
 
             scene.Initialize();
             scenes.AddFirst(scene);
+
+            chartDepths();
         }
 
         public void Pop()
@@ -46,6 +50,8 @@ namespace Bounce
 
             if (Count > 0)
                 Top.WhenPoppedDownTo();
+
+            chartDepths();
         }
 
         public void PopToBottom()
@@ -57,10 +63,11 @@ namespace Bounce
         public override void Update(GameTime gameTime)
         {
             _update(scenes.First, gameTime);
+
             base.Update(gameTime);
         }
 
-        public void _update(LinkedListNode<Scene> node, GameTime gameTime)
+        void _update(LinkedListNode<Scene> node, GameTime gameTime)
         {
             node.Value.Update(gameTime);
 
@@ -73,7 +80,7 @@ namespace Bounce
             GraphicsDevice.Clear(Color.Black);
             
             spriteBatch.Begin(
-                sortMode: SpriteSortMode.FrontToBack,
+                sortMode: SpriteSortMode.BackToFront,
                 blendState: BlendState.AlphaBlend,
                 samplerState: SamplerState.AnisotropicClamp,
                 depthStencilState: DepthStencilState.None,
@@ -88,7 +95,7 @@ namespace Bounce
             base.Draw(gameTime);
         }
 
-        public void _draw(LinkedListNode<Scene> node, SpriteBatch spriteBatch)
+        void _draw(LinkedListNode<Scene> node, SpriteBatch spriteBatch)
         {
             node.Value.Draw(spriteBatch);
 
@@ -96,12 +103,23 @@ namespace Bounce
                 _draw(node.Next, spriteBatch);
         }
 
-        public void _debugDraw(LinkedListNode<Scene> node)
+        void _debugDraw(LinkedListNode<Scene> node)
         {
             node.Value.DebugDraw();
 
             if (!node.Value.BlockDraw)
                 _debugDraw(node.Next);
+        }
+
+        void chartDepths()
+        {
+            int i = 0;
+            foreach (Scene scene in scenes.Reverse())
+                SceneDepths[scene] = i++;
+
+            var poppedScenes = SceneDepths.Keys.ToList().FindAll(x => !scenes.Contains(x));
+            foreach (Scene scene in poppedScenes)
+                    SceneDepths.Remove(scene);
         }
     }
 }

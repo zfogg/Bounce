@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 
-namespace Bounce
+namespace Bounce.Items
 {
     public static class ItemFactory
     {

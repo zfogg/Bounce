@@ -11,7 +11,7 @@ using FarseerPhysics.Dynamics;
 using FarseerPhysics.Factories;
 
 
-namespace Bounce
+namespace Bounce.Items
 {
     public class Samus : PhysicalItem
     {

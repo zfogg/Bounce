@@ -15,6 +15,7 @@ namespace Bounce
         protected SceneStack sceneStack;
         public Input Input;
         public virtual Vector2 SceneSize { get; private set; }
+        public float stackDepth { get { return sceneStack.SceneDepths[this] / 100f; } }
         public virtual bool BlockUpdate { get { return true; } }
         public virtual bool BlockDraw { get { return true; } }
 

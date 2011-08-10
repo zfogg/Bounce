@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Text.RegularExpressions;
 
 
-namespace Bounce
+namespace Bounce.Scenes
 {
     public class TimedTransitionScene : Scene
     {
@@ -51,7 +51,12 @@ namespace Bounce
                 spriteFont: font,
                 text: string.Format(drawString + " {0:f}", timeToPop),
                 position: stringPosition,
-                color: Color.White);
+                color: Color.White,
+                rotation: 0f,
+                origin: Vector2.Zero,
+                scale: 1f,
+                effects: SpriteEffects.None,
+                layerDepth: stackDepth * 0.8f);
         }
     }
 }

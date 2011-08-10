@@ -1,14 +1,16 @@
 using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Bounce.Items;
 
 
 namespace Bounce
 {
-    public class Background
+    public class Background : Item
     {
         private Vector2 position;
-        public Background(Vector2 position, string textureName)
+        public Background(Scene scene, Vector2 position, string textureName)
+            : base(scene)
         {
             this.position = position;
             backgroundTexture = BounceGame.ContentManager.Load<Texture2D>(textureName);
@@ -16,7 +18,12 @@ namespace Bounce
 
         private Texture2D backgroundTexture;
 
-        public void Draw(SpriteBatch spriteBatch)
+        public override void Update(GameTime gameTime)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(
                 texture: backgroundTexture,
@@ -27,7 +34,7 @@ namespace Bounce
                 origin: Vector2.Zero,
                 scale: 0.5f,
                 effects: SpriteEffects.None,
-                layerDepth: 0f);
+                layerDepth: scene.stackDepth);
         }
     }
 }
