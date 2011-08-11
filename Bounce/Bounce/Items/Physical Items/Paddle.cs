@@ -15,7 +15,7 @@ namespace Bounce.Items
     public class Paddle : PhysicalItem
     {
 
-        private static Vector2 physicalScale = (Vector2.UnitX * 0.64f) + (Vector2.UnitY * .8f);
+        private static Vector2 physicalScale = (Vector2.UnitX * 0.64f) + (Vector2.UnitY * 0.8f);
 
         public Paddle(PhysicalScene scene, Texture2D texture)
             : base(scene)
@@ -27,13 +27,16 @@ namespace Bounce.Items
 
             var unitCircle = new UnitCircle();
 
-            Body = BodyFactory.CreateRoundedRectangle(scene.World,
-                ConvertUnits.ToSimUnits(texture.Width) * physicalScale.X, 0.35f,
-                ConvertUnits.ToSimUnits(texture.Height) * physicalScale.Y, 0.15f,
-                10, 1f);
+            //Body = BodyFactory.CreateRoundedRectangle(scene.World,
+            //    ConvertUnits.ToSimUnits(texture.Width) * physicalScale.X, 0.35f,
+            //    ConvertUnits.ToSimUnits(texture.Height) * physicalScale.Y, 0.15f,
+            //    10, 1f);
+
+            Body = BodyFactory.CreateSolidArc(scene.World,
+                2f, (float)Math.PI / 2.6f, 24, 1.8f, Vector2.UnitY * 1.6f, (float)Math.PI);
 
             Body.BodyType = BodyType.Kinematic;
-            Body.Restitution = 1.0125f;
+            Body.Restitution = 1f;
             Body.Friction = 0f;
 
             scene.Input.OnKeyHoldDown += new KeyboardEvent(onKeyHoldDown);

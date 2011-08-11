@@ -13,10 +13,7 @@ namespace Bounce
     {
         public static List<Vector2> Row(int numberOfPositions, Vector2 startingPosition, int pixelsApart)
         {
-            
             List<Vector2> positions = new List<Vector2>();
-            positions.Add(startingPosition);
-
             Vector2 position = startingPosition;
             for (int i = 0; i < numberOfPositions * pixelsApart; i += pixelsApart)
             {
@@ -30,8 +27,6 @@ namespace Bounce
         public static List<Vector2> Column(int numberOfPositions, Vector2 startingPosition, int pixelsApart)
         {
             List<Vector2> positions = new List<Vector2>();
-            positions.Add(startingPosition);
-
             Vector2 position = startingPosition;
             for (int i = 0; i < numberOfPositions * pixelsApart; i += pixelsApart)
             {

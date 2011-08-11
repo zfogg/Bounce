@@ -10,12 +10,12 @@ namespace Bounce
     {
         private LinkedList<Scene> scenes;
         public Dictionary<Scene, int> SceneDepths;
-        private Camera2D camera;
         public int Count { get { return scenes.Count; } }
         public Scene Top { get { return scenes.First.Value; } }
         public LinkedListNode<Scene> TopNode { get { return scenes.First; } }
 
         private SpriteBatch spriteBatch;
+        private Camera2D camera;
 
         public SceneStack(Game game)
             :base(game)
@@ -40,7 +40,7 @@ namespace Bounce
             scene.Initialize();
             scenes.AddFirst(scene);
 
-            chartDepths();
+            chartSceneDepths();
         }
 
         public void Pop()
@@ -51,7 +51,7 @@ namespace Bounce
             if (Count > 0)
                 Top.WhenPoppedDownTo();
 
-            chartDepths();
+            chartSceneDepths();
         }
 
         public void PopToBottom()
@@ -111,15 +111,20 @@ namespace Bounce
                 _debugDraw(node.Next);
         }
 
-        void chartDepths()
+        void chartSceneDepths()
         {
+            cleanSceneDepths();
+
             int i = 0;
             foreach (Scene scene in scenes.Reverse())
                 SceneDepths[scene] = i++;
+        }
 
-            var poppedScenes = SceneDepths.Keys.ToList().FindAll(x => !scenes.Contains(x));
-            foreach (Scene scene in poppedScenes)
-                    SceneDepths.Remove(scene);
+        void cleanSceneDepths()
+        {
+            var poppedScenes = SceneDepths.Keys.Except(scenes);
+            foreach (Scene scene in poppedScenes.ToList())
+                SceneDepths.Remove(scene);
         }
     }
 }

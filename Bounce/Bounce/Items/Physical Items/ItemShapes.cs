@@ -57,7 +57,7 @@ namespace Bounce.Items
 
     public class LineItem : PhysicalItem
     {
-        public LineItem(PhysicalScene scene, Vector2 start, float rotation, float length)
+        public LineItem(PhysicalScene scene, Vector2 start, float rotation, float length) // Currently broken.
             :base(scene)
         {
             var end = start * length;

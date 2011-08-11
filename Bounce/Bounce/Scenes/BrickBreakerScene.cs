@@ -30,13 +30,11 @@ namespace Bounce.Scenes
             : base(sceneStack)
         {
             ConvertUnits.SetDisplayUnitToSimUnitRatio(80f);
+            score = new Score(1f);
 
             background = new Background(this, Vector2.Zero, "space3");
             Input.OnKeyDown += new KeyboardEvent(onKeyDown);
             Input.OnKeyHoldDown += new KeyboardEvent(onKeyHoldDown);
-
-            score = new Score(1f);
-            scorePosition = SceneSize * (Vector2.UnitX * 0.015f + Vector2.UnitY * 0.95f);
         }
 
         public override void Initialize()
@@ -44,8 +42,7 @@ namespace Bounce.Scenes
             framing = ItemStructures.CreateFraming(this, SceneSize, width: 20);
             PhysicalItems.AddRange(framing);
 
-            var bricks = brickWall(8);
-            //bricks = orderByColor<Brick>(bricks).ToList();
+            var bricks = brickWall(8, 16, SceneSize / 2f - Vector2.UnitY * 100f);
             PhysicalItems.AddRange(bricks);
 
             paddle = ItemFactory.CreatePaddle(this, SceneSize * (Vector2.UnitX / 2f + Vector2.UnitY * 0.95f));
@@ -60,6 +57,7 @@ namespace Bounce.Scenes
             // [1] is the RectangleItem under the paddle.
             framing[1].Body.OnCollision += new OnCollisionEventHandler(resetBall);
 
+            scorePosition = SceneSize * (Vector2.UnitX * 0.015f + Vector2.UnitY * 0.95f);
             scoreFont = BounceGame.ContentManager.Load<SpriteFont>("arial");
             base.Initialize();
         }
@@ -106,23 +104,24 @@ namespace Bounce.Scenes
             base.Draw(spriteBatch);
         }
 
-        List<Brick> brickWall(int rows)
+        List<Brick> brickWall(int rows, int columns, Vector2 position)
         {
             var sampleBrick = ItemFactory.CreateBrick(this);
+            var brickSize = new Vector2(sampleBrick.Texture.Width, sampleBrick.Texture.Height);
+            var blockSize = new Vector2(columns, rows) * brickSize;
+            sampleBrick.Kill();
 
             var rowStartingPositions = VectorStructures.Column(
-                rows, new Vector2(sampleBrick.Texture.Width / 2, sampleBrick.Texture.Height / 2), sampleBrick.Texture.Height);
+                rows, position - (blockSize / 2f) - (brickSize / 2f), (int)brickSize.Y);
 
             var bricks = new List<Brick>();
             foreach (Vector2 startingPosition in rowStartingPositions)
             {
                 var newRow = ItemStructures.BrickRow(
-                    this, (int)SceneSize.X / sampleBrick.Texture.Width - 1, startingPosition, sampleBrick.Texture.Width);
+                    this, columns, startingPosition, (int)brickSize.X);
 
                 bricks.AddRange(newRow);
             }
-
-            sampleBrick.Kill();
 
             return bricks;
         }
